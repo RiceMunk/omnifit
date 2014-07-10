@@ -5,7 +5,6 @@
 #Library imports
 #---------------
 import matplotlib
-matplotlib.use('TkAgg')
 import numpy as np
 import pyfits as pf
 import matplotlib.pyplot as plt
