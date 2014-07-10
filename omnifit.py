@@ -177,13 +177,20 @@ class spectrum:
       #warnings.warn('Spectrum '+self.name+' has not been baselined yet. Recommend baselining before convolution.',RuntimeWarning)
     self.y=np.convolve(self.y,psf,mode='same')
     self.convolved=True
-  def gconvolve(self,fwhm):
-    """ Convolve spectrum a gaussian of given fwhm (in units of x axis) """
+  def gpsf(self,fwhm):
+    """ Return PSF for a gaussian convlution function of given fwhm (in units of x axis """
     deltaX=np.mean(np.diff(self.x))
     tempX=np.arange(-10*fwhm,10*fwhm+0.001*deltaX,deltaX)
     if len(tempX)>len(self.x):
       raise Exception('Length of convolving array must be less than convolved array for this to work. Decrease the fwhm.')
     gPsf=1.0*np.exp(-2.35*(tempX)**2./fwhm**2.)
+    return gPsf
+  def autopsf(self):
+    """ Return automatically generated psf in the form of a gaussian with a FWHM of average x step amount """
+    return self.gpsf(np.mean(np.diff(self.x)))
+  def gconvolve(self,fwhm):
+    """ Convolve spectrum using a gaussian of given fwhm (in units of x axis) """
+    gPsf=self.gpsf(fwhm)
     #gPsf=gaussian(np.arange(-10*fwhm,10*fwhm,deltaX),[1.0,0.0,fwhm])
     self.convolve(gPsf)
   def smooth(self,window_len=11,window='hanning'):
@@ -296,7 +303,7 @@ class absorptionSpectrum(spectrum):
   specific details that involves.
   Units on the y axis are in optical depth
   """
-  def __init__(self,iWn,iOd,specname='Unknown absorption spectrum'):
+  def __init__(self,iWn,iOd,specname='Unknown absorption spectrum',nonData=[]):
     """
     Init the spectrum. Places iOd on the y axis and
     iWn on the x axis.
@@ -304,7 +311,7 @@ class absorptionSpectrum(spectrum):
     self.od = np.array(iOd,dtype='float64') #Optical depth
     self.wn = np.array(iWn,dtype='float64') #Wave number
     self.wl = wn2wl(self.wn)
-    spectrum.__init__(self,self.wn,self.od,specname=specname,xUnit='Wave number',yUnit='Optical depth')
+    spectrum.__init__(self,self.wn,self.od,specname=specname,xUnit='Wave number',yUnit='Optical depth',nonData=nonData)
   def plotod(self,iAx,in_wl=False,**kwargs):
     """
     Plot the optical depth spectrum as function of wavenumber
@@ -480,6 +487,92 @@ class fitter():
     iAx.plot(self.targX,totRes,lw=3,drawstyle=drawstyle,color=self.color)
     if legend:
       iAx.legend(legList,shadow=True)
+  def fitresults_tofile(self,filename):
+    """
+    Export fit results to two output files.
+    First file is filename.xml, which contains information about both
+    the best-fit parameters and of function names etc.
+    Second file is filename.csv, which contains x and y data of the fitted
+    models, as would be visualized in a plotted fit result.
+    First column of csv is the x value, which is shared by all models.
+    Second column is y value of data that was being fitted to.
+    Third column is total sum of fitted models.
+    Fourth to Nth columns are the individual models, in the order
+    described in filename.xml.
+    """
+    filename_csv = filename+'.csv'
+    filename_xml = filename+'.xml'
+    file_xml = open(filename_xml,'w')
+    file_xml.write('<!-- Automatically generated information file for csv file '+filename_csv+'-->\n')
+    file_xml.write('<INFO file="'+filename_csv+'">\n')
+    file_xml.write('<MODELNAME>'+self.modelname+'</MODELNAME>\n')
+    file_xml.write('<HAVEPSF>'+str(self.psf != None)+'</HAVEPSF>\n')
+    file_xml.write('<RMS_DATA>'+str(self.targdY)+'</RMS_DATA>\n')
+    file_xml.write('<NUMBER_FUNCTIONS>'+str(len(self.funcList))+'</NUMBER_FUNCTIONS>\n')
+    outdata_csv = np.vstack([self.targX,self.targY])
+    outdata_functions = np.empty([0,len(self.targX)])
+    totRes = np.zeros(len(self.targX))
+    for indFunc,cFunc in enumerate(self.funcList):
+      file_xml.write('<FUNCTION name="'+cFunc['name']+'">\n')
+      file_xml.write('<TYPE>')
+      if cFunc['type'] == 'theory':
+        file_xml.write(cFunc['shape'])
+      elif cFunc['type'] == 'lab':
+        file_xml.write('lab')
+      else:
+        file_xml.write('unknown'+'\n')
+      file_xml.write('</TYPE>\n')
+      file_xml.write('<DETECTION>'+str(not self.lowsigma(sigma=2.0)[cFunc['name']])+'</DETECTION>\n')
+      file_xml.write('<CSV_COLUMN>'+str(indFunc+3)+'</CSV_COLUMN>\n')
+      cParlist = cFunc['params']
+      file_xml.write('<NUMBER_PARAMS>'+str(len(cParlist))+'</NUMBER_PARAMS>\n')
+      oPar=Parameters()
+      for cPar in cParlist.values():
+        file_xml.write('<PARAMETER name="'+cPar.name+'">\n')
+        cFitPar=self.fitPars[self.func_ident(indFunc)+cPar.name]
+        oPar.add(cPar.name,
+                 value=cFitPar.value,vary=cFitPar.vary,
+                 min=cFitPar.min,max=cFitPar.max,
+                 expr=cFitPar.expr)
+        file_xml.write('<VALUE>'+str(cFitPar.value)+'</VALUE>\n')
+        file_xml.write('</PARAMETER>\n')
+      funcRes = self.parse_function(oPar,cFunc)
+      outdata_functions = np.vstack([outdata_functions,funcRes])
+      totRes += funcRes
+      file_xml.write('</FUNCTION>\n')
+    file_xml.write('</INFO>')
+    file_xml.close()
+    outdata_csv = np.vstack([outdata_csv,totRes,outdata_functions])
+    np.savetxt(filename_csv,outdata_csv.transpose(),delimiter=',',header='For info, see '+filename_xml)
+  def lowsigma(self,sigma=1.0):
+    """
+    Return dictionary with boolean values indicating
+    whether the fitting results are below a certain
+    sigma multiple value
+    """
+    minY = sigma*self.targdY
+    out = {}
+    totRes = np.zeros(len(self.targX))
+    for indFunc,cFunc in enumerate(self.funcList):
+      cParlist = cFunc['params']
+      oPar=Parameters()
+      for cPar in cParlist.values():
+        cFitPar=self.fitPars[self.func_ident(indFunc)+cPar.name]
+        oPar.add(cPar.name,
+                 value=cFitPar.value,vary=cFitPar.vary,
+                 min=cFitPar.min,max=cFitPar.max,
+                 expr=cFitPar.expr)
+      funcRes = self.parse_function(oPar,cFunc)
+      if np.max(funcRes) < minY:
+        out[cFunc['name']] = True
+      else:
+        out[cFunc['name']] = False
+      totRes += funcRes
+    if np.max(totRes) < minY:
+      out['total'] = True
+    else:
+      out['total'] = False
+    return out
   def fit_results(self):
     """ Return all fitting results as a dictionary"""
     oResults={}
