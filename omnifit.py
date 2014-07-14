@@ -595,8 +595,17 @@ class fitter():
   def parse_function(self,iPar,iFunc):
     """ Parse the input function, insert parameters, return result """
     if iFunc['type']=='lab':
-      shiftData=np.interp(self.targX+iPar['shift'].value,self.targX,iFunc['shape'])
-      funcRes=muldata(shiftData,iPar['mul'].value)
+      #shiftData=np.interp(self.targX+iPar['shift'].value,self.targX,iFunc['shape'])
+      # shiftamount = int(np.round(iPar['shift'].value))
+      funcRes=muldata(iFunc['shape'],iPar['mul'].value)
+      # leftEdge = funcRes[0]
+      # rightEdge = funcRes[-1]
+      # if shiftamount != 0:
+      #   funcRes=np.roll(funcRes,shiftamount)
+      #   if shiftamount >= 0:
+      #     funcRes[:shiftamount] = leftEdge
+      #   else:
+      #     funcRes[shiftamount:] = rightEdge
       #funcRes=muldata(iFunc['shape'],iPar['mul'].value)
     elif iFunc['type']=='scatter':
       funcres=scatterdata(self.targX,iFunc['shape'],iFunc['grain'],iPar,self.psf)
