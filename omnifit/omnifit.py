@@ -6,7 +6,7 @@
 #---------------
 import matplotlib
 import numpy as np
-import pyfits as pf
+import astropy.io.fits as pf
 import matplotlib.pyplot as plt
 import pylab
 from scipy.optimize import leastsq
@@ -17,6 +17,7 @@ import time
 import pickle
 import os
 from bhcoat import *
+
 #----------------------
 #Main class definitions
 #----------------------
