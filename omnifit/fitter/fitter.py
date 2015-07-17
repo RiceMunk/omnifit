@@ -1,5 +1,6 @@
 import numpy as np
 from lmfit import minimize, Parameters, Parameter
+from .. import spectrum
 
 class fitter():
   """

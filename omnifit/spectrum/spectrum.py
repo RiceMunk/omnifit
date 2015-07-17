@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import warnings
 import pickle
 import os
+from utils import *
 
 class spectrum:
   """ Generic 1d spectrum class. """
