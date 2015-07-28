@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import warnings
 import pickle
-import os
+import os, sys
 from utils import *
 
 class spectrum:
@@ -80,7 +80,7 @@ class spectrum:
       cY = self.__dict__[y]
     else:
       cY = self.y
-    if len(cY) != len(cY):
+    if len(cY) != len(cX):
       raise Exception('Plottable x and y values of different length!')
     if drawstyle:
       cDrawstyle=drawstyle
@@ -162,7 +162,7 @@ class spectrum:
     self.y=np.convolve(self.y,psf,mode='same')
     self.convolved=True
   def gpsf(self,fwhm):
-    """ Return PSF for a gaussian convlution function of given fwhm (in units of x axis """
+    """ Return PSF for a gaussian convolution function of given fwhm (in units of x axis """
     deltaX=np.mean(np.diff(self.x))
     tempX=np.arange(-10*fwhm,10*fwhm+0.001*deltaX,deltaX)
     if len(tempX)>len(self.x):
@@ -195,11 +195,7 @@ class spectrum:
       w=np.ones(window_len,'d')
     else:  
       w=eval('np.'+window+'(window_len)')
-    y=numpy.convolve(w/w.sum(),s,mode='same')
-  def smooth(self):
-    """ Convolve spectrum with a gaussian by 50% """
-    deltaX=np.mean(np.diff(self.x))
-    
+    self.y=np.convolve(w/w.sum(),s,mode='same')
   def baseline(self,degree=1,windows=[[0.0,1.0e6]],exclusive=False,useFile=None,overWrite=False):
     """
     Correct the y with a new baseline.
@@ -217,8 +213,11 @@ class spectrum:
       cManager.window.wm_geometry("+100+50")
       cAx.plot(self.x,self.y,'k-',drawstyle=self.drawstyle)
       cBaseliner = baseliner(cAx,self)
-      plt.show(cFig)
-      windows=cBaseliner.windows
+      if not hasattr(sys,'_called_from_test'): #only show the plot if not testing
+        plt.show(cFig)
+        windows=cBaseliner.windows
+      else:
+        return cFig,cBaseliner #send the relevant stuff back for testing
       if useFile != None:
         with open(useFile,'w') as cFile:
           pickle.dump(windows,cFile)
@@ -272,11 +271,11 @@ class spectrum:
     print '---'
     print 'Summary for spectrum '+self.name
     print 'x unit: '+self.xUnit
-    print 'min(x): '+np.min(self.x)
-    print 'max(x): '+np.max(self.x)
+    print 'min(x): '+str(np.min(self.x))
+    print 'max(x): '+str(np.max(self.x))
     print 'y unit: '+self.yUnit
-    print 'min(y): '+np.min(self.y)
-    print 'max(y): '+np.max(self.y)
+    print 'min(y): '+str(np.min(self.y))
+    print 'max(y): '+str(np.max(self.y))
     print 'baseline: '+str(self.baselined)
     print 'convolved: '+str(self.convolved)
     print '---'
@@ -292,6 +291,8 @@ class absorptionSpectrum(spectrum):
     Init the spectrum. Places iOd on the y axis and
     iWn on the x axis.
     """
+    if len(iWn) != len(iOd):
+      raise TypeError('Input arrays have different sizes.')
     self.od = np.array(iOd,dtype='float64') #Optical depth
     self.wn = np.array(iWn,dtype='float64') #Wave number
     self.wl = wn2wl(self.wn)
@@ -307,18 +308,6 @@ class absorptionSpectrum(spectrum):
       self.plot(iAx,x='wn',y='od',**kwargs)
 
 
-#class labSpectrum(absorptionSpectrum):
-  #"""
-  #Laboratory spectrum class.
-  #Inherits absorptionspectrum class propertries.
-  #"""
-  #def __init__(self,iWn,iOd,specname='Unknown laboratory spectrum'):
-    #"""
-    #Init requires input of wavenumber array [cm^-1] and od array.
-    #Optional input: Name of spectrum
-    #"""
-    #absorptionSpectrum.__init__(self,iWn,iOd,specname=specname)
-
 class labSpectrum(absorptionSpectrum):
   """
   Laboratory spectrum class from optical constants.
@@ -330,14 +319,14 @@ class labSpectrum(absorptionSpectrum):
     Init requires input of wavenumber array [cm^-1] and od array.
     Optional input: Name of spectrum
     """
-    if len(iWn) != len(iN):
+    if len(iWn) != len(iN) or len(iK) != len(iN):
       raise TypeError('Input arrays have different sizes.')
     self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=cde_correct(iWn,iN,iK)
     self.n=np.array(iN,dtype='float64')
     self.k=np.array(iK,dtype='float64')
     absorptionSpectrum.__init__(self,iWn,self.cabs_vol,specname=specname)
   def plotnk(self,xrange=None):
-    """ Plot the optical constants as function of wavenumber """
+    """ Plot the optical constants as function of wavenumber. Return figure where plotting happened. """
     if np.any(xrange):
       minx=xrange[0]
       maxx=xrange[1]
@@ -355,5 +344,4 @@ class labSpectrum(absorptionSpectrum):
     c_axis.set_xlim(minx,maxx)
     c_axis.plot(self.wn,self.k,'k-',drawstyle=self.drawstyle)
     c_axis.plot(self.wn,self.k,'k.',drawstyle=self.drawstyle)
-    plt.show()
-    plt.close()
+    return c_fig
