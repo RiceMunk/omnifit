@@ -1,6 +1,7 @@
 import numpy as np
 from lmfit import minimize, Parameters, Parameter
 from .. import spectrum
+from functions import *
 
 class fitter():
   """
@@ -36,14 +37,8 @@ class fitter():
   def add_theory(self,iShape,iParams,funcname='Unknown function',color='red'):
     """
     Add theoretical function to fitting pool.
-    Supported functions:
-      gaussian, lorentzian, omni_custom
-      (omni_custom needs to be defined separately)
     Uses lmfit params as the parameter list
     """
-    supported_functions=['gaussian','lorentzian','flipped_egh']
-    if iShape not in supported_functions and not self.customfunctions:
-       raise Exception('Function shape not supported. Supported function shapes: '+str(supported_functions))
     self.funcList.append({'type':'theory','shape':iShape,'params':iParams,'name':funcname,'color':color})
 
   def perform_fit(self):
@@ -224,20 +219,7 @@ class fitter():
   def parse_function(self,iPar,iFunc):
     """ Parse the input function, insert parameters, return result """
     if iFunc['type']=='lab':
-      #shiftData=np.interp(self.targX+iPar['shift'].value,self.targX,iFunc['shape'])
-      # shiftamount = int(np.round(iPar['shift'].value))
       funcRes=muldata(iFunc['shape'],iPar['mul'].value)
-      # leftEdge = funcRes[0]
-      # rightEdge = funcRes[-1]
-      # if shiftamount != 0:
-      #   funcRes=np.roll(funcRes,shiftamount)
-      #   if shiftamount >= 0:
-      #     funcRes[:shiftamount] = leftEdge
-      #   else:
-      #     funcRes[shiftamount:] = rightEdge
-      #funcRes=muldata(iFunc['shape'],iPar['mul'].value)
-    elif iFunc['type']=='scatter':
-      funcres=scatterdata(self.targX,iFunc['shape'],iFunc['grain'],iPar,self.psf)
     elif iFunc['type']=='theory':
       funcRes=globals()[iFunc['shape']](self.targX,iPar,self.psf)
     else:

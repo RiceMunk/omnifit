@@ -26,18 +26,6 @@ def flipped_egh(x,par,psf):
   else:
     return np.convolve(out_y,psf,mode='same')
 
-def poly3(x,par,psf=None):
-  """ A 3rd order polynomial function """
-  p1=par['par1'].value
-  p2=par['par2'].value
-  p3=par['par3'].value
-  p4=par['par4'].value
-  out_y=p1+p2*x+p3*x*x+p4*x*x*x
-  if not(np.any(psf)):
-    return out_y
-  else:
-    return np.convolve(out_y,psf,mode='same')
-
 def gaussian(x,par,psf=None):
   """ A gaussian function """
   peak=par['peak'].value
