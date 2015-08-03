@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from astropy import units as u
 
 class baseliner:
   """
@@ -77,26 +78,18 @@ class baseliner:
     self.ax.figure.canvas.mpl_disconnect(self.keyListener)
     plt.close(self.ax.figure)
 
+#Units definitions
+unit_od = u.def_unit('optical depth',doc='Optical depth of radiation')
+unit_opticaldepth = unit_od
+
 #--------------------------
 #Misc. function definitions
 #--------------------------
-def wl2wn(iWavelength):
-  """
-  Convert wavelength [um] to wavenumber [cm^-1]
-  """
-  return 1.0e4/iWavelength
-
-def wn2wl(iWavenumber):
-  """
-  Convert wavenumber [cm^-1] to wavelength [um]
-  """
-  return 1.0e4/iWavenumber
-
 def cde_correct(wn,n,k):
   """
   CDE correction to  n,k data
   """
-  wl=wn2wl(wn)
+  wl=1.e4/wn
   m=np.vectorize(complex)(n,k)
   cabs_vol=np.empty(0)
   cabs=np.empty(0)

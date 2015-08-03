@@ -1,5 +1,6 @@
 import numpy as np
 from lmfit import minimize, Parameters, Parameter
+from astropy import units as u
 from .. import spectrum
 from functions import *
 
@@ -13,7 +14,7 @@ class fitter():
   def __init__(self,iX,iY,dY=1.0,modelname='Unknown model',psf=None,fitrange=None,color='blue',customfunctions=False):
     """ Initialise with target spectrum that the rest will be fitted to. """
     if len(iX) != len(iY):
-      raise Exception('Input arrays have different sizes.')
+      raise RuntimeError('Input arrays have different sizes.')
     self.fitrange=fitrange
     self.targX=iX
     self.targY=iY
@@ -32,7 +33,7 @@ class fitter():
     if not(funcname):
       funcname=iSpectrum.name
     if len(iSpectrum.x) != len(self.targX):
-      raise Exception('Input spectrum has wrong size!')
+      raise RuntimeError('Input spectrum has wrong size!')
     self.funcList.append({'type':'lab','shape':iSpectrum.y,'params':iParams,'name':funcname,'color':color})
   def add_theory(self,iShape,iParams,funcname='Unknown function',color='red'):
     """
@@ -48,7 +49,7 @@ class fitter():
     self.fitPars = self.extract_pars()
     self.fitRes=minimize(self.fit_residual,self.fitPars,epsfcn=0.05)
     if not(self.fitRes.success):
-      raise Exception('Fitting failed!')
+      raise RuntimeError('Fitting failed!')
   def fit_residual(self,iPar,custrange=None):
     """ Calculate residual of all the functions compared to the target function """
     if custrange==None:
@@ -223,7 +224,7 @@ class fitter():
     elif iFunc['type']=='theory':
       funcRes=globals()[iFunc['shape']](self.targX,iPar,self.psf)
     else:
-      raise Exception('Unknown function type!')
+      raise RuntimeError('Unknown function type!')
     return funcRes
   def extract_pars(self):
     """

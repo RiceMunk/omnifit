@@ -1,40 +1,47 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from astropy import units as u
+from astropy import convolution
 import warnings
 import pickle
 import os, sys
-from utils import *
+import utils
+from copy import deepcopy
 
-class spectrum:
+class baseSpectrum:
   """ Generic 1d spectrum class. """
-  def __init__(self,iX,iY,specname='Unknown spectrum',nonData=[],xUnit='Unknown',yUnit='Unknown'):
+  def __init__(self,x,y,specname='Unknown spectrum',nonData=[]):
     """
     Init requires input of x axis values (wavelength etc.) and y axis values (intensity etc.)
     nonData adds extra variable names to the list of variables to be ignored by
-    the dropbad function.
+    the fixbad function.
     """
-    if len(iX) != len(iY):                                  #Check that input is sane
-      raise Exception('Input arrays have different sizes.')
-    self.x=np.array(iX,dtype='float64')                     #X axis
-    self.y=np.array(iY,dtype='float64')                     #Y axis
+    if len(x) != len(y):                                  #Check that input is sane
+      raise RuntimeError('Input arrays have different sizes.')
+    if type(x) != u.quantity.Quantity:
+      raise u.UnitsError('the x data is not in astropy unit format')
+    else:
+      self.x=x
+    if type(y) != u.quantity.Quantity:
+      raise u.UnitsError('the y data is not in astropy unit format')
+    else:
+      self.y=y
     self.dy=np.nan                                          #Do a baseline to get this
     self.name=str(specname)                                 #Spectrum name
     self.baselined=False                                    #Has the spectrum been baselined?
     self.convolved=False                                    #Has the spectrum been convolved?
     self.drawstyle='steps-mid'
-    self.xUnit=xUnit
-    self.yUnit=yUnit
     self.nonData = [
                       'nonData',\
                       'name',\
                       'convolved','baselined',\
                       'drawstyle',\
-                      'xUnit','yUnit','dy'\
+                      'dy'\
                    ]
     for cNonData in nonData:                                #Add the extra non-array variable names into nonData
       if not cNonData in self.nonData:
         self.nonData.append(cNonData)                       
-    self.dropbad()                                          #Drop bad data.
+    self.fixbad()                                          #Drop bad data.
     self.sort()
   def sort(self):
     """
@@ -49,9 +56,9 @@ class spectrum:
     iGoodones = np.isfinite(np.ones(varlength))
     for cVarname in ownvarnames:
       self.__dict__[cVarname]=self.__dict__[cVarname][sorter]
-  def dropbad(self):
+  def fixbad(self):
     """
-    Make spectrum go through its own vars and drop all the bad ones.
+    Make spectrum go through its own vars and replace all the bad ones with nans.
     All variable names in nonData are ignored by this function.
     """
     ignorevars = self.nonData
@@ -62,50 +69,44 @@ class spectrum:
     for cVarname in ownvarnames:
       cVar = self.__dict__[cVarname]
       if len(cVar) != varlength:
-        raise Exception('Anomalous variable length detected in spectrum!')
+        raise RuntimeError('Anomalous variable length detected in spectrum!')
       iGoodones = np.logical_and(iGoodones,np.isfinite(cVar))
+    iBadones = np.logical_not(iGoodones)
     for cVarname in ownvarnames:
-      self.__dict__[cVarname]=self.__dict__[cVarname][iGoodones]
-  def plot(self,iAx,plotstyle='k-',drawstyle=None,x=None,y=None):
+      if cVarname != 'x':
+        self.__dict__[cVarname][iBadones]=np.nan
+  def plot(self,axis,plotstyle='k-',iDrawstyle=None,x=None,y=None):
     """
     Plot x,y into given MPL axis.
     They can be overridden with different
     variable names.
     """
     if x:
-      cX = self.__dict__[x]
+      plotx = self.__dict__[x]
     else:
-      cX = self.x
+      plotx = self.x.value
     if y:
-      cY = self.__dict__[y]
+      ploty = self.__dict__[y]
     else:
-      cY = self.y
-    if len(cY) != len(cX):
-      raise Exception('Plottable x and y values of different length!')
-    if drawstyle:
-      cDrawstyle=drawstyle
+      ploty = self.y.value
+    if iDrawstyle:
+      drawstyle=iDrawstyle
     else:
-      cDrawstyle=self.drawstyle
-    iAx.plot(cX,cY,plotstyle,drawstyle=cDrawstyle)
-  def wl2wn(self):
+      drawstyle=self.drawstyle
+    iAx.plot(cX,cY,plotstyle,drawstyle=drawstyle)
+  def convert2wn(self):
     """
-    Convert x axis units from wavelength [um]
-    to wavenumer [cm^-1]
+    Convert x axis to wavenumber [cm^-1]
     """
-    if self.xUnit != 'Wavelength':
-      raise Exception('x axis units are not of wavelength, they are '+self.xUnit)
-    self.x=wl2wn(self.x)
-    self.xUnit = 'Wave number'
+    with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+      self.x=self.x.to(u.kayser)
     self.sort()
-  def wn2wl(self):
+  def convert2wl(self):
     """
-    Convert x axis units from wavenumer [cm^-1]
-    to wavelength [um]
+    Convert x axis to wavelength [um]
     """
-    if self.xUnit != 'Wave number':
-      raise Exception('x axis units are not of wave number, they are '+self.xUnit)
-    self.x=wn2wl(self.x)
-    self.xUnit = 'Wavelength'
+    with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+      self.x=self.x.to(u.micron)
     self.sort()
   def subspectrum(self,minX,maxX):
     """
@@ -116,16 +117,9 @@ class spectrum:
     iSub = np.logical_and(np.greater_equal(self.x,minX),np.less_equal(self.x,maxX))
     newX = self.x[iSub]
     newY = self.y[iSub]
-    newSpec = spectrum(newX,newY,specname=self.name+'(cropped)',
-                                 nonData=self.nonData,
-                                 xUnit=self.xUnit,
-                                 yUnit=self.yUnit)
-    newSpec.baselined = self.baselined
-    newSpec.convolved = self.convolved
-    newSpec.drawstyle = self.drawstyle
-    for cVarName in self.__dict__.keys():
-      if not cVarName in newSpec.__dict__.keys():
-        newSpec.__dict__[cVarName]=self.__dict__[cVarName]
+    newSpec = deepcopy(self)
+    newSpec.x = newX
+    newSpec.y = newY
     return newSpec
   def interpolate(self,targSpectrum):
     """
@@ -133,50 +127,33 @@ class spectrum:
     Does not modify current spectrum. Returns a new one.
     New spectrum metadata is taken from target spectrum.
     """
-    if self.xUnit != targSpectrum.xUnit:
-      raise Exception('Spectrums have different units on x axis!')
-    if self.yUnit != targSpectrum.yUnit:
-      raise Exception('Spectrums have different units on y axis!')
+    if self.x.unit != targSpectrum.x.unit:
+      raise u.UnitsError('Spectrums have different units on x axis!')
+    if self.y.unit != targSpectrum.y.unit:
+      raise u.UnitsError('Spectrums have different units on y axis!')
     newX=targSpectrum.x
     newY=np.interp(newX,self.x,self.y)
-    newSpec=spectrum(newX,newY,
-                    specname=self.name+'(interpolated: '+targSpectrum.name+')',
-                    nonData=self.nonData,
-                    xUnit=self.xUnit,yUnit=self.yUnit)
+    newSpec = deepcopy(self)
+    newSpec.x = newX
+    newSpec.y = newY
+    newSpec.name = self.name+'(interpolated: '+targSpectrum.name+')'
     newSpec.baselined = targSpectrum.baselined
     newSpec.convolved = targSpectrum.convolved
     newSpec.drawstyle = targSpectrum.drawstyle
-    for cVarName in targSpectrum.__dict__.keys():
-      if not cVarName in newSpec.__dict__.keys():
-        newSpec.__dict__[cVarName]=targSpectrum.__dict__[cVarName]
     return newSpec
   def yat(self,x):
     """ Return value of y at x """
     return np.interp(x,self.x,self.y)
-  def convolve(self,psf):
-    """ Convolve spectrum y with given psf """
+  def convolve(self,kernel):
+    """ Convolve spectrum y with given kernel """
     if self.convolved:
       warnings.warn('Spectrum '+self.name+' has already been convolved once!',RuntimeWarning)
-    #if not(self.baselined):
-      #warnings.warn('Spectrum '+self.name+' has not been baselined yet. Recommend baselining before convolution.',RuntimeWarning)
-    self.y=np.convolve(self.y,psf,mode='same')
+    self.y=convolution.convolve(self.y,kernel)
     self.convolved=True
-  def gpsf(self,fwhm):
-    """ Return PSF for a gaussian convolution function of given fwhm (in units of x axis """
-    deltaX=np.mean(np.diff(self.x))
-    tempX=np.arange(-10*fwhm,10*fwhm+0.001*deltaX,deltaX)
-    if len(tempX)>len(self.x):
-      raise Exception('Length of convolving array must be less than convolved array for this to work. Decrease the fwhm.')
-    gPsf=1.0*np.exp(-2.35*(tempX)**2./fwhm**2.)
-    return gPsf
-  def autopsf(self):
-    """ Return automatically generated psf in the form of a gaussian with a FWHM of average x step amount """
-    return self.gpsf(np.mean(np.diff(self.x)))
   def gconvolve(self,fwhm):
     """ Convolve spectrum using a gaussian of given fwhm (in units of x axis) """
-    gPsf=self.gpsf(fwhm)
-    #gPsf=gaussian(np.arange(-10*fwhm,10*fwhm,deltaX),[1.0,0.0,fwhm])
-    self.convolve(gPsf)
+    gkernel=convolution.Gaussian1DKernel(fwhm)
+    self.convolve(gkernel)
   def smooth(self,window_len=11,window='hanning'):
     """
     A smoothing function
@@ -229,7 +206,7 @@ class spectrum:
         iBaseline=np.logical_or(iBaseline,np.logical_and(np.greater(self.x,cWindow[0]),np.less(self.x,cWindow[1])))
     baseline = np.polyfit(self.x[iBaseline],self.y[iBaseline],degree)
     if not(np.all(np.isfinite(baseline))):
-      raise Exception('Baseline is non-finite!')
+      raise RuntimeError('Baseline is non-finite!')
     fixedY = self.y
     for cPower in range(degree+1):
       fixedY=fixedY-baseline[degree-cPower]*self.x**cPower
@@ -248,39 +225,39 @@ class spectrum:
     Returns maximum y of the spectrum.
     If checkrange is set, returns maximum inside of that range.
     """
-    iCheckrange=np.isfinite(self.y)
+    iCheckrange=np.ones_like(self.y,dtype=bool)
     if np.any(checkrange):
       minX=checkrange[0]
       maxX=checkrange[1]     
       iCheckrange=np.logical_and(iCheckrange,np.logical_and(
                         np.less_equal(minX,self.x),np.greater_equal(maxX,self.x)))
-    return np.max(self.y[iCheckrange])
+    return np.nanmax(self.y[iCheckrange])
   def min(self,checkrange=None):
     """
     Returns minimum y of the spectrum.
     If checkrange is set, returns maximum inside of that range.
     """
-    iCheckrange=np.isfinite(self.y)
+    iCheckrange=np.ones_like(self.y,dtype=bool)
     if np.any(checkrange):
       minX=checkrange[0]
       maxX=checkrange[1]     
       iCheckrange=np.logical_and(iCheckrange,np.logical_and(
                         np.less_equal(minX,self.x),np.greater_equal(maxX,self.x)))
-    return np.min(self.y[iCheckrange])
+    return np.nanmin(self.y[iCheckrange])
   def info(self):
     print '---'
     print 'Summary for spectrum '+self.name
     print 'x unit: '+self.xUnit
-    print 'min(x): '+str(np.min(self.x))
-    print 'max(x): '+str(np.max(self.x))
+    print 'min(x): '+str(np.nanmin(self.x))
+    print 'max(x): '+str(np.nanmax(self.x))
     print 'y unit: '+self.yUnit
-    print 'min(y): '+str(np.min(self.y))
-    print 'max(y): '+str(np.max(self.y))
-    print 'baseline: '+str(self.baselined)
+    print 'min(y): '+str(np.nanmin(self.y))
+    print 'max(y): '+str(np.nanmax(self.y))
+    print 'baselined: '+str(self.baselined)
     print 'convolved: '+str(self.convolved)
     print '---'
 
-class absorptionSpectrum(spectrum):
+class absorptionSpectrum(baseSpectrum):
   """
   An absorption spectrum, with all the
   specific details that involves.
@@ -292,11 +269,12 @@ class absorptionSpectrum(spectrum):
     iWn on the x axis.
     """
     if len(iWn) != len(iOd):
-      raise TypeError('Input arrays have different sizes.')
-    self.od = np.array(iOd,dtype='float64') #Optical depth
-    self.wn = np.array(iWn,dtype='float64') #Wave number
-    self.wl = wn2wl(self.wn)
-    spectrum.__init__(self,self.wn,self.od,specname=specname,xUnit='Wave number',yUnit='Optical depth',nonData=nonData)
+      raise RuntimeError('Input arrays have different sizes.')
+    self.od = iOd #Optical depth
+    self.wn = iWn #Wave number
+    with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+      self.wl=self.wn.to(u.micron)
+    baseSpectrum.__init__(self,self.wn,self.od,specname=specname,nonData=nonData)
   def plotod(self,iAx,in_wl=False,**kwargs):
     """
     Plot the optical depth spectrum as function of wavenumber
@@ -320,11 +298,11 @@ class labSpectrum(absorptionSpectrum):
     Optional input: Name of spectrum
     """
     if len(iWn) != len(iN) or len(iK) != len(iN):
-      raise TypeError('Input arrays have different sizes.')
-    self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=cde_correct(iWn,iN,iK)
+      raise RuntimeError('Input arrays have different sizes.')
+    self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=utils.cde_correct(iWn,iN,iK)
     self.n=np.array(iN,dtype='float64')
     self.k=np.array(iK,dtype='float64')
-    absorptionSpectrum.__init__(self,iWn,self.cabs_vol,specname=specname)
+    absorptionSpectrum.__init__(self,iWn*u.kayser,self.cabs_vol*utils.unit_od,specname=specname)
   def plotnk(self,xrange=None):
     """ Plot the optical constants as function of wavenumber. Return figure where plotting happened. """
     if np.any(xrange):

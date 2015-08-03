@@ -1,7 +1,9 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 import numpy as np
+from astropy import units as u
 import os,sys
-from ..spectrum import *
+from .. import spectrum
+from ..spectrum import utils
 epsilon = 1.e-10 #tolerance for floating point errors
 sys._called_from_test = True
 
@@ -9,9 +11,9 @@ def generate_spectrum():
   """
   Generate and return a generic spectrum from dummy data
   """
-  xdata = np.arange(1000,2000,10)
-  ydata = np.arange(0,100,1)
-  return spectrum(xdata,ydata)
+  xdata = np.arange(1000,2000,10)*u.micron
+  ydata = np.arange(0,100,1)*utils.unit_od
+  return spectrum.baseSpectrum(xdata,ydata)
 
 def generate_absspectrum():
   """
@@ -19,7 +21,7 @@ def generate_absspectrum():
   """
   filepath_waterice = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/waterice_absorption.txt')
   wn, absorbance = np.loadtxt(filepath_waterice,delimiter=', ',skiprows=0,unpack=True)
-  return absorptionSpectrum(wn,-1.0*np.log(10**(-1.0*absorbance)),specname='test water spectrum (absorption)')
+  return spectrum.absorptionSpectrum(wn*u.kayser,-1.0*np.log(10**(-1.0*absorbance))*utils.unit_od,specname='test water spectrum (absorption)')
 
 def generate_labspectrum():
   """
@@ -27,4 +29,4 @@ def generate_labspectrum():
   """
   filepath_waterice = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/waterice_nandk.txt')
   wn, n, k, dum1, dum2 = np.loadtxt(filepath_waterice,skiprows=1,unpack=True)
-  return labSpectrum(wn,n,k,specname='test water spectrum (n and k)')
+  return spectrum.labSpectrum(wn,n,k,specname='test water spectrum (n and k)')
