@@ -32,8 +32,8 @@ class TestSpectrumCreation_basic:
     """
     xdata = np.arange(1000,2000,10)*u.micron
     ydata = np.arange(0,100,1)*utils.unit_od
-    testspec = spectrum.baseSpectrum(xdata,ydata,nonData=['dummy data'])
-    assert 'dummy data' in testspec.nonData
+    testspec = spectrum.baseSpectrum(xdata,ydata,nondata=['dummy data'])
+    assert 'dummy data' in testspec._baseSpectrum__nondata
   def test_initwrongsize(self):
     """
     Make sure that initialising a spectrum with different sized x and y doesn't work

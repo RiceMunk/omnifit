@@ -9,11 +9,35 @@ from .. import utils
 from copy import deepcopy
 
 class baseSpectrum:
-  """ Generic 1d spectrum class. """
-  def __init__(self,x,y,specname='Unknown spectrum',nonData=[]):
+  """
+  A class to represent spectroscopic data.
+  
+  This class is designed to work for spectroscopic data of ices, but 
+  may work for other types of spectroscopic data as well.
+  
+
+  Attributes
+  ----------
+    x : astropy quantity or numpy ndarray
+      Represents the data on the "x-axis" of the spectrum,
+      i.e. usually the wavelength or frequency
+    y : astropy quantity or numpy ndarray
+      Represents the data on the "x-axis" of the spectrum,
+      i.e. the flux or optical depth
+    dy : NoneType or float
+      The uncertainty of y. Can be given during initialisation,
+      or automatically calculated during baselining
+    specname : string
+      The name of the spectrum
+    baselined : bool
+      Indicates whether the spectrum has been baselined or not
+    convolved : bool
+      Indicates whether the spectrum has been put through convolution
+  """
+  def __init__(self,x,y,dy=None,specname='Unknown spectrum',nondata=[]):
     """
     Init requires input of x axis values (wavelength etc.) and y axis values (optical depth etc.)
-    nonData adds extra variable names to the list of variables to be ignored by
+    nondata adds extra variable names to the list of variables to be ignored by
     the fixbad function.
     """
     if len(x) != len(y):                                  #Check that input is sane
@@ -33,40 +57,44 @@ class baseSpectrum:
       self.y=y*utils.unit_od
     else:
       self.y=y
-    self.dy=np.nan                                          #Do a baseline to get this
+    if dy is not None:
+      self.dy=dy
+    else:
+      self.dy=None
     self.name=str(specname)                                 #Spectrum name
     self.baselined=False                                    #Has the spectrum been baselined?
     self.convolved=False                                    #Has the spectrum been convolved?
-    self.nonData = [
-                      'nonData',\
+    self.__nondata = [
+                      '_baseSpectrum__nondata',\
                       'name',\
                       'convolved','baselined',\
                       'dy'\
                    ]
-    for cNonData in nonData:                                #Add the extra non-array variable names into nonData
-      if not cNonData in self.nonData:
-        self.nonData.append(cNonData)                       
-    self.fixbad()                                          #Drop bad data.
-    self.sort()
-  def sort(self):
+    for cnondata in nondata:                                #Add the extra non-array variable names into nondata
+      if not cnondata in self.__nondata:
+        self.__nondata.append(cnondata)                       
+    print self.__nondata
+    self.__fixbad()                                          #Drop bad data.
+    self.__sort()
+  def __sort(self):
     """
     Sort the data arrays to go in increasing
     order of x
     """
     sorter=np.argsort(self.x)
-    nonDatavars = self.nonData
+    nondatavars = self.__nondata
     ownvarnames = self.__dict__.keys()
-    ownvarnames = filter (lambda a: not a in nonDatavars, ownvarnames)
+    ownvarnames = filter (lambda a: not a in nondatavars, ownvarnames)
     varlength = len(self.__dict__[ownvarnames[0]])
     iGoodones = np.isfinite(np.ones(varlength))
     for cVarname in ownvarnames:
       self.__dict__[cVarname]=self.__dict__[cVarname][sorter]
-  def fixbad(self):
+  def __fixbad(self):
     """
     Make spectrum go through its own vars and replace all the bad ones with nans.
-    All variable names in nonData are ignored by this function.
+    All variable names in nondata are ignored by this function.
     """
-    ignorevars = self.nonData
+    ignorevars = self.__nondata
     ownvarnames = self.__dict__.keys()
     ownvarnames = filter (lambda a: a not in ignorevars, ownvarnames)
     varlength = len(self.__dict__[ownvarnames[0]])
@@ -108,14 +136,14 @@ class baseSpectrum:
     """
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
       self.x=self.x.to(u.kayser)
-    self.sort()
+    self.__sort()
   def convert2wl(self):
     """
     Convert x axis to wavelength [um]
     """
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
       self.x=self.x.to(u.micron)
-    self.sort()
+    self.__sort()
   def subspectrum(self,minX,maxX):
     """
     Return a slice of the spectrum as a new spectrum,
@@ -216,7 +244,8 @@ class baseSpectrum:
     for cPower in range(degree+1):
       fixedY=fixedY-baseline[degree-cPower]*self.x.value**cPower
     self.y=fixedY*self.y.unit
-    self.dy=np.abs(np.std(fixedY[iBaseline]))
+    if self.dy is None:
+      self.dy=np.abs(np.std(fixedY[iBaseline]))
     self.baselined=True
   def shift(self,amount):
     """
@@ -268,7 +297,7 @@ class absorptionSpectrum(baseSpectrum):
   specific details that involves.
   Units on the y axis are in optical depth
   """
-  def __init__(self,iWn,iOd,specname='Unknown absorption spectrum',nonData=[]):
+  def __init__(self,iWn,iOd,specname='Unknown absorption spectrum',nondata=[]):
     """
     Init the spectrum. Places iOd on the y axis and
     iWn on the x axis.
@@ -279,16 +308,16 @@ class absorptionSpectrum(baseSpectrum):
     self.wn = iWn #Wave number
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
       self.wl=self.wn.to(u.micron)
-    baseSpectrum.__init__(self,self.wn,self.od,specname=specname,nonData=nonData)
-  def plotod(self,iAx,in_wl=False,**kwargs):
+    baseSpectrum.__init__(self,self.wn,self.od,specname=specname,nondata=nondata)
+  def plotod(self,iAx,in_wl=False,*args,**kwargs):
     """
     Plot the optical depth spectrum as function of wavenumber
     to given axis unless flag is set.
     """
     if in_wl:
-      self.plot(iAx,x='wl',y='od',**kwargs)      
+      self.plot(iAx,x='wl',y='od',*args,**kwargs)      
     else:
-      self.plot(iAx,x='wn',y='od',**kwargs)
+      self.plot(iAx,x='wn',y='od',*args,**kwargs)
 
 
 class labSpectrum(absorptionSpectrum):
