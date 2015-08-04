@@ -6,6 +6,7 @@ import os
 from ..fitter import *
 from ...tests.helpers import *
 from lmfit import Parameters
+from astropy import convolution
 
 class TestFitterFitting:
   def test_fitterinit(self):
@@ -13,13 +14,19 @@ class TestFitterFitting:
     Make sure that fitter initialises as it should
     """
     testspec = generate_labspectrum()
-    testfitter = fitter(testspec.x,testspec.y)
+    testfitter = fitter(testspec.x.value,testspec.y.value)
+  def test_fitterinit_fromspectrum(self):
+    """
+    Make sure that fitter initialises as it should when initialising with a spectrum
+    """
+    testspec = generate_labspectrum()
+    testfitter = fitter.fromspectrum(testspec)
   def test_fitlab(self):
     """
     Test the fitting of lab data
     """
     testspec = generate_labspectrum()
-    testfitter = fitter(testspec.x,2.*testspec.y)
+    testfitter = fitter(testspec.x.value,2.*testspec.y.value)
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
     testpars.add_many(('mul', 1.0,    True,   0.0,     None,    None))
@@ -30,7 +37,7 @@ class TestFitterFitting:
     Test the fitting of the available analytical functions
     """
     testspec = generate_labspectrum()
-    testfitter = fitter(testspec.x,testspec.y)
+    testfitter = fitter.fromspectrum(testspec)
     testpars = Parameters()
     #                 (Name,    Value,  Vary,  Min,    Max, Expr)
     testpars.add_many(('lor1',   1.67, False,  None,   None,   None),
@@ -63,8 +70,8 @@ class TestFitterFitting:
     """
     testspec = generate_labspectrum()
     testspec1 = testspec.subspectrum(2000.,2300.)
-    testpsf1 = testspec1.gpsf(5)
-    testfitter1 = fitter(testspec1.x,testspec1.y,psf=testpsf1)
+    testpsf1 = convolution.Gaussian1DKernel(5)
+    testfitter1 = fitter.fromspectrum(testspec1,psf=testpsf1)
     testpars = Parameters()
     #                 (Name,    Value,  Vary,  Min,    Max, Expr)
     testpars.add_many(('lor1',   1.67, False,  None,   None,   None),
@@ -76,8 +83,8 @@ class TestFitterFitting:
     testfitter1.perform_fit()
 
     testspec2 = testspec.subspectrum(2500.,3700.)
-    testpsf2 = testspec2.gpsf(5)
-    testfitter2 = fitter(testspec2.x,testspec2.y,psf=testpsf2)
+    testpsf2 = convolution.Gaussian1DKernel(5)
+    testfitter2 = fitter.fromspectrum(testspec2,psf=testpsf2)
     testpars=Parameters()
     #                (Name,    Value,  Vary,   Min,    Max,     Expr)
     testpars.add_many(
@@ -88,7 +95,7 @@ class TestFitterFitting:
                      )
     testfitter2.add_theory('flipped_egh',testpars,funcname='test fEGH')
     testfitter2.perform_fit()
-    testfitter3 = fitter(testspec2.x,testspec2.y,psf=testpsf2)
+    testfitter3 = fitter.fromspectrum(testspec2,psf=testpsf2)
     testpars=Parameters()
     #                (Name,    Value,  Vary,   Min,    Max,     Expr)
     testpars.add_many(
@@ -104,7 +111,7 @@ class TestFitterResults:
     Test the returning of fit results
     """
     testspec = generate_labspectrum()
-    testfitter = fitter(testspec.x,2.*testspec.y)
+    testfitter = fitter(testspec.x.value,2.*testspec.y.value)
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
     testpars.add_many(('mul', 1.0,    True,   0.0,     None,    None))
@@ -116,7 +123,7 @@ class TestFitterResults:
     Test the dumping of fit results to a file
     """
     testspec = generate_labspectrum()
-    testfitter = fitter(testspec.x,2.*testspec.y)
+    testfitter = fitter(testspec.x.value,2.*testspec.y.value)
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
     testpars.add_many(('mul', 1.0,    True,   0.0,     None,    None))
@@ -136,7 +143,7 @@ class TestFitterResults:
     Test the plotting of fit results
     """
     testspec = generate_labspectrum()
-    testfitter = fitter(testspec.x,2.*testspec.y)
+    testfitter = fitter(testspec.x.value,2.*testspec.y.value)
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
     testpars.add_many(('mul', 1.0,    True,   0.0,     None,    None))

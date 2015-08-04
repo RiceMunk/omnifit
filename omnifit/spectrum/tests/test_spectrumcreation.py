@@ -3,7 +3,7 @@ from astropy.tests.helper import pytest
 import numpy as np
 import os
 from .. import spectrum
-from ..spectrum import utils
+from ... import utils
 from ...tests import helpers
 from astropy import units as u
 
@@ -15,6 +15,17 @@ class TestSpectrumCreation_basic:
     testspec = helpers.generate_spectrum()
     assert np.any(testspec.x.value)
     assert np.any(testspec.y.value)
+  def test_initnounit(self,recwarn):
+    """
+    Make sure that basic base spectrum creation works without units
+    """
+    xdata = np.arange(1000,2000,10)
+    ydata = np.arange(0,100,1)
+    testspec = spectrum.baseSpectrum(xdata,ydata)
+    w = recwarn.pop(RuntimeWarning)
+    assert issubclass(w.category, RuntimeWarning)
+    assert testspec.x.unit is not None
+    assert testspec.y.unit is not None
   def test_initwithnondata(self):
     """
     Make sure that initialising with non-data specification goes through

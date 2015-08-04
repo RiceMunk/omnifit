@@ -3,7 +3,7 @@ import numpy as np
 from astropy import units as u
 import os,sys
 from .. import spectrum
-from ..spectrum import utils
+from .. import utils
 epsilon = 1.e-10 #tolerance for floating point errors
 sys._called_from_test = True
 

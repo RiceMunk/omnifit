@@ -9,8 +9,8 @@ class baseliner:
   def __init__(self,ax,spec,power=1):
     self.ax = ax
     self.spec = spec
-    self.x = spec.x
-    self.y = spec.y
+    self.x = spec.x.value
+    self.y = spec.y.value
     self.power = power
     self.limlo=None
     self.limhi=None
@@ -20,7 +20,7 @@ class baseliner:
     self.maxy=np.max(self.y)
     self.ax.set_xlim(self.minx,self.maxx)
     self.ax.set_ylim(self.miny,self.maxy)
-    self.specplot,=self.ax.plot(self.x,self.y,'k-',drawstyle=spec.drawstyle)
+    self.specplot,=self.ax.plot(self.x,self.y,'k-',drawstyle='steps-mid')
     self.buttonListener = self.ax.figure.canvas.mpl_connect('button_press_event', self.mouse_press)
     self.keyListener = self.ax.figure.canvas.mpl_connect('key_press_event', self.key_press)
     self.windows=[]

@@ -4,6 +4,7 @@ import numpy as np
 import os
 from ..spectrum import *
 from ...tests.helpers import *
+from astropy import units as u
 
 class TestSpectrumManipulation_conversion:
   def test_wl2wn2wl(self):
@@ -11,17 +12,11 @@ class TestSpectrumManipulation_conversion:
     Make sure that conversion from microns to wavenumbers and back works
     """
     testspec = generate_spectrum()
-    original_x = testspec.x
-    testspec.xUnit = 'Wavelength'
-    testspec.wl2wn()
-    testspec.wn2wl()
-    assert np.all(np.abs(testspec.x - original_x) < epsilon)
-  def test_wl2wn2wl_fail(self):
-    testspec = generate_spectrum()
-    with pytest.raises(Exception):
-      testspec.wn2wl()
-    with pytest.raises(Exception):
-      testspec.wl2wn()
+    assert testspec.x.unit == u.micron
+    testspec.convert2wn()
+    assert testspec.x.unit == u.kayser
+    testspec.convert2wl()
+    assert testspec.x.unit == u.micron
 
 class TestSpectrumManipulation_convolution:
   def test_gaussianconvolution(self):
@@ -46,12 +41,6 @@ class TestSpectrumManipulation_convolution:
     testspec = generate_labspectrum()
     with pytest.raises(Exception):
       testspec.gpsf(len(testspec.x)+1)
-  def test_autopsf(self):
-    """
-    Test the functionality of autopsf
-    """
-    testspec = generate_labspectrum()
-    testspec.autopsf()
   def test_smooth(self):
     """
     Test the various smoothing convolutions
@@ -87,12 +76,12 @@ class TestSpectrumManipulation_misc:
     #trying to break it
     testspec1 = generate_labspectrum()
     testspec2 = generate_absspectrum()
-    testspec2.xUnit = 'fake x units'
+    testspec2.x = testspec2.x.value * u.kg
     with pytest.raises(Exception):
       testspec1.interpolate(testspec2)
     testspec1 = generate_labspectrum()
     testspec2 = generate_absspectrum()
-    testspec2.yUnit = 'fake y units'
+    testspec2.y = testspec2.y.value * u.kg
     with pytest.raises(Exception):
       testspec1.interpolate(testspec2)
   def test_subspectrum(self):
@@ -100,7 +89,7 @@ class TestSpectrumManipulation_misc:
     Test the extraction of a subspectrum from a spectrum
     """
     testspec = generate_labspectrum()
-    testspec.subspectrum(testspec.x[0]+500,testspec.x[-1]-500)
+    testspec.subspectrum(testspec.x[0].value+500,testspec.x[-1].value-500)
   def test_baseline_basic(self):
     """
     Test the baselining of a spectrum
@@ -108,7 +97,7 @@ class TestSpectrumManipulation_misc:
     testspec = generate_labspectrum()
     testspec.baseline()
     testspec = generate_labspectrum()
-    testspec.baseline(windows=[[testspec.x[0]+500,testspec.x[-1]-500]],exclusive=True)
+    testspec.baseline(windows=[[testspec.x[0].value+500,testspec.x[-1].value-500]],exclusive=True)
   def test_baseline_manual(self):
     """
     Test manual baseline functionality

@@ -11,7 +11,7 @@ class fitter():
     -The target data points (X and Y; X is assumed same for all functions)
     -The function list, consisting of either lab data or theoretical functions
   """
-  def __init__(self,iX,iY,dY=1.0,modelname='Unknown model',psf=None,fitrange=None,color='blue',customfunctions=False):
+  def __init__(self,iX,iY,dY=1.0,modelname='Unknown model',psf=None,fitrange=None,color='blue'):
     """ Initialise with target spectrum that the rest will be fitted to. """
     if len(iX) != len(iY):
       raise RuntimeError('Input arrays have different sizes.')
@@ -22,8 +22,16 @@ class fitter():
     self.modelname=modelname
     self.color=color
     self.psf=psf
-    self.customfunctions=customfunctions
     self.funcList=[]
+  @classmethod
+  def fromspectrum(cls,spectrum,**kwargs):
+    """
+    a way to initialise fitter using an input spectrum
+    """
+    if spectrum.baselined:
+      return cls(spectrum.x.value,spectrum.y.value,spectrum.dy,**kwargs)
+    else:
+      return cls(spectrum.x.value,spectrum.y.value,**kwargs)
   def add_lab(self,iSpectrum,iParams,funcname=None,color='red'):
     """
     Add laboratory spectrum to the fitting pool.
@@ -34,7 +42,7 @@ class fitter():
       funcname=iSpectrum.name
     if len(iSpectrum.x) != len(self.targX):
       raise RuntimeError('Input spectrum has wrong size!')
-    self.funcList.append({'type':'lab','shape':iSpectrum.y,'params':iParams,'name':funcname,'color':color})
+    self.funcList.append({'type':'lab','shape':iSpectrum.y.value,'params':iParams,'name':funcname,'color':color})
   def add_theory(self,iShape,iParams,funcname='Unknown function',color='red'):
     """
     Add theoretical function to fitting pool.

@@ -15,7 +15,7 @@ class TestSpectrumPlotting:
     fig = plt.figure()
     ax = fig.add_subplot(111)
     testspec.plot(ax)
-    testspec.plot(ax,drawstyle='steps-post')
+    testspec.plot(ax,drawstyle='steps-mid')
     plt.close()
   def test_plotwrong(self):
     """
@@ -33,13 +33,10 @@ class TestSpectrumPlotting:
     Make sure that n and k spectrum plotting works as expected
     """
     testspec = generate_labspectrum()
-    #no range
-    fig = testspec.plotnk()
-    assert not(fig is None)
-    plt.close()
-    #with range
-    fig = testspec.plotnk(xrange=[3000,3050])
-    assert not(fig is None)
+    fig = plt.figure()
+    ax1 = fig.add_subplot(211)
+    ax2 = fig.add_subplot(212)
+    fig = testspec.plotnk(ax1,ax2)
     plt.close()
   def test_plotabs(self):
     """
