@@ -17,6 +17,16 @@ class TestSpectrumManipulation_conversion:
     assert testspec.x.unit == u.kayser
     testspec.convert2wl()
     assert testspec.x.unit == u.micron
+  def test_customconvert(self):
+    """
+    Make sure that custom unit conversion works as expected
+    """
+    testspec = generate_spectrum()
+    assert testspec.x.unit == u.micron
+    testspec.convert2(u.meter)
+    assert testspec.x.unit == u.meter
+    with pytest.raises(u.UnitsError):
+        testspec.convert2(u.kg)
 
 class TestSpectrumManipulation_convolution:
   def test_gaussianconvolution(self):

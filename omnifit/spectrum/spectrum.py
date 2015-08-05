@@ -14,14 +14,15 @@ class BaseSpectrum:
   
   This class is designed to work for spectroscopic data of ices, but 
   may work for other types of spectroscopic data as well.
-  
+  This is the most basic version of the class, concerned solely with
+  the contents of the x and y attributes.
 
   Attributes
   ----------
-    x : astropy quantity or numpy ndarray
+    x : astropy.units.Quantity
       Represents the data on the "x-axis" of the spectrum,
       i.e. usually the wavelength or frequency
-    y : astropy quantity or numpy ndarray
+    y : astropy.units.Quantity
       Represents the data on the "x-axis" of the spectrum,
       i.e. the flux or optical depth
     dy : NoneType or float
@@ -38,11 +39,51 @@ class BaseSpectrum:
     """
     BaseSpectrum(x,y,dy=None,specname='Unknown spectrum',nondata=[])
 
-    Constructor for the BaseSpectrum class
+    Constructor for the BaseSpectrum class. Requires x and y;
+    everything else is optional.
 
-    Init requires input of x axis values (wavelength etc.) and y axis values (optical depth etc.)
-    nondata adds extra variable names to the list of variables to be ignored by
-    the fixbad function.
+    Parameters
+    ----------
+    x : astropy.units.Quantity or numpy.ndarray
+      Represents the data on the "x-axis" of the spectrum.
+      This is stored as an astropy quantity and thus it is
+      recommended that the class constructor is called with
+      such an input. However, the constructor also accepts
+      a numpy ndarray, in which case it will try to guess
+      the units and then convert the input into an appropriate
+      astropy quantity.
+      The autodetection assumes the units are in kayser units
+      (i.e. reciprocal wavenumbers with the unit cm^-1) if the
+      mean of the input array is greater than 1000. Otherwise
+      the autodetection assumes the units are in microns.
+    y : astropy.units.Quantity or numpy.ndarray
+      Represents the data on the "x-axis" of the spectrum.
+      This is stored as an astropy quantity and thus it is
+      recommended that the class constructor is called with
+      such an input. However, the constructor also accepts
+      a numpy ndarray, in which case it will assume that
+      the units are in optical depth and then convert the 
+      input into this astropy quantity.
+    dy : float, optional
+      The uncertainty of y. If given, this is assumed to be
+      the uncertainty of the y axis data in the same units
+      as given (or assumed) with the y input. Otherwise
+      the uncertainty is left as None during initialisation
+      and will be calculated as part of baselining.
+    specname : string, optional
+      An optional human-readable name can be given to the
+      spectrum via this input.
+    nondata : list, optional
+      If information unrelated to the x and y input data is
+      stored in the class instance, the variable names in which
+      this information is stored can be given here. This causes
+      various internal functions (related to automatic sorting 
+      and error-checking) of the class to ignore these
+      variables.
+      It is not usually necessary for the user to use this input
+      during initialisation; it is most often used by children of
+      the BaseSpectrum class.
+
     """
     if len(x) != len(y):                                  #Check that input is sane
       raise RuntimeError('Input arrays have different sizes.')
@@ -77,13 +118,18 @@ class BaseSpectrum:
     for cnondata in nondata:                                #Add the extra non-array variable names into nondata
       if not cnondata in self.__nondata:
         self.__nondata.append(cnondata)                       
-    print self.__nondata
     self.__fixbad()                                          #Drop bad data.
     self.__sort()
   def __sort(self):
     """
-    Sort the data arrays to go in increasing
-    order of x
+    __sort()
+
+    An internal method which sorts the data arrays so that they
+    all go in increasing order of x.
+
+    Parameters
+    ----------
+    None
     """
     sorter=np.argsort(self.x)
     nondatavars = self.__nondata
@@ -95,8 +141,14 @@ class BaseSpectrum:
       self.__dict__[cVarname]=self.__dict__[cVarname][sorter]
   def __fixbad(self):
     """
-    Make spectrum go through its own vars and replace all the bad ones with nans.
-    All variable names in nondata are ignored by this function.
+    __fixbad()
+
+    An internal method which replaces all non-number data (e.g. 
+    infinities) in the data arrays with numpy.nan.
+
+    Parameters
+    ----------
+    None
     """
     ignorevars = self.__nondata
     ownvarnames = self.__dict__.keys()
@@ -112,80 +164,172 @@ class BaseSpectrum:
     for cVarname in ownvarnames:
       if cVarname != 'x':
         self.__dict__[cVarname][iBadones]=np.nan
-  def plot(self,axis,x=None,y=None,*args,**kwargs):
+  def plot(self,axis,x='x',y='y',*args,**kwargs):
     """
-    Plot x,y into given MPL axis.
-    They can be overridden with different
-    variable names.
-    Accepts all the same args and kwargs that pyplot.plot accepts.
+    plot(axis,x='x',y='y',*args,**kwargs)
+
+    Plot the contents of the spectrum into a given matplotlib axis.
+    Defaults to the data contained in the x and y attributes, but
+    can also plot other data content if instructed to do so.
+
+    Parameters
+    ----------
+    axis : matplotlib.axis
+      The axis which the plot will be generated in.
+    x : string, optional
+      The name of the variable to be plotted on the x axis.
+    y : string, optional
+      The name of the variable to be plotted on the x axis.
+    *args and **kwargs can be used to pass additional plotting
+    parameters to the matplotlib plotting routine, as documented
+    in the matplotlib documentation.
     """
-    if x:
-      try: #assume it's with astropy units
-        plotx = self.__dict__[x].value
-      except ValueError:
-        plotx = self.__dict__[x]
-    else:
-      plotx = self.x.value
-    if y:
-      try: #assume it's with astropy units
-        ploty = self.__dict__[y].value
-      except ValueError:
-        ploty = self.__dict__[y]
-    else:
-      ploty = self.y.value
+    try: #assume it's with astropy units
+      plotx = self.__dict__[x].value
+    except ValueError:
+      plotx = self.__dict__[x]
+    try: #assume it's with astropy units
+      ploty = self.__dict__[y].value
+    except ValueError:
+      ploty = self.__dict__[y]
     axis.plot(plotx,ploty,*args,**kwargs)
   def convert2wn(self):
     """
-    Convert x axis to wavenumber [cm^-1]
+    convert2wn()
+
+    Convert the x axis data to kayser (reciprocal wavenumber) units.
+    Re-sort the data afterwards.
+
+    Parameters
+    ----------
+    None
     """
-    with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-      self.x=self.x.to(u.kayser)
-    self.__sort()
+    self.convert2(u.kayser)
   def convert2wl(self):
     """
-    Convert x axis to wavelength [um]
+    convert2wl()
+
+    Convert the x axis data to wavelength (in microns) units.
+    Re-sort the data afterwards.
+
+    Parameters
+    ----------
+    None
+    """
+    self.convert2(u.micron)
+  def convert2(self,newunit):
+    """
+    convert2(newunit)
+
+    Convert the x axis data to given spectral units.
+    Re-sort the data afterwards.
+
+    Parameters
+    ----------
+    newunit : astropy.units.core.Unit
+      Desired (spectral) unit the x axis data should be
+      converted to.
     """
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-      self.x=self.x.to(u.micron)
+      self.x=self.x.to(newunit)
     self.__sort()
-  def subspectrum(self,minX,maxX):
+  def subspectrum(self,limit_lower,limit_upper):
     """
-    Return a slice of the spectrum as a new spectrum,
-    using x axis units as the limits.
-    Slice limits are inclusive.
+    subspectrum(limit_lower,limit_upper)
+
+    Create a copy of the spectrum which is cropped along the x
+    axis using the given inclusive limits.
+
+    Parameters
+    ----------
+    limit_lower : float
+      The desired minimum x axis of the cropped spectrum, in
+      current units of the spectrum. This limit is inclusive.
+    limit_upper : float
+      The desired maximum x axis of the cropped spectrum, in
+      current units of the spectrum. This limit is inclusive.
+
+    Returns
+    -------
+    Copy of the spectrum, cropped using the given specifications.
     """
-    iSub = np.logical_and(np.greater_equal(self.x.value,minX),np.less_equal(self.x.value,maxX))
+    iSub = np.logical_and(np.greater_equal(self.x.value,limit_lower),np.less_equal(self.x.value,limit_upper))
     newX = self.x[iSub]
     newY = self.y[iSub]
     newSpec = deepcopy(self)
     newSpec.x = newX
     newSpec.y = newY
     return newSpec
-  def interpolate(self,targSpectrum):
+  def interpolate(self,target_spectrum):
     """
+    interpolate target_spectrum
+
     Interpolate spectrum to match target spectrum resolution.
-    Does not modify current spectrum. Returns a new one.
-    New spectrum metadata is taken from target spectrum.
+    Does not modify current spectrum, but returns a new one, which is
+    a copy of the current spectrum but with the interpolated data on
+    the x and y fields.
+    The target spectrum has to be using the same units on the x and
+    y axes as the current spectrum, or the interpolation will fail.
+
+    Parameters
+    ----------
+    target_spectrum : BaseSpectrum
+      The target spectrum which the x axis resolution of the current
+      spectrum should be made to match.
+
+    Returns
+    -------
+    Copy of the spectrum, interpolated to match the target spectrum
+    x axis resolution.
+
     """
-    if self.x.unit != targSpectrum.x.unit:
+    if self.x.unit != target_spectrum.x.unit:
       raise u.UnitsError('Spectrums have different units on x axis!')
-    if self.y.unit != targSpectrum.y.unit:
+    if self.y.unit != target_spectrum.y.unit:
       raise u.UnitsError('Spectrums have different units on y axis!')
-    newX=targSpectrum.x
+    newX=target_spectrum.x
     newY=np.interp(newX,self.x,self.y)
-    newSpec = deepcopy(targSpectrum)
+    newSpec = deepcopy(self)
     newSpec.x = newX
     newSpec.y = newY
-    newSpec.name = self.name+'(interpolated: '+targSpectrum.name+')'
+    newSpec.name = self.name+'(interpolated: '+target_spectrum.name+')'
     return newSpec
   def yat(self,x):
-    """ Return value of y at x """
-    return np.interp(x,self.x,self.y)
-  def convolve(self,kernel):
-    """ Convolve spectrum y with given kernel """
+    """
+    yat(x)
+
+    Return interpolated value of y at requested x.
+
+    Parameters
+    ----------
+    x : float
+      The x axis coordinate of interest.
+
+    Returns
+    -------
+    The interpolated value of y at the requested x coordinate.
+
+    """
+    return np.interp(x,self.x.value,self.y.value)
+  def convolve(self,kernel,*args,**kwargs):
+    """
+    convolve(kernel,*args,**kwargs)
+
+    Use astropy.convolution.convolve to convolve the y axis data of the
+    spectrum with the given kernel.
+    Modifies the existing spectrum.
+
+    Parameters
+    ----------
+    kernel : numpy.ndarray or astropy.convolution.Kernel
+      A convolution kernel to feed into the convolution function.
+    *args and **kwargs can be used to pass additional plotting
+    parameters to the astropy convolution routine, as documented
+    in the astropy documentation.
+    """
     if self.convolved:
       warnings.warn('Spectrum '+self.name+' has already been convolved once!',RuntimeWarning)
-    self.y=convolution.convolve(self.y,kernel)
+    self.y=convolution.convolve(self.y,kernel,*args,**kwargs)
     self.convolved=True
   def gconvolve(self,fwhm):
     """ Convolve spectrum using a gaussian of given fwhm (in units of x axis) """
@@ -193,8 +337,20 @@ class BaseSpectrum:
     self.convolve(gkernel)
   def smooth(self,window_len=11,window='hanning'):
     """
-    A smoothing function
-    adapted from http://stackoverflow.com/questions/5515720/python-smooth-time-series-data
+    smooth(window_len=11,window='hanning')
+
+    Smooth the spectrum using the given window of requested type and size.
+    The supported smoothing functions are: Bartlett, Blackman, Hanning,
+    Hamming, and flat (i.e. moving average).
+    This method has been adapted from http://stackoverflow.com/a/5516430
+
+    Parameters
+    ----------
+    window_len : int, optional
+      Requested window size, in increments of x axis.
+    window : string, optional
+      Requested window type. Possible values are: 'flat', 'hanning',
+      'hamming', 'bartlett', and 'blackman'.
     """
     if self.x.ndim != 1:
       raise ValueError, "smooth only accepts 1 dimension arrays."
@@ -226,7 +382,7 @@ class BaseSpectrum:
       cManager = plt.get_current_fig_manager()
       cManager.window.wm_geometry("+100+50")
       cAx.plot(self.x,self.y,'k-',drawstyle='steps-mid')
-      cBaseliner = utils.baseliner(cAx,self)
+      cBaseliner = utils.Baseliner(cAx,self)
       if not hasattr(sys,'_called_from_test'): #only show the plot if not testing
         plt.show(cFig)
         windows=cBaseliner.windows

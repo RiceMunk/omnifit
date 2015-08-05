@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
 
-class baseliner:
+class Baseliner:
   """
   baseliner of the objects
   """
