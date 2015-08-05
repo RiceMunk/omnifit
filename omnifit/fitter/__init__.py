@@ -2,7 +2,7 @@
 
 try:
     # Not guaranteed available at setup time
-    from .fitter import fitter
+    from .fitter import Fitter
 except ImportError:
     if not _ASTROPY_SETUP_:
         raise

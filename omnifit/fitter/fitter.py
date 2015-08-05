@@ -4,7 +4,7 @@ from astropy import units as u
 from .. import spectrum
 from functions import *
 
-class fitter():
+class Fitter():
   """
   The omnifitter class.
   The class consists of two major components:

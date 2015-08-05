@@ -13,7 +13,7 @@ def generate_spectrum():
   """
   xdata = np.arange(1000,2000,10)*u.micron
   ydata = np.arange(0,100,1)*utils.unit_od
-  return spectrum.baseSpectrum(xdata,ydata)
+  return spectrum.BaseSpectrum(xdata,ydata)
 
 def generate_absspectrum():
   """
@@ -21,7 +21,7 @@ def generate_absspectrum():
   """
   filepath_waterice = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/waterice_absorption.txt')
   wn, absorbance = np.loadtxt(filepath_waterice,delimiter=', ',skiprows=0,unpack=True)
-  return spectrum.absorptionSpectrum(wn*u.kayser,-1.0*np.log(10**(-1.0*absorbance))*utils.unit_od,specname='test water spectrum (absorption)')
+  return spectrum.AbsorptionSpectrum(wn*u.kayser,-1.0*np.log(10**(-1.0*absorbance))*utils.unit_od,specname='test water spectrum (absorption)')
 
 def generate_labspectrum():
   """
@@ -29,4 +29,4 @@ def generate_labspectrum():
   """
   filepath_waterice = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/waterice_nandk.txt')
   wn, n, k, dum1, dum2 = np.loadtxt(filepath_waterice,skiprows=1,unpack=True)
-  return spectrum.labSpectrum(wn,n,k,specname='test water spectrum (n and k)')
+  return spectrum.LabSpectrum(wn,n,k,specname='test water spectrum (n and k)')

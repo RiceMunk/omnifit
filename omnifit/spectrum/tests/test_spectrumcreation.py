@@ -21,7 +21,7 @@ class TestSpectrumCreation_basic:
     """
     xdata = np.arange(1000,2000,10)
     ydata = np.arange(0,100,1)
-    testspec = spectrum.baseSpectrum(xdata,ydata)
+    testspec = spectrum.BaseSpectrum(xdata,ydata)
     w = recwarn.pop(RuntimeWarning)
     assert issubclass(w.category, RuntimeWarning)
     assert testspec.x.unit is not None
@@ -32,8 +32,8 @@ class TestSpectrumCreation_basic:
     """
     xdata = np.arange(1000,2000,10)*u.micron
     ydata = np.arange(0,100,1)*utils.unit_od
-    testspec = spectrum.baseSpectrum(xdata,ydata,nondata=['dummy data'])
-    assert 'dummy data' in testspec._baseSpectrum__nondata
+    testspec = spectrum.BaseSpectrum(xdata,ydata,nondata=['dummy data'])
+    assert 'dummy data' in testspec._BaseSpectrum__nondata
   def test_initwrongsize(self):
     """
     Make sure that initialising a spectrum with different sized x and y doesn't work
@@ -41,7 +41,7 @@ class TestSpectrumCreation_basic:
     xdata = np.arange(1000,2000,1)*u.micron
     ydata = np.arange(0,100,1)*utils.unit_od
     with pytest.raises(RuntimeError):
-      testspec = spectrum.baseSpectrum(xdata,ydata)
+      testspec = spectrum.BaseSpectrum(xdata,ydata)
   def test_initwithinf(self):
     """
     Make sure that infinities are converted to nans when creating spectrum
@@ -49,7 +49,7 @@ class TestSpectrumCreation_basic:
     xdata = np.arange(1000,2000,10,dtype=np.float)*u.micron
     ydata = np.arange(0,100,1,dtype=np.float)*utils.unit_od
     ydata[3] = np.inf
-    testspec = spectrum.baseSpectrum(xdata,ydata)
+    testspec = spectrum.BaseSpectrum(xdata,ydata)
     assert np.all(testspec.x == xdata)
     assert np.isnan(testspec.y[3])
   def test_initsort(self):
@@ -59,7 +59,7 @@ class TestSpectrumCreation_basic:
     xdata = np.arange(1000,2000,10,dtype=np.float)*u.micron
     ydata = np.arange(0,100,1,dtype=np.float)*utils.unit_od
     xdata_rev = xdata[::-1] #reverse xdata
-    testspec = spectrum.baseSpectrum(xdata_rev,ydata)
+    testspec = spectrum.BaseSpectrum(xdata_rev,ydata)
     assert not np.all(testspec.x == xdata_rev)
     assert not np.all(testspec.y == ydata)
     assert np.all(testspec.x == xdata)
@@ -79,7 +79,7 @@ class TestSpectrumCreation_absorption:
     xdata = np.arange(1000,2000,10,dtype=np.float)*u.micron
     ydata = np.arange(0,100,1,dtype=np.float)[1:]*utils.unit_od
     with pytest.raises(RuntimeError):
-      testspec = spectrum.absorptionSpectrum(xdata,ydata,specname='test water spectrum (absorption)')
+      testspec = spectrum.AbsorptionSpectrum(xdata,ydata,specname='test water spectrum (absorption)')
   def test_initlab(self):
     """
     Make sure that lab spectrum initialisation works as expected.
@@ -94,4 +94,4 @@ class TestSpectrumCreation_absorption:
     ndata = np.arange(0,100,1,dtype=np.float)[1:]
     kdata = np.arange(0,100,1,dtype=np.float)[2:]
     with pytest.raises(RuntimeError):
-      testspec = spectrum.labSpectrum(xdata,ndata,kdata,specname='test water spectrum (n and k)')
+      testspec = spectrum.LabSpectrum(xdata,ndata,kdata,specname='test water spectrum (n and k)')

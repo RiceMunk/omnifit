@@ -8,7 +8,7 @@ import os, sys
 from .. import utils
 from copy import deepcopy
 
-class baseSpectrum:
+class BaseSpectrum:
   """
   A class to represent spectroscopic data.
   
@@ -26,9 +26,9 @@ class baseSpectrum:
       i.e. the flux or optical depth
     dy : NoneType or float
       The uncertainty of y. Can be given during initialisation,
-      or automatically calculated during baselining
+      or automatically calculated during baselining. (default=None)
     specname : string
-      The name of the spectrum
+      The name of the spectrum (default='Unknown spectrum')
     baselined : bool
       Indicates whether the spectrum has been baselined or not
     convolved : bool
@@ -36,6 +36,10 @@ class baseSpectrum:
   """
   def __init__(self,x,y,dy=None,specname='Unknown spectrum',nondata=[]):
     """
+    BaseSpectrum(x,y,dy=None,specname='Unknown spectrum',nondata=[])
+
+    Constructor for the BaseSpectrum class
+
     Init requires input of x axis values (wavelength etc.) and y axis values (optical depth etc.)
     nondata adds extra variable names to the list of variables to be ignored by
     the fixbad function.
@@ -65,7 +69,7 @@ class baseSpectrum:
     self.baselined=False                                    #Has the spectrum been baselined?
     self.convolved=False                                    #Has the spectrum been convolved?
     self.__nondata = [
-                      '_baseSpectrum__nondata',\
+                      '_BaseSpectrum__nondata',\
                       'name',\
                       'convolved','baselined',\
                       'dy'\
@@ -291,7 +295,7 @@ class baseSpectrum:
     print 'convolved: '+str(self.convolved)
     print '---'
 
-class absorptionSpectrum(baseSpectrum):
+class AbsorptionSpectrum(BaseSpectrum):
   """
   An absorption spectrum, with all the
   specific details that involves.
@@ -308,7 +312,7 @@ class absorptionSpectrum(baseSpectrum):
     self.wn = iWn #Wave number
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
       self.wl=self.wn.to(u.micron)
-    baseSpectrum.__init__(self,self.wn,self.od,specname=specname,nondata=nondata)
+    BaseSpectrum.__init__(self,self.wn,self.od,specname=specname,nondata=nondata)
   def plotod(self,iAx,in_wl=False,*args,**kwargs):
     """
     Plot the optical depth spectrum as function of wavenumber
@@ -320,10 +324,10 @@ class absorptionSpectrum(baseSpectrum):
       self.plot(iAx,x='wn',y='od',*args,**kwargs)
 
 
-class labSpectrum(absorptionSpectrum):
+class LabSpectrum(AbsorptionSpectrum):
   """
   Laboratory spectrum class from optical constants.
-  Inherits absorptionSpectrum class propertries.
+  Inherits AbsorptionSpectrum class propertries.
   Does CDE correction to the data.
   """
   def __init__(self,iWn,iN,iK,specname='Unknown CDE-corrected laboratory spectrum'):
@@ -336,7 +340,7 @@ class labSpectrum(absorptionSpectrum):
     self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=utils.cde_correct(iWn,iN,iK)
     self.n=np.array(iN,dtype='float64')
     self.k=np.array(iK,dtype='float64')
-    absorptionSpectrum.__init__(self,iWn*u.kayser,self.cabs_vol*utils.unit_od,specname=specname)
+    AbsorptionSpectrum.__init__(self,iWn*u.kayser,self.cabs_vol*utils.unit_od,specname=specname)
   def plotnk(self,ax1,ax2,*args,**kwargs):
     """
     Plot the optical constants as function of wavenumber to the two matplotlib axes given.
