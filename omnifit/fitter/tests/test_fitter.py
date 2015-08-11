@@ -69,8 +69,9 @@ class TestFitterFitting:
     Test the fitting of the available analytical functions with convolution enabled
     """
     testspec = generate_labspectrum()
-    testspec1 = testspec.subspectrum(2000.,2300.)
+    testspec1 = testspec.subspectrum(2000.,2300.,clone=True)
     testpsf1 = convolution.Gaussian1DKernel(5)
+    print testspec1
     testfitter1 = Fitter.fromspectrum(testspec1,psf=testpsf1)
     testpars = Parameters()
     #                 (Name,    Value,  Vary,  Min,    Max, Expr)
@@ -82,7 +83,7 @@ class TestFitterFitting:
     testfitter1.add_theory('lorentzian',testpars,funcname='test lorentzian')
     testfitter1.perform_fit()
 
-    testspec2 = testspec.subspectrum(2500.,3700.)
+    testspec2 = testspec.subspectrum(2500.,3700.,clone=True)
     testpsf2 = convolution.Gaussian1DKernel(5)
     testfitter2 = Fitter.fromspectrum(testspec2,psf=testpsf2)
     testpars=Parameters()

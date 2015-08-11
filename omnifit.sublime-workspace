@@ -1,0 +1,773 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Ratio",
+				"ratiolist"
+			],
+			[
+				"num",
+				"num_bins"
+			],
+			[
+				"mode",
+				"modelList"
+			],
+			[
+				"fitrag",
+				"fitrange_OH"
+			],
+			[
+				"model",
+				"modelData"
+			],
+			[
+				"ULN",
+				"ULNpureCH3OH"
+			],
+			[
+				"dNpu",
+				"dNpureCH3OH"
+			],
+			[
+				"Npo",
+				"NpureCH3OH"
+			],
+			[
+				"spec",
+				"spectrum"
+			],
+			[
+				"targe",
+				"target"
+			],
+			[
+				"target",
+				"target_spectrum"
+			],
+			[
+				"targ",
+				"target_spectrum"
+			],
+			[
+				"interpo",
+				"interpolated"
+			],
+			[
+				"sper",
+				"spectral"
+			],
+			[
+				"mi",
+				"micron"
+			],
+			[
+				"Base",
+				"BaseSpectrum"
+			],
+			[
+				"from",
+				"fromspectrum"
+			],
+			[
+				"test",
+				"testspec2"
+			],
+			[
+				"cVar",
+				"cVarname"
+			],
+			[
+				"uni",
+				"unit_od"
+			],
+			[
+				"u",
+				"utils"
+			],
+			[
+				"convo",
+				"convolution"
+			],
+			[
+				"tesp",
+				"testspec"
+			],
+			[
+				"testfitter",
+				"testfitter"
+			],
+			[
+				"tes",
+				"testspec"
+			],
+			[
+				"keyp",
+				"keypress_a"
+			],
+			[
+				"left",
+				"leftclick1"
+			],
+			[
+				"functio",
+				"functionality"
+			],
+			[
+				"testspe",
+				"testspec"
+			],
+			[
+				"testsp",
+				"testspec2"
+			],
+			[
+				"ge",
+				"generate_absspectrum"
+			],
+			[
+				"SPE",
+				"SPECNAMES"
+			],
+			[
+				"SEP",
+				"SPECNAMES_INPUT"
+			],
+			[
+				"xdata",
+				"xdata_nans"
+			],
+			[
+				"xda",
+				"xdata_nans"
+			],
+			[
+				"nGri",
+				"nGridcols"
+			],
+			[
+				"nGrio",
+				"nGridrows"
+			],
+			[
+				"c_arf2",
+				"c_arf2flux"
+			],
+			[
+				"c_nobl",
+				"c_noblesource"
+			],
+			[
+				"c_no",
+				"c_noblepointing"
+			],
+			[
+				"poin",
+				"pointings_noble"
+			],
+			[
+				"souc",
+				"sources_noble"
+			],
+			[
+				"redu",
+				"reduced_spectra"
+			],
+			[
+				"db_",
+				"db_res"
+			],
+			[
+				"source",
+				"sources_both"
+			],
+			[
+				"sources",
+				"sources_arf2"
+			],
+			[
+				"soul",
+				"soutList_yso"
+			],
+			[
+				"souLi",
+				"souList_vlt"
+			],
+			[
+				"Brooke",
+				"BrookeSpec"
+			],
+			[
+				"Broo",
+				"BrookeSpec"
+			],
+			[
+				"poly",
+				"polynomial_fitrange"
+			],
+			[
+				"current_max",
+				"current_maxwindow"
+			],
+			[
+				"current_min",
+				"current_minwindow"
+			],
+			[
+				"obse",
+				"observing_windows"
+			],
+			[
+				"rest",
+				"rest_frequency"
+			],
+			[
+				"list_",
+				"list_sources"
+			],
+			[
+				"obser",
+				"observing_gaps"
+			],
+			[
+				"res_",
+				"rest_frequencies"
+			],
+			[
+				"curre",
+				"current_bandrange"
+			],
+			[
+				"current_",
+				"current_bandrange"
+			],
+			[
+				"current",
+				"current_min_frequency"
+			],
+			[
+				"rec_",
+				"rec_lX"
+			],
+			[
+				"temp",
+				"template_flux"
+			],
+			[
+				"list",
+				"list_z"
+			],
+			[
+				"curr",
+				"current_max_frequency"
+			],
+			[
+				"templa",
+				"template_flux"
+			],
+			[
+				"redi",
+				"redshifted_frequency"
+			],
+			[
+				"templ",
+				"template_data"
+			],
+			[
+				"arr",
+				"array_z"
+			],
+			[
+				"arxiv",
+				"arxivID"
+			],
+			[
+				"Test",
+				"TestCase"
+			],
+			[
+				"unit",
+				"unittest"
+			],
+			[
+				"option",
+				"options_long"
+			],
+			[
+				"stdo",
+				"stdoutput"
+			],
+			[
+				"rec_w",
+				"rec_wX"
+			],
+			[
+				"rec_mi",
+				"rec_midX"
+			],
+			[
+				"redwin",
+				"redwing_minX"
+			],
+			[
+				"func",
+				"function_name"
+			],
+			[
+				"brooke_",
+				"brooke_peak"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "omnifit/spectrum/spectrum.py",
+			"settings":
+			{
+				"buffer_size": 18644,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/data/Dropbox/work/coding/co_methanol/analyse/prepare_analyse.py",
+		"/data/Dropbox/work/coding/co_methanol/analyse/paper_plots.py",
+		"/data/Dropbox/work/coding/co_methanol/vltfit_generic/vltfit_defaults.py",
+		"/data/Dropbox/work/coding/co_methanol/vltfit_model5/vltfit_model5.py",
+		"/data/Dropbox/work/coding/co_methanol/vltfit_model1/vltfit_model1.py",
+		"/data/Dropbox/work/coding/co_methanol/akarifit_model5/akarifit_model5.py",
+		"/data/Dropbox/work/coding/co_methanol/akarifit_model1/akarifit_model1.py",
+		"/data/Dropbox/work/coding/co_methanol/analyse/data/cdtable4.tex",
+		"/home/ansuutar/coding/omnifit/omnifit/fitter/functions.py",
+		"/home/ansuutar/coding/omnifit/omnifit/fitter/fitter.py",
+		"/home/ansuutar/coding/omnifit/omnifit/utils/utils.py",
+		"/home/ansuutar/coding/omnifit/omnifit/spectrum/spectrum.py",
+		"/home/ansuutar/coding/omnifit/omnifit/spectrum/tests/test_spectrummanipulation.py",
+		"/home/ansuutar/coding/omnifit/omnifit/spectrum/__init__.py",
+		"/home/ansuutar/coding/omnifit/omnifit/spectrum/tests/test_spectrumcreation.py",
+		"/home/ansuutar/coding/omnifit/omnifit/tests/helpers.py",
+		"/home/ansuutar/coding/omnifit/omnifit/fitter/__init__.py",
+		"/home/ansuutar/coding/omnifit/omnifit/fitter/tests/test_fitter.py",
+		"/home/ansuutar/coding/omnifit/omnifit/spectrum/tests/test_spectruminfo.py",
+		"/home/ansuutar/coding/omnifit/omnifit/__init__.py",
+		"/home/ansuutar/coding/omnifit/setup.cfg",
+		"/home/ansuutar/coding/omnifit/MANIFEST.in",
+		"/home/ansuutar/coding/omnifit/omnifit/conftest.py",
+		"/home/ansuutar/coding/omnifit/omnifit/spectrum/tests/test_spectrumplotting.py",
+		"/home/ansuutar/coding/omnifit/omnifit/utils/__init__.py",
+		"/home/ansuutar/coding/omnifit/omnifit/spectrum/utils.py",
+		"/home/ansuutar/coding/tests/clonetest.py",
+		"/data/Dropbox/work/applications/emerlin-2015/additional_info.txt",
+		"/home/ansuutar/coding/omnifit/docs/conf.py",
+		"/home/ansuutar/coding/omnifit/docs/index.rst",
+		"/home/ansuutar/coding/template/setup.cfg",
+		"/home/ansuutar/coding/astropy/setup.cfg",
+		"/home/ansuutar/coding/astropy/docs/conf.py",
+		"/data/Dropbox/work/coding/co_methanol/akarifit_generic/akarifit_defaults.py",
+		"/home/ansuutar/coding/omnifit/omnifit/fitter/tests/__init__.py",
+		"/home/ansuutar/coding/tests/aplfmt.py",
+		"/home/ansuutar/coding/astropy/astropy/nddata/tests/test_nddata.py",
+		"/home/ansuutar/Downloads/APLpy-1.0/aplpy/tests/test_init_cube.py",
+		"/home/ansuutar/Downloads/APLpy-1.0/aplpy/tests/setup_package.py",
+		"/home/ansuutar/coding/omnifit/omnifit/tests/setup_package.py",
+		"/home/ansuutar/Downloads/APLpy-1.0/aplpy/tests/test_pixworldmarkers.py",
+		"/home/ansuutar/Downloads/APLpy-1.0/aplpy/tests/__init__.py",
+		"/home/ansuutar/coding/omnifit/omnifit/tests/__init__.pyc",
+		"/home/ansuutar/coding/omnifit/omnifit/tests/__init__.py",
+		"/home/ansuutar/Downloads/APLpy-1.0/aplpy/tests/test_init_image.py",
+		"/home/ansuutar/Downloads/APLpy-1.0/aplpy/tests/test_frame.py",
+		"/home/ansuutar/coding/omnifit/omnifit/tests/coveragerc",
+		"/home/ansuutar/Downloads/APLpy-1.0/aplpy/tests/coveragerc",
+		"/home/ansuutar/Downloads/APLpy-1.0/aplpy/tests/helpers.py",
+		"/home/ansuutar/coding/astropy/astropy/convolution/tests/test_convolve.py",
+		"/home/ansuutar/coding/omnifit/omnifit/tests/test_misc.py",
+		"/home/ansuutar/coding/omnifit/omnifit/_astropy_init.py",
+		"/home/ansuutar/coding/omnifit/omnifit/version.py",
+		"/home/ansuutar/coding/omnifit/omnifit/spectrum/tests/__init__.py",
+		"/home/ansuutar/coding/omnifit/omnifit/omnifit.py",
+		"/data/Dropbox/work/conferences/lad1_edinburgh2015/notes_lad1.txt",
+		"/home/ansuutar/coding/omnifit/omnifit/misc/__init__.py",
+		"/home/ansuutar/coding/omnifit/omnifit/misc/functions.py",
+		"/home/ansuutar/coding/astropy/astropy/convolution/setup_package.py",
+		"/home/ansuutar/coding/astropy/astropy/convolution/convolve.py",
+		"/home/ansuutar/coding/astropy/astropy/convolution/core.py",
+		"/home/ansuutar/coding/astropy/astropy/utils/__init__.py",
+		"/home/ansuutar/coding/astropy/astropy/convolution/__init__.py",
+		"/home/ansuutar/coding/astropy/astropy/io/fits/__init__.py",
+		"/home/ansuutar/coding/astropy/astropy/cosmology/__init__.py",
+		"/home/ansuutar/coding/astropy/astropy/__init__.py",
+		"/home/ansuutar/coding/astropy/astropy/cosmology/core.py",
+		"/home/ansuutar/coding/astropy/astropy/io/fits/file.py",
+		"/home/ansuutar/coding/astropy/astropy/utils/misc.py",
+		"/home/ansuutar/.config/sublime-text-3/Packages/Default/Preferences.sublime-settings",
+		"/home/ansuutar/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
+		"/home/ansuutar/coding/astropy/astropy/tests/__init__.py",
+		"/home/ansuutar/coding/astropy/astropy/tests/output_checker.py",
+		"/home/ansuutar/coding/astropy/astropy/tests/helper.py",
+		"/home/ansuutar/coding/astropy/astropy/tests/tests/__init__.py",
+		"/home/ansuutar/coding/astropy/astropy/tests/tests/test_imports.py",
+		"/home/ansuutar/coding/astropy/astropy/tests/tests/test_run_tests.py",
+		"/home/ansuutar/coding/astropy/astropy/convolution/utils.py",
+		"/home/ansuutar/coding/astropy/astropy/convolution/tests/__init__.py",
+		"/home/ansuutar/coding/astropy/astropy/constants/cgs.py",
+		"/home/ansuutar/coding/omnifit/setup.py",
+		"/data/Dropbox/clickopalypse2.txt",
+		"/home/ansuutar/coding/template/packagename/example_mod.py",
+		"/home/ansuutar/coding/template/packagename/__init__.py",
+		"/home/ansuutar/coding/omnifit/omnifit/tests/test_example.py",
+		"/home/ansuutar/coding/template/packagename/_astropy_init.py",
+		"/home/ansuutar/coding/template/packagename/tests/coveragerc",
+		"/home/ansuutar/coding/template/packagename/tests/__init__.py",
+		"/home/ansuutar/coding/template/packagename/tests/setup_package.py",
+		"/home/ansuutar/coding/omnifit/omnifit/tests/setup_package.pyc",
+		"/home/ansuutar/coding/template/packagename/version.py",
+		"/data/Dropbox/work/bureaucracy/thesis/changelist_final.txt",
+		"/home/ansuutar/coding/template/packagename/tests/test_example.py",
+		"/home/ansuutar/coding/omnifit/build/lib.linux-x86_64-2.7/omnifit/_astropy_init.py",
+		"/home/ansuutar/coding/omnifit/omnifit/tests/helper.py",
+		"/home/ansuutar/coding/astropy/astropy/tests/setup_package.py",
+		"/home/ansuutar/coding/astropy/astropy/tests/test_logger.py",
+		"/home/ansuutar/coding/omnifit/omnifit/test.py",
+		"/home/ansuutar/coding/template/.travis.yml",
+		"/home/ansuutar/coding/package-template/setup.cfg",
+		"/home/ansuutar/coding/package-template/README.rst",
+		"/home/ansuutar/coding/package-template/MANIFEST.in",
+		"/home/ansuutar/coding/package-template/omnifit/tests/test_example.py",
+		"/home/ansuutar/coding/package-template/omnifit/conftest.py",
+		"/home/ansuutar/coding/package-template/setup.py",
+		"/home/ansuutar/coding/package-template/omnifit/_astropy_init.py",
+		"/home/ansuutar/coding/package-template/omnifit/data/README.rst",
+		"/home/ansuutar/coding/package-template/omnifit/example_subpkg/__init__.py",
+		"/home/ansuutar/coding/package-template/omnifit/tests/setup_package.py",
+		"/home/ansuutar/coding/package-template/omnifit/tests/__init__.py",
+		"/home/ansuutar/coding/package-template/omnifit/example_mod.py",
+		"/home/ansuutar/coding/package-template/omnifit/example_c.pyx",
+		"/home/ansuutar/coding/package-template/TEMPLATE_CHANGES.md",
+		"/home/ansuutar/coding/package-template/ah_bootstrap.py",
+		"/home/ansuutar/coding/package-template/ez_setup.py",
+		"/home/ansuutar/coding/astropy-helpers/astropy_helpers/sphinx/conf.py",
+		"/home/ansuutar/coding/omnifit/doc/source/conf.py",
+		"/home/ansuutar/coding/package-template/packagename/data/README.rst",
+		"/home/ansuutar/coding/package-template/cextern/README.rst",
+		"/home/ansuutar/writing/phd-thesis/changelist_final.txt",
+		"/data/Dropbox/work/coding/testing/julia/kk/kk.jl",
+		"/tmp/foraleksi/foraleksi/kkuv.pro",
+		"/data/Dropbox/work/coding/ysocomp/plotcat_paper.py",
+		"/data/Dropbox/work/coding/ysocomp/makecat.py",
+		"/tmp/57601643.institute.js",
+		"/data/Dropbox/work/coding/co_methanol/analyse/thesis_plots_final.py",
+		"/data/Dropbox/work/coding/co_methanol/analyse/prepare_analyse_thesis_final.py",
+		"/home/ansuutar/coding/arf2/scripts/thesis_finalization.arf2"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/home/ansuutar/coding/omnifit",
+			"/home/ansuutar/coding/astropy",
+			"/home/ansuutar/coding/omnifit/",
+			"/data/Dropbox/work/coding/ysocomp"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"modelColor",
+			"cModel",
+			"ratiocolor",
+			"fig.",
+			"modelcolor",
+			"color",
+			"Nmet",
+			"Nwat",
+			"function_color",
+			"iModel*3",
+			".tex",
+			"cSou",
+			"print",
+			"astropy quantity",
+			"targSpectrum",
+			"maxx",
+			"minx",
+			"maxX",
+			"minX",
+			"baseliner",
+			"fitter",
+			"absorptionSpectrum",
+			"baseSpectrum",
+			"labSpectrum",
+			"absorptionSpectrum",
+			"baseSpectrum",
+			"self.nondata",
+			"nonData",
+			".sort",
+			".gps",
+			"recwarn",
+			"basespectrum",
+			"spectrum",
+			"Exception",
+			"exception",
+			"Exception",
+			"exception",
+			"Exception",
+			"RunTimeError",
+			"Exception",
+			",mode='same'",
+			"np.convolve(",
+			"psf",
+			"dropbad",
+			"copy",
+			"warn(",
+			"oPar",
+			".min",
+			"YNAMES",
+			"SPECNAMES",
+			"wl2wn",
+			"os.",
+			"pickle.",
+			"time.",
+			"warnings.",
+			"re.",
+			"pylab",
+			"leastsq",
+			"plt.",
+			"pf.",
+			"matplotlib",
+			"test_primes_c",
+			"_ASTROPY_PACKAGE_NAME_",
+			"coverage",
+			"helper",
+			"_save_coverage",
+			"pytest",
+			"save_coverage",
+			"save_covera",
+			"_get_test",
+			"Astropy",
+			"test()",
+			"nopt",
+			".tex ",
+			".tex",
+			"'AKARI-'+str(cSource)",
+			"grid",
+			"tight",
+			"lab",
+			",size=",
+			",fontsize=20",
+			"cData",
+			"cde_correct",
+			"cSou",
+			"Ternary",
+			"np.min",
+			"redwing_max",
+			"fitteR_brooke = ",
+			"fitter_OH =",
+			"_noconvol",
+			"fraser_OH_noconvol",
+			"smooth",
+			"convol",
+			"fitrange",
+			"fitter_broo",
+			"brookespec.fitter_broo",
+			"graphdir",
+			".tex",
+			"fitter_OH",
+			"mul = ",
+			"methmul",
+			"636.7211645569622",
+			"template_flux",
+			"figure(",
+			"pdfpages",
+			"If",
+			"url_exi",
+			"Mixture ",
+			"Ratio ",
+			"50%",
+			"31%",
+			"23%",
+			"17%",
+			",y",
+			"Model 4",
+			"datadir_vlt",
+			"reducpath = ",
+			"reducpath",
+			"brooke",
+			"methmul",
+			"    fitWn = fitsWn[fitInd]\n    fitFlux = flux[fitInd]\n"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "omnifit/spectrum/spectrum.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 18644,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"word_wrap": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 27.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "omnifit.sublime-project",
+	"replace":
+	{
+		"height": 50.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 191.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

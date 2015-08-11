@@ -44,6 +44,7 @@ distribute-*.tar.gz
 
 # Other
 .*.swp
+*.sublime-project
 *~
 
 # Mac OSX

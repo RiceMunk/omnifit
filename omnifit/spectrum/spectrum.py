@@ -7,6 +7,27 @@ import pickle
 import os, sys
 from .. import utils
 from copy import deepcopy
+from functools import wraps
+
+def clonable(func):
+  @wraps(func)
+  def wrapper(self,*args,**kwargs):
+    try:
+      clone = kwargs.pop('clone')
+    except KeyError:
+      clone = False
+    if clone:
+      newclass = deepcopy(self)
+      retdata = getattr(newclass,func.__name__)(*args,**kwargs)
+      if retdata is not None:
+        return newclass,retdata
+      else:
+        return newclass
+    else:
+      retdata = func(self,*args,**kwargs)
+      if retdata is not None:
+        return retdata
+  return wrapper
 
 class BaseSpectrum:
   """
@@ -164,6 +185,7 @@ class BaseSpectrum:
     for cVarname in ownvarnames:
       if cVarname != 'x':
         self.__dict__[cVarname][iBadones]=np.nan
+
   def plot(self,axis,x='x',y='y',*args,**kwargs):
     """
     plot(axis,x='x',y='y',*args,**kwargs)
@@ -193,33 +215,43 @@ class BaseSpectrum:
     except ValueError:
       ploty = self.__dict__[y]
     axis.plot(plotx,ploty,*args,**kwargs)
+
+  @clonable
   def convert2wn(self):
     """
-    convert2wn()
+    convert2wn(clone=False)
 
     Convert the x axis data to kayser (reciprocal wavenumber) units.
     Re-sort the data afterwards.
 
     Parameters
     ----------
-    None
+    clone : bool
+      If set to True, returns a modified copy of the spectrum instead
+      of operating on the existing spectrum.
     """
     self.convert2(u.kayser)
+
+  @clonable
   def convert2wl(self):
     """
-    convert2wl()
+    convert2wl(clone=False)
 
     Convert the x axis data to wavelength (in microns) units.
     Re-sort the data afterwards.
 
     Parameters
     ----------
-    None
+    clone : bool
+      If set to True, returns a modified copy of the spectrum instead
+      of operating on the existing spectrum.
     """
     self.convert2(u.micron)
+
+  @clonable
   def convert2(self,newunit):
     """
-    convert2(newunit)
+    convert2(newunit,clone=False)
 
     Convert the x axis data to given spectral units.
     Re-sort the data afterwards.
@@ -229,16 +261,21 @@ class BaseSpectrum:
     newunit : astropy.units.core.Unit
       Desired (spectral) unit the x axis data should be
       converted to.
+    clone : bool
+      If set to True, returns a modified copy of the spectrum instead
+      of operating on the existing spectrum.
     """
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
       self.x=self.x.to(newunit)
     self.__sort()
+
+  @clonable
   def subspectrum(self,limit_lower,limit_upper):
     """
-    subspectrum(limit_lower,limit_upper)
+    subspectrum(limit_lower,limit_upper,clone=False)
 
-    Create a copy of the spectrum which is cropped along the x
-    axis using the given inclusive limits.
+    Cropped the spectrum along along the x axis using the given
+    inclusive limits.
 
     Parameters
     ----------
@@ -248,21 +285,20 @@ class BaseSpectrum:
     limit_upper : float
       The desired maximum x axis of the cropped spectrum, in
       current units of the spectrum. This limit is inclusive.
-
-    Returns
-    -------
-    Copy of the spectrum, cropped using the given specifications.
+    clone : bool
+      If set to True, returns a modified copy of the spectrum instead
+      of operating on the existing spectrum.
     """
     iSub = np.logical_and(np.greater_equal(self.x.value,limit_lower),np.less_equal(self.x.value,limit_upper))
     newX = self.x[iSub]
     newY = self.y[iSub]
-    newSpec = deepcopy(self)
-    newSpec.x = newX
-    newSpec.y = newY
-    return newSpec
+    self.x = newX
+    self.y = newY
+
+  @clonable
   def interpolate(self,target_spectrum):
     """
-    interpolate target_spectrum
+    interpolate(target_spectrum,clone=False)
 
     Interpolate spectrum to match target spectrum resolution.
     Does not modify current spectrum, but returns a new one, which is
@@ -276,12 +312,9 @@ class BaseSpectrum:
     target_spectrum : BaseSpectrum
       The target spectrum which the x axis resolution of the current
       spectrum should be made to match.
-
-    Returns
-    -------
-    Copy of the spectrum, interpolated to match the target spectrum
-    x axis resolution.
-
+    clone : bool
+      If set to True, returns a modified copy of the spectrum instead
+      of operating on the existing spectrum.
     """
     if self.x.unit != target_spectrum.x.unit:
       raise u.UnitsError('Spectrums have different units on x axis!')
@@ -289,11 +322,10 @@ class BaseSpectrum:
       raise u.UnitsError('Spectrums have different units on y axis!')
     newX=target_spectrum.x
     newY=np.interp(newX,self.x,self.y)
-    newSpec = deepcopy(self)
-    newSpec.x = newX
-    newSpec.y = newY
-    newSpec.name = self.name+'(interpolated: '+target_spectrum.name+')'
-    return newSpec
+    self.x = newX
+    self.y = newY
+    self.name = self.name+'(interpolated: '+target_spectrum.name+')'
+
   def yat(self,x):
     """
     yat(x)
@@ -331,10 +363,14 @@ class BaseSpectrum:
       warnings.warn('Spectrum '+self.name+' has already been convolved once!',RuntimeWarning)
     self.y=convolution.convolve(self.y,kernel,*args,**kwargs)
     self.convolved=True
+
+  @clonable
   def gconvolve(self,fwhm):
     """ Convolve spectrum using a gaussian of given fwhm (in units of x axis) """
     gkernel=convolution.Gaussian1DKernel(fwhm)
     self.convolve(gkernel)
+
+  @clonable
   def smooth(self,window_len=11,window='hanning'):
     """
     smooth(window_len=11,window='hanning')
@@ -366,6 +402,8 @@ class BaseSpectrum:
     else:  
       w=eval('np.'+window+'(window_len)')
     self.y=np.convolve(w/w.sum(),s,mode='same')
+
+  @clonable
   def baseline(self,degree=1,windows=[[0.0,1.0e6]],exclusive=False,useFile=None,overWrite=False):
     """
     Correct the y with a new baseline.
@@ -407,6 +445,8 @@ class BaseSpectrum:
     if self.dy is None:
       self.dy=np.abs(np.std(fixedY[iBaseline]))
     self.baselined=True
+
+  @clonable
   def shift(self,amount):
     """
     Shifts the spectrum by amount
@@ -414,6 +454,7 @@ class BaseSpectrum:
     units.
     """
     self.x+=amount
+
   def max(self,checkrange=None):
     """
     Returns maximum y of the spectrum.
@@ -426,6 +467,7 @@ class BaseSpectrum:
       iCheckrange=np.logical_and(iCheckrange,np.logical_and(
                         np.less_equal(minX,self.x.value),np.greater_equal(maxX,self.x.value)))
     return np.nanmax(self.y[iCheckrange])
+
   def min(self,checkrange=None):
     """
     Returns minimum y of the spectrum.
@@ -438,6 +480,7 @@ class BaseSpectrum:
       iCheckrange=np.logical_and(iCheckrange,np.logical_and(
                         np.less_equal(minX,self.x.value),np.greater_equal(maxX,self.x.value)))
     return np.nanmin(self.y[iCheckrange])
+
   def info(self):
     print '---'
     print 'Summary for spectrum '+self.name
