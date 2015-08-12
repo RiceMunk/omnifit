@@ -33,13 +33,13 @@ class TestSpectrumManipulation_convolution:
     """
     Test the functionality of the gaussian convolution
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.gconvolve(10.)
   def test_repeatedconvolution(self,recwarn):
     """
     Make sure that a warning is raised if convolution is repeated
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.gconvolve(10.)
     testspec.gconvolve(10.)
     w = recwarn.pop(RuntimeWarning)
@@ -48,29 +48,29 @@ class TestSpectrumManipulation_convolution:
     """
     Make sure that gaussian PSF can't be made too large
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     with pytest.raises(Exception):
       testspec.gpsf(len(testspec.x)+1)
   def test_smooth(self):
     """
     Test the various smoothing convolutions
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.smooth(window='flat')
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.smooth(window='hanning')
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.smooth(window='hamming')
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.smooth(window='bartlett')
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.smooth(window='blackman')
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.smooth(window_len=2)
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     with pytest.raises(ValueError):
       testspec.smooth(window='not a window')
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     with pytest.raises(ValueError):
       testspec.smooth(window_len=1e10)
 
@@ -80,16 +80,16 @@ class TestSpectrumManipulation_misc:
     Test interpolation between two different spectra
     """
     #normal function
-    testspec1 = generate_labspectrum()
+    testspec1 = generate_cdespectrum()
     testspec2 = generate_absspectrum()
     testspec1.interpolate(testspec2)
     #trying to break it
-    testspec1 = generate_labspectrum()
+    testspec1 = generate_cdespectrum()
     testspec2 = generate_absspectrum()
     testspec2.x = testspec2.x.value * u.kg
     with pytest.raises(Exception):
       testspec1.interpolate(testspec2)
-    testspec1 = generate_labspectrum()
+    testspec1 = generate_cdespectrum()
     testspec2 = generate_absspectrum()
     testspec2.y = testspec2.y.value * u.kg
     with pytest.raises(Exception):
@@ -98,22 +98,22 @@ class TestSpectrumManipulation_misc:
     """
     Test the extraction of a subspectrum from a spectrum
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.subspectrum(testspec.x[0].value+500,testspec.x[-1].value-500)
   def test_baseline_basic(self):
     """
     Test the baselining of a spectrum
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.baseline()
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.baseline(windows=[[testspec.x[0].value+500,testspec.x[-1].value-500]],exclusive=True)
   def test_baseline_manual(self):
     """
     Test manual baseline functionality
     as far as the interactive mode allows non-interactively
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     cFig,cBaseliner = testspec.baseline(windows='manual')
     from matplotlib.backend_bases import MouseEvent, KeyEvent
     leftclick = MouseEvent('button_press_event',cFig.canvas,2000.,0.,button=1)

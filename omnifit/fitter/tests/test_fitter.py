@@ -13,19 +13,19 @@ class TestFitterFitting:
     """
     Make sure that fitter initialises as it should
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testfitter = Fitter(testspec.x.value,testspec.y.value)
   def test_fitterinit_fromspectrum(self):
     """
     Make sure that fitter initialises as it should when initialising with a spectrum
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testfitter = Fitter.fromspectrum(testspec)
   def test_fitlab(self):
     """
     Test the fitting of lab data
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testfitter = Fitter(testspec.x.value,2.*testspec.y.value)
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
@@ -36,7 +36,7 @@ class TestFitterFitting:
     """
     Test the fitting of the available analytical functions
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testfitter = Fitter.fromspectrum(testspec)
     testpars = Parameters()
     #                 (Name,    Value,  Vary,  Min,    Max, Expr)
@@ -68,7 +68,7 @@ class TestFitterFitting:
     """
     Test the fitting of the available analytical functions with convolution enabled
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec1 = testspec.subspectrum(2000.,2300.,clone=True)
     testpsf1 = convolution.Gaussian1DKernel(5)
     print testspec1
@@ -111,7 +111,7 @@ class TestFitterResults:
     """
     Test the returning of fit results
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testfitter = Fitter(testspec.x.value,2.*testspec.y.value)
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
@@ -123,7 +123,7 @@ class TestFitterResults:
     """
     Test the dumping of fit results to a file
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testfitter = Fitter(testspec.x.value,2.*testspec.y.value)
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
@@ -143,7 +143,7 @@ class TestFitterResults:
     """
     Test the plotting of fit results
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testfitter = Fitter(testspec.x.value,2.*testspec.y.value)
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)

@@ -10,7 +10,7 @@ class TestSpectrumInfo:
     """
     Make sure that min and max work
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.min()
     testspec.min(checkrange=[2000.,2050.])
     testspec.max()
@@ -19,5 +19,5 @@ class TestSpectrumInfo:
     """
     Make sure that spectrum info is produced
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     testspec.info()

@@ -32,7 +32,7 @@ class TestSpectrumPlotting:
     """
     Make sure that n and k spectrum plotting works as expected
     """
-    testspec = generate_labspectrum()
+    testspec = generate_cdespectrum()
     fig = plt.figure()
     ax1 = fig.add_subplot(211)
     ax2 = fig.add_subplot(212)

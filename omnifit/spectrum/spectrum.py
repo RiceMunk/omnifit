@@ -343,18 +343,22 @@ class BaseSpectrum:
 
     """
     return np.interp(x,self.x.value,self.y.value)
+
+  @clonable
   def convolve(self,kernel,*args,**kwargs):
     """
-    convolve(kernel,*args,**kwargs)
+    convolve(kernel,clone=False,*args,**kwargs)
 
     Use astropy.convolution.convolve to convolve the y axis data of the
     spectrum with the given kernel.
-    Modifies the existing spectrum.
 
     Parameters
     ----------
     kernel : numpy.ndarray or astropy.convolution.Kernel
       A convolution kernel to feed into the convolution function.
+    clone : bool
+      If set to True, returns a modified copy of the spectrum instead
+      of operating on the existing spectrum.
     *args and **kwargs can be used to pass additional plotting
     parameters to the astropy convolution routine, as documented
     in the astropy documentation.
@@ -365,15 +369,27 @@ class BaseSpectrum:
     self.convolved=True
 
   @clonable
-  def gconvolve(self,fwhm):
-    """ Convolve spectrum using a gaussian of given fwhm (in units of x axis) """
+  def gconvolve(self,fwhm,*args,**kwargs):
+    """
+    gconvolve(fwhm,*args,**kwargs)
+
+    Convolve spectrum using a gaussian of given fwhm.
+
+    Parameters
+    ----------
+    fwhm : float
+      The desired fwhm of the gaussian, in units of x axis.
+    *args and **kwargs can be used to pass additional plotting
+    parameters to the convolution method.
+
+    """
     gkernel=convolution.Gaussian1DKernel(fwhm)
-    self.convolve(gkernel)
+    self.convolve(gkernel,*args,**kwargs)
 
   @clonable
   def smooth(self,window_len=11,window='hanning'):
     """
-    smooth(window_len=11,window='hanning')
+    smooth(window_len=11,window='hanning',clone=False)
 
     Smooth the spectrum using the given window of requested type and size.
     The supported smoothing functions are: Bartlett, Blackman, Hanning,
@@ -387,6 +403,9 @@ class BaseSpectrum:
     window : string, optional
       Requested window type. Possible values are: 'flat', 'hanning',
       'hamming', 'bartlett', and 'blackman'.
+    clone : bool
+      If set to True, returns a modified copy of the spectrum instead
+      of operating on the existing spectrum.
     """
     if self.x.ndim != 1:
       raise ValueError, "smooth only accepts 1 dimension arrays."
@@ -403,14 +422,47 @@ class BaseSpectrum:
       w=eval('np.'+window+'(window_len)')
     self.y=np.convolve(w/w.sum(),s,mode='same')
 
-  def baseline(self,degree=1,windows=[[0.0,1.0e6]],exclusive=False,useFile=None,overWrite=False):
+  def baseline(self,degree=1,windows=[[0.0,1.0e6]],exclusive=False,usefile=None):
     """
-    Correct the y with a new baseline.
-    Default mode is inclusive.
+    baseline(degree=1,windows=[[0.0,1.0e6]],exclusive=False,usefile=None)
+
+    Fit and subtract a polynomial baseline from the spectrum, within
+    the specified windows. The fitting windows can either be designated
+    as a list of x axis coordinates, or specified interactively within
+    a matplotlib plotting window.
+
+    Parameters
+    ----------
+    degree : int
+      Degree of order on the polynomial to fit.
+    windows : list or string
+      The windows can be designated in two different ways:
+      * as a list of x axis coordinates, e.g. 
+        [[200,250],[300,350]] for two windows
+        of 200 to 250, and 300 to 350.
+      * in an interactive matplotlib plotting window, by
+        setting windows to 'manual'
+      In the former case, no further input is required from
+      the user after calling baseline, but in the latter case
+      the baseliner class is invoked from omnifit.utils.
+    exclusive : bool
+      This parameter indicates whether the windows are exclusive
+      or inclusive, i.e. whether the polynomial baseline fitting
+      is done inside (exclusive=False) the range indicated by 
+      the windows or outside (exclusive=True) of said range.
+    usefile : NoneType or string
+      This parameter indicates whether an interactively designated
+      baseline data is saved into a file, or if the baseline data
+      is read from an already existing file.
+      If the user wishes to use an existing file for a baseline,
+      simply set usefile as the path to the pickle file created
+      in a previous baselining session.
+      To create a new baseline file, set windows to 'manual' and
+      set usefile to point to the desired path of the new file.
     """
     iBaseline=np.logical_or(np.isinf(self.x),exclusive)
-    if useFile != None and os.path.exists(useFile):
-      with open(useFile,'r') as cFile:
+    if usefile != None and os.path.exists(usefile):
+      with open(usefile,'r') as cFile:
         windows = pickle.load(cFile) 
     elif windows=='manual':
       print 'Determining manual baseline'
@@ -425,10 +477,10 @@ class BaseSpectrum:
         windows=cBaseliner.windows
       else:
         return cFig,cBaseliner #send the relevant stuff back for testing
-      if useFile != None:
-        with open(useFile,'w') as cFile:
+      if usefile != None:
+        with open(usefile,'w') as cFile:
           pickle.dump(windows,cFile)
-        print 'Wrote window data to '+useFile
+        print 'Wrote window data to '+usefile
     for cWindow in windows:
       if exclusive:
         iBaseline=np.logical_and(iBaseline,np.logical_or(np.less(self.x.value,cWindow[0]),np.greater(self.x.value,cWindow[1])))
@@ -445,19 +497,39 @@ class BaseSpectrum:
       self.dy=np.abs(np.std(fixedY[iBaseline]))
     self.baselined=True
 
-  @clonable
   def shift(self,amount):
     """
+    shift(amount)
+
     Shifts the spectrum by amount
     specified, in primary x axis
     units.
+
+    Parameters
+    ----------
+      x : float
+        The x axis of the entire spectrum has this number
+        added to it, effectively shifting it.
     """
     self.x+=amount
 
   def max(self,checkrange=None):
     """
+    max(checkrange=None)
+
     Returns maximum y of the spectrum.
     If checkrange is set, returns maximum inside of that range.
+
+    Parameters
+    ----------
+      checkrange : Nonetype or list
+        If this is set to a list, the first and second items on
+        the list are taken to indicate the range (in units of x axis)
+        between which the maximum is looked for.
+    Returns
+    -------
+      Maximum y of either the entire spectrum or, if checkrange is set,
+      the maximum y inside of the specified range.
     """
     iCheckrange=np.ones_like(self.y.value,dtype=bool)
     if np.any(checkrange):
@@ -469,8 +541,21 @@ class BaseSpectrum:
 
   def min(self,checkrange=None):
     """
+    min(checkrange=None)
+
     Returns minimum y of the spectrum.
-    If checkrange is set, returns maximum inside of that range.
+    If checkrange is set, returns minimum inside of that range.
+
+    Parameters
+    ----------
+      checkrange : Nonetype or list
+        If this is set to a list, the first and second items on
+        the list are taken to indicate the range (in units of x axis)
+        between which the minimum is looked for.
+    Returns
+    -------
+      Minimum y of either the entire spectrum or, if checkrange is set,
+      the minimum y inside of the specified range.
     """
     iCheckrange=np.ones_like(self.y.value,dtype=bool)
     if np.any(checkrange):
@@ -481,6 +566,22 @@ class BaseSpectrum:
     return np.nanmin(self.y[iCheckrange])
 
   def info(self):
+    """
+    info()
+
+    Prints out a simple human-readable summary of the spectrum,
+    containing the name of the spectrum, the units on its axes,
+    and their limits. Also shows whether the spectrum has been
+    baselined or convolved yet.
+
+    Parameters
+    ----------
+      None
+
+    Returns
+    -------
+      Nothing, but prints out a summary of the spectrum.
+    """
     print '---'
     print 'Summary for spectrum '+self.name
     print 'x unit: '+str(self.x.unit)
@@ -495,54 +596,166 @@ class BaseSpectrum:
 
 class AbsorptionSpectrum(BaseSpectrum):
   """
-  An absorption spectrum, with all the
-  specific details that involves.
-  Units on the y axis are in optical depth
+  A class specialized in representing absorption spectra of the type
+  often used in ice spectroscopy. This is a child class of BaseSpectrum.
+
+  The functionality of this class is otherwise identical to BaseSpectrum,
+  except it contains an additional method for plotting the optical depth
+  spectrum in either microns and kayser units, both of which it stores
+  as additional attributes.
+
+  Attributes
+  -----------
+  All the attributes stored in BaseSpectrum, plus the following:
+  wn : astropy.units.Quantity
+    The data on the x-axis of the spectrum, expressed in kayser
+    (reciprocal wavenumber) units.
+  wl : astropy.units.Quantity
+    The data on the x-axis of the spectrum, expressed in microns.
+  od : astropy.units.Quantity
+    The data on the y-axis spectrum, expressed as optical depth
+    units (using omnifit.utils.unit_od).
   """
-  def __init__(self,iWn,iOd,specname='Unknown absorption spectrum',nondata=[]):
+  def __init__(self,wn,od,*args,**kwargs):
     """
-    Init the spectrum. Places iOd on the y axis and
-    iWn on the x axis.
+    AbsorptionSpectrum(wn,od,*args,**kwargs)
+
+    Constructor for the AbsorptionSpectrum class. Requires wn and od;
+    everything else is optional, as inherited from BaseSpectrum.
+
+    Parameters
+    ----------
+    wn : astropy.units.Quantity
+      The absorption spectrum frequency data. Unlike BaseSpectrum,
+      the initialisation of AbsorptionSpectrum requires this to be
+      in the specific units of reciprocal wavenumber.
+    od : astropy.units.Quantity
+      The absorption spectrum optical depth data. Unlike BaseSpectrum,
+      the initialisation of AbsorptionSpectrum requires this to be
+      in the specific units of optical depth units (from
+      omnifit.utils.unit_od).
+    *args and **kwargs accept all the same inputs as BaseSpectrum,
+    with the exception of x and y, which are created from wn and od.
     """
-    if len(iWn) != len(iOd):
+    if type(wn) != u.quantity.Quantity:
+      raise u.UnitsError('Input wn is not an astropy quantity.')
+    if wn.unit != u.kayser:
+      raise u.UnitsError('Input wn is not in kayser units.')
+    if type(od) != u.quantity.Quantity:
+      raise u.UnitsError('Input od is not an astropy quantity.')
+    if od.unit != utils.unit_od:
+      raise u.UnitsError('Input od is not in optical depth units.')
+    if len(wn) != len(od):
       raise RuntimeError('Input arrays have different sizes.')
-    self.od = iOd #Optical depth
-    self.wn = iWn #Wave number
+    self.wn = wn
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
       self.wl=self.wn.to(u.micron)
-    BaseSpectrum.__init__(self,self.wn,self.od,specname=specname,nondata=nondata)
-  def plotod(self,iAx,in_wl=False,*args,**kwargs):
+    self.od = od
+    BaseSpectrum.__init__(self,self.wn,self.od,*args,**kwargs)
+  def plotod(self,ax,in_wl=False,*args,**kwargs):
     """
-    Plot the optical depth spectrum as function of wavenumber
-    to given axis unless flag is set.
+    plotod(ax,in_wl=False,*args,**kwargs)
+
+    Plot the optical depth spectrum as either a function of reciprocal
+    wavenumber or wavelength to the given axis.
+
+    Parameters
+    ----------
+    axis : matplotlib.axis
+      The axis which the plot will be generated in.
+    in_wl : bool
+      If set to true, the x axis of the plotting axis will be in
+      wavelength; otherwise it will be in reciprocal wavenumbers.
+    *args and **kwargs can be used to pass additional plotting
+    parameters to the matplotlib plotting routine, as documented
+    in the matplotlib documentation.
     """
     if in_wl:
-      self.plot(iAx,x='wl',y='od',*args,**kwargs)      
+      self.plot(ax,x='wl',y='od',*args,**kwargs)      
     else:
-      self.plot(iAx,x='wn',y='od',*args,**kwargs)
+      self.plot(ax,x='wn',y='od',*args,**kwargs)
 
 
-class LabSpectrum(AbsorptionSpectrum):
+class CDESpectrum(AbsorptionSpectrum):
   """
-  Laboratory spectrum class from optical constants.
-  Inherits AbsorptionSpectrum class propertries.
-  Does CDE correction to the data.
+  A class specialized in representing CDE-corrected absorption spectra,
+  generated from given complex optical refractive index data.
+  This is a child class of AbsorptionSpectrum.
+
+  The functionality of this class is otherwise identical to
+  AbsorptionSpectrum (and by extension, BaseSpectrum), except it contains
+  an additional method for plotting the complex refractive index data,
+  which it also stores in additional attributes as part of the class
+  instance. Also stored are various additional data returned by the CDE
+  correction, as documented below.
+
+  Attributes
+  -----------
+  All the attributes stored in AbsorptionSpectrum, plus the following:
+  n : numpy.ndarray
+    The real part of the complex refractive index spectrum of the data.
+  k : numpy.ndarray
+    The imaginary part of the complex refractive index spectrum of the
+    data.
+  cabs : nump.ndarray
+    The spectrum of the absorption cross section of the simulated grain.
+  cabs_vol : nump.ndarray
+    The spectrum of the absorption cross section of the simulated grain,
+    normalized by the volume distribution of the grain. This parameter
+    is the equivalent of optical depth in most cases.
+  cscat_vol : nump.ndarray
+    The spectrum of the scattering cross section of the simulated grain,
+    normalized by the volume distribution of the grain.
+  ctot : nump.ndarray
+    The spectrum of the total cross section of the simulated grain.
   """
-  def __init__(self,iWn,iN,iK,specname='Unknown CDE-corrected laboratory spectrum'):
+  def __init__(self,wn,n,k,*args,**kwargs):
     """
-    Init requires input of wavenumber array [cm^-1] and od array.
-    Optional input: Name of spectrum
+    CDESpectrum(wn,n,k,*args,**kwargs)
+
+    Constructor for the CDESpectrum class. Requires wn, n, and k;
+    everything else is optional, as inherited from AbsorptionSpectrum.
+
+    Parameters
+    ----------
+    wn : astropy.units.Quantity or numpy.ndarray
+      The absorption spectrum frequency data. Must either be in kayser
+      units or convertable to kayser units.
+    n : numpy.ndarray
+      The real part of the complex refractive index spectrum of the data.
+    k : numpy.ndarray
+      The imaginary part of the complex refractive index spectrum of the
+      data.
+    *args and **kwargs accept all the same inputs as AbsorptionSpectrum,
+    with the exception of wn and od, which are created from wn, n, and k.
     """
-    if len(iWn) != len(iN) or len(iK) != len(iN):
+    if len(wn) != len(n) or len(k) != len(n):
       raise RuntimeError('Input arrays have different sizes.')
-    self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=utils.cde_correct(iWn,iN,iK)
-    self.n=np.array(iN,dtype='float64')
-    self.k=np.array(iK,dtype='float64')
-    AbsorptionSpectrum.__init__(self,iWn*u.kayser,self.cabs_vol*utils.unit_od,specname=specname)
-  def plotnk(self,ax1,ax2,*args,**kwargs):
+    if type(wn) != u.quantity.Quantity:
+      wn = wn * u.kayser
+    if wn.unit != u.kayser:
+      with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+        wn=wn.to(u.kayser)
+    self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=utils.cde_correct(wn.value,n,k)
+    self.n=np.array(n,dtype='float64')
+    self.k=np.array(k,dtype='float64')
+    AbsorptionSpectrum.__init__(self,wn,self.cabs_vol*utils.unit_od,*args,**kwargs)
+  def plotnk(self,ax_n,ax_k,*args,**kwargs):
     """
-    Plot the optical constants as function of wavenumber to the two matplotlib axes given.
-    Accepts all the same args and kwargs as pyplot.plt
+    plotnk(ax_n,ax_k,*args,**kwargs)
+    
+    Plot the complex refractive indices as function of wavenumber to
+    the two given matplotlib axes.
+
+    Parameters
+    ----------
+    ax_n : matplotlib.axis
+      The axis which the plot of n will be generated in.
+    ax_k : matplotlib.axis
+      The axis which the plot of k will be generated in.
+    *args and **kwargs can be used to pass additional plotting
+    parameters to the matplotlib plotting routine, as documented
+    in the matplotlib documentation.
     """
-    ax1.plot(self.wn,self.n,*args,**kwargs)
-    ax2.plot(self.wn,self.k,*args,**kwargs)
+    ax_n.plot(self.wn,self.n,*args,**kwargs)
+    ax_k.plot(self.wn,self.k,*args,**kwargs)

@@ -76,7 +76,7 @@ class TestSpectrumCreation_absorption:
     """
     As above, but deliberately mess up the size. This should raise an RuntimeError.
     """
-    xdata = np.arange(1000,2000,10,dtype=np.float)*u.micron
+    xdata = np.arange(1000,2000,10,dtype=np.float)*u.kayser
     ydata = np.arange(0,100,1,dtype=np.float)[1:]*utils.unit_od
     with pytest.raises(RuntimeError):
       testspec = spectrum.AbsorptionSpectrum(xdata,ydata,specname='test water spectrum (absorption)')
@@ -84,7 +84,7 @@ class TestSpectrumCreation_absorption:
     """
     Make sure that lab spectrum initialisation works as expected.
     """
-    testspec = helpers.generate_labspectrum()
+    testspec = helpers.generate_cdespectrum()
     assert testspec.y.value.any
   def test_initwrongsize_lab(self):
     """
@@ -94,4 +94,4 @@ class TestSpectrumCreation_absorption:
     ndata = np.arange(0,100,1,dtype=np.float)[1:]
     kdata = np.arange(0,100,1,dtype=np.float)[2:]
     with pytest.raises(RuntimeError):
-      testspec = spectrum.LabSpectrum(xdata,ndata,kdata,specname='test water spectrum (n and k)')
+      testspec = spectrum.CDESpectrum(xdata,ndata,kdata,specname='test water spectrum (n and k)')

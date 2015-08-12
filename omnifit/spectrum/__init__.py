@@ -2,7 +2,7 @@
 
 try:
     # Not guaranteed available at setup time
-    from .spectrum import BaseSpectrum, AbsorptionSpectrum, LabSpectrum
+    from .spectrum import BaseSpectrum, AbsorptionSpectrum, CDESpectrum
 except ImportError:
     if not _ASTROPY_SETUP_:
         raise
