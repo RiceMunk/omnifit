@@ -132,4 +132,3 @@ class TestSpectrumManipulation_misc:
     cBaseliner.setlim(2800.)
     cBaseliner.setlim(2600.)
     cBaseliner.setlim(0.)
-    # windows = [[0.0,1.0e6]]

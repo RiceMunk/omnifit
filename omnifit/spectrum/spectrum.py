@@ -403,7 +403,6 @@ class BaseSpectrum:
       w=eval('np.'+window+'(window_len)')
     self.y=np.convolve(w/w.sum(),s,mode='same')
 
-  @clonable
   def baseline(self,degree=1,windows=[[0.0,1.0e6]],exclusive=False,useFile=None,overWrite=False):
     """
     Correct the y with a new baseline.
