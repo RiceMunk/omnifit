@@ -40,21 +40,21 @@ class BaseSpectrum:
 
   Attributes
   ----------
-    x : astropy.units.Quantity
-      Represents the data on the "x-axis" of the spectrum,
-      i.e. usually the wavelength or frequency
-    y : astropy.units.Quantity
-      Represents the data on the "x-axis" of the spectrum,
-      i.e. the flux or optical depth
-    dy : NoneType or float
-      The uncertainty of y. Can be given during initialisation,
-      or automatically calculated during baselining. (default=None)
-    specname : string
-      The name of the spectrum (default='Unknown spectrum')
-    baselined : bool
-      Indicates whether the spectrum has been baselined or not
-    convolved : bool
-      Indicates whether the spectrum has been put through convolution
+  x : astropy.units.Quantity
+    Represents the data on the "x-axis" of the spectrum,
+    i.e. usually the wavelength or frequency
+  y : astropy.units.Quantity
+    Represents the data on the "x-axis" of the spectrum,
+    i.e. the flux or optical depth
+  dy : NoneType or float
+    The uncertainty of y. Can be given during initialisation,
+    or automatically calculated during baselining. (default=None)
+  specname : string
+    The name of the spectrum (default='Unknown spectrum')
+  baselined : bool
+    Indicates whether the spectrum has been baselined or not
+  convolved : bool
+    Indicates whether the spectrum has been put through convolution
   """
   def __init__(self,x,y,dy=None,specname='Unknown spectrum',nondata=[]):
     """
@@ -507,9 +507,9 @@ class BaseSpectrum:
 
     Parameters
     ----------
-      x : float
-        The x axis of the entire spectrum has this number
-        added to it, effectively shifting it.
+    x : float
+      The x axis of the entire spectrum has this number
+      added to it, effectively shifting it.
     """
     self.x+=amount
 
@@ -522,14 +522,14 @@ class BaseSpectrum:
 
     Parameters
     ----------
-      checkrange : Nonetype or list
-        If this is set to a list, the first and second items on
-        the list are taken to indicate the range (in units of x axis)
-        between which the maximum is looked for.
+    checkrange : Nonetype or list
+      If this is set to a list, the first and second items on
+      the list are taken to indicate the range (in units of x axis)
+      between which the maximum is looked for.
     Returns
     -------
-      Maximum y of either the entire spectrum or, if checkrange is set,
-      the maximum y inside of the specified range.
+    Maximum y of either the entire spectrum or, if checkrange is set,
+    the maximum y inside of the specified range.
     """
     iCheckrange=np.ones_like(self.y.value,dtype=bool)
     if np.any(checkrange):
@@ -548,14 +548,14 @@ class BaseSpectrum:
 
     Parameters
     ----------
-      checkrange : Nonetype or list
-        If this is set to a list, the first and second items on
-        the list are taken to indicate the range (in units of x axis)
-        between which the minimum is looked for.
+    checkrange : Nonetype or list
+      If this is set to a list, the first and second items on
+      the list are taken to indicate the range (in units of x axis)
+      between which the minimum is looked for.
     Returns
     -------
-      Minimum y of either the entire spectrum or, if checkrange is set,
-      the minimum y inside of the specified range.
+    Minimum y of either the entire spectrum or, if checkrange is set,
+    the minimum y inside of the specified range.
     """
     iCheckrange=np.ones_like(self.y.value,dtype=bool)
     if np.any(checkrange):
@@ -576,11 +576,11 @@ class BaseSpectrum:
 
     Parameters
     ----------
-      None
+    None
 
     Returns
     -------
-      Nothing, but prints out a summary of the spectrum.
+    Nothing, but prints out a summary of the spectrum.
     """
     print '---'
     print 'Summary for spectrum '+self.name

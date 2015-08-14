@@ -30,7 +30,7 @@ class TestFitterFitting:
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
     testpars.add_many(('mul', 1.0,    True,   0.0,     None,    None))
-    testfitter.add_lab(testspec,testpars)
+    testfitter.add_empirical(testspec,testpars)
     testfitter.perform_fit()
   def test_fittheory(self):
     """
@@ -45,7 +45,7 @@ class TestFitterFitting:
                       ('lor3',    1.5, False,   None,   None,   None),
                       ('peak', 0.05,  True,   0.0,    0.1,    None),
                       ('pos',  2139.9,  True,   2129.9, 2149.9, None))
-    testfitter.add_theory('lorentzian',testpars,funcname='test lorentzian')
+    testfitter.add_analytical('lorentzian',testpars,funcname='test lorentzian')
     testpars=Parameters()
     #                (Name,    Value,  Vary,   Min,    Max,     Expr)
     testpars.add_many(
@@ -54,7 +54,7 @@ class TestFitterFitting:
                      ('w',      50.0,  True,    0.0,        None, None),
                      ('tau',    50.0,  True,    0.0,        None, None)
                      )
-    testfitter.add_theory('flipped_egh',testpars,funcname='test fEGH')
+    testfitter.add_analytical('flipped_egh',testpars,funcname='test fEGH')
     testpars=Parameters()
     #                (Name,    Value,  Vary,   Min,    Max,     Expr)
     testpars.add_many(
@@ -62,7 +62,7 @@ class TestFitterFitting:
                      ('pos',    3000., True,   3000.-200.,  3000.+200., None),
                      ('fwhm',   50.0,  True,    0.0,        None, None),
                      )
-    testfitter.add_theory('gaussian',testpars,funcname='test gaussian')
+    testfitter.add_analytical('gaussian',testpars,funcname='test gaussian')
     testfitter.perform_fit()
   def test_fittheory_convolved(self):
     """
@@ -80,7 +80,7 @@ class TestFitterFitting:
                       ('lor3',    1.5, False,   None,   None,   None),
                       ('peak', 0.05,  True,   0.0,    0.1,    None),
                       ('pos',  2139.9,  True,   2129.9, 2149.9, None))
-    testfitter1.add_theory('lorentzian',testpars,funcname='test lorentzian')
+    testfitter1.add_analytical('lorentzian',testpars,funcname='test lorentzian')
     testfitter1.perform_fit()
 
     testspec2 = testspec.subspectrum(2500.,3700.,clone=True)
@@ -94,7 +94,7 @@ class TestFitterFitting:
                      ('w',      50.0,  True,    0.0,        None, None),
                      ('tau',    50.0,  True,    0.0,        None, None)
                      )
-    testfitter2.add_theory('flipped_egh',testpars,funcname='test fEGH')
+    testfitter2.add_analytical('flipped_egh',testpars,funcname='test fEGH')
     testfitter2.perform_fit()
     testfitter3 = Fitter.fromspectrum(testspec2,psf=testpsf2)
     testpars=Parameters()
@@ -104,7 +104,7 @@ class TestFitterFitting:
                      ('pos',    3000., True,   3000.-200.,  3000.+200., None),
                      ('fwhm',   50.0,  True,    0.0,        None, None),
                      )
-    testfitter3.add_theory('gaussian',testpars,funcname='test gaussian')
+    testfitter3.add_analytical('gaussian',testpars,funcname='test gaussian')
     testfitter3.perform_fit()
 class TestFitterResults:
   def test_fitres(self):
@@ -116,7 +116,7 @@ class TestFitterResults:
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
     testpars.add_many(('mul', 1.0,    True,   0.0,     None,    None))
-    testfitter.add_lab(testspec,testpars)
+    testfitter.add_empirical(testspec,testpars)
     testfitter.perform_fit()
     res = testfitter.fit_results()
   def test_fitres_tofile(self):
@@ -128,7 +128,7 @@ class TestFitterResults:
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
     testpars.add_many(('mul', 1.0,    True,   0.0,     None,    None))
-    testfitter.add_lab(testspec,testpars)
+    testfitter.add_empirical(testspec,testpars)
     testpars=Parameters()
     #                (Name,    Value,  Vary,   Min,    Max,     Expr)
     testpars.add_many(
@@ -136,7 +136,7 @@ class TestFitterResults:
                      ('pos',    3000., True,   3000.-200.,  3000.+200., None),
                      ('fwhm',   50.0,  True,    0.0,        None, None),
                      )
-    testfitter.add_theory('gaussian',testpars,funcname='test gaussian')
+    testfitter.add_analytical('gaussian',testpars,funcname='test gaussian')
     testfitter.perform_fit()
     res = testfitter.fitresults_tofile('testfile')
   def test_plotfit(self):
@@ -148,7 +148,7 @@ class TestFitterResults:
     testpars = Parameters()
     #                 (Name,  Value,  Vary,   Min,     Max,     Expr)
     testpars.add_many(('mul', 1.0,    True,   0.0,     None,    None))
-    testfitter.add_lab(testspec,testpars)
+    testfitter.add_empirical(testspec,testpars)
     testfitter.perform_fit()
     fig = plt.figure()
     ax = fig.add_subplot(111)
