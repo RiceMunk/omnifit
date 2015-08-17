@@ -172,14 +172,14 @@ class Fitter():
     """
     perform_fit(*args,**kwargs)
 
-    Perform the least-squares fitting of all the functions in the
-    function list to the target data.
+    Uses lmfit.minimize to perform least-squares fitting of all the
+    functions in the function list to the target data.
 
     Parameters
     ----------
     *args and **kwargs are fed directly into lmfit.minimize.
     """
-    self.fitpars = self.extract_pars()
+    self.fitpars = self.__extract_pars()
     self.fitres=minimize(self.__fit_residual,self.fitpars,*args,**kwargs)
     if not(self.fitres.success):
       raise RuntimeError('Fitting failed!')
@@ -216,12 +216,12 @@ class Fitter():
       oPar=Parameters()
       cParlist = cFunc['params']
       for cPar in cParlist.values():
-        cParams=params[self.func_ident(indFunc)+cPar.name]
+        cParams=params[self.__func_ident(indFunc)+cPar.name]
         oPar.add(cPar.name,
                  value=cParams.value,vary=cParams.vary,
                  min=cParams.min,max=cParams.max,
                  expr=cParams.expr)
-      residual-=self.parse_function(oPar,cFunc)
+      residual-=self.__parse_function(oPar,cFunc)
     #Crop out not-numbers and fitting range exterior if necessary
     if np.any(fitrange):
       fitInd=np.isinf(residual)
@@ -279,8 +279,6 @@ class Fitter():
       parameters to the matplotlib plotting routine, as documented
       in the matplotlib documentation.
     """
-    if autorange:
-      ax.set_xlim(np.min(self.target_x),np.max(self.target_x))
     ax.plot(self.target_x,self.target_y,color=self.color,lw=lw[0],**kwargs)
     legList = [self.modelname]
     #totres=self.targ_y+self.fitres.residual
@@ -290,12 +288,12 @@ class Fitter():
       cParList = cFunc['params']
       cCol = cFunc['color']
       for cPar in cParList.values():
-        cFitPar=self.fitpars[self.func_ident(indFunc)+cPar.name]
+        cFitPar=self.fitpars[self.__func_ident(indFunc)+cPar.name]
         oPar.add(cPar.name,
                  value=cFitPar.value,vary=cFitPar.vary,
                  min=cFitPar.min,max=cFitPar.max,
                  expr=cFitPar.expr)
-      funcRes = self.parse_function(oPar,cFunc)
+      funcRes = self.__parse_function(oPar,cFunc)
       totRes+=funcRes
       ax.plot(self.target_x,funcRes,lw=lw[1],color=cCol,**kwargs)
       legList.append(cFunc['name'])
@@ -339,11 +337,21 @@ class Fitter():
         string "empirical". Otherwise it contains the name of the
         called analytical function.
       * DETECTION : When generating the contents of this element,
-        The method lowsigma with the detection threshold designated
+        The method is_nondet with the detection threshold designated
         by the parameter detection_threshold. The result given by
         the method is indicated here with a "True" or "False"
         depending on whether the result is considered a detection.
-
+      * CSV_COLUMN : Indicates which column in the CSV contains the
+        fitted data for this function.
+      * NUMBER_PARAMS : Inidicates how many parameters are used by
+        this function i.e. the number of PARAMETER elements.
+    Finally, contained within each FUNCTION element is a number of
+    PARAMETER elements, which list the best-fit data for each fitted
+    parameter pertaining to that function. Each PARAMETER element
+    contains the attribute "name", which tells the name of the
+    parameter. In addition the following elements are contained by
+    each PARAMETER element:
+      * VALUE : The best-fit value for this parameter.
 
     Parameters
     ----------
@@ -377,21 +385,21 @@ class Fitter():
       else:
         file_xml.write('unknown'+'\n')
       file_xml.write('</TYPE>\n')
-      file_xml.write('<DETECTION>'+str(not self.lowsigma(sigma=detection_threshold)[cFunc['name']])+'</DETECTION>\n')
+      file_xml.write('<DETECTION>'+str(not self.is_nondet(sigma=detection_threshold)[cFunc['name']])+'</DETECTION>\n')
       file_xml.write('<CSV_COLUMN>'+str(indFunc+3)+'</CSV_COLUMN>\n')
       cParlist = cFunc['params']
       file_xml.write('<NUMBER_PARAMS>'+str(len(cParlist))+'</NUMBER_PARAMS>\n')
       oPar=Parameters()
       for cPar in cParlist.values():
         file_xml.write('<PARAMETER name="'+cPar.name+'">\n')
-        cFitPar=self.fitpars[self.func_ident(indFunc)+cPar.name]
+        cFitPar=self.fitpars[self.__func_ident(indFunc)+cPar.name]
         oPar.add(cPar.name,
                  value=cFitPar.value,vary=cFitPar.vary,
                  min=cFitPar.min,max=cFitPar.max,
                  expr=cFitPar.expr)
         file_xml.write('<VALUE>'+str(cFitPar.value)+'</VALUE>\n')
         file_xml.write('</PARAMETER>\n')
-      funcRes = self.parse_function(oPar,cFunc)
+      funcRes = self.__parse_function(oPar,cFunc)
       outdata_functions = np.vstack([outdata_functions,funcRes])
       totRes += funcRes
       file_xml.write('</FUNCTION>\n')
@@ -399,11 +407,31 @@ class Fitter():
     file_xml.close()
     outdata_csv = np.vstack([outdata_csv,totRes,outdata_functions])
     np.savetxt(filename_csv,outdata_csv.transpose(),delimiter=',',header='For info, see '+filename_xml)
-  def lowsigma(self,sigma=1.0):
+  def is_nondet(self,sigma=5.0):
     """
-    Return dictionary with boolean values indicating
-    whether the fitting results are below a certain
-    sigma multiple value
+    is_nondet(sigma=5.0)
+
+    Determines whether the fitted functions in the function list can
+    be considered detections or non-detections using the given detection
+    thereshold. This is done by comparing the peak of the fitted function
+    within the fitting range to a multiple (set by the parameter sigma)
+    of the RMS noise in the target data.
+    It should be emphasized that unless the dy attribute has been set
+    during the fitter class initialisation, the results returned by this
+    method are meaningless.
+
+    Parameters
+    ----------
+    sigma : float
+      The multiplier that should be applied to the noise when comparing
+      it against the fitted function peaks.
+
+    Returns
+    -------
+    A dictionary containing boolean values for each function (with
+    their names as the keys) and the total fit (key 'total'), with
+    True indicating that the function is considered a non-detection
+    using the criteria outlined above.
     """
     minY = sigma*self.target_dy
     print self.target_dy
@@ -413,12 +441,12 @@ class Fitter():
       cParlist = cFunc['params']
       oPar=Parameters()
       for cPar in cParlist.values():
-        cFitPar=self.fitpars[self.func_ident(indFunc)+cPar.name]
+        cFitPar=self.fitpars[self.__func_ident(indFunc)+cPar.name]
         oPar.add(cPar.name,
                  value=cFitPar.value,vary=cFitPar.vary,
                  min=cFitPar.min,max=cFitPar.max,
                  expr=cFitPar.expr)
-      funcRes = self.parse_function(oPar,cFunc)
+      funcRes = self.__parse_function(oPar,cFunc)
       if np.max(funcRes) < minY:
         out[cFunc['name']] = True
       else:
@@ -430,7 +458,22 @@ class Fitter():
       out['total'] = False
     return out
   def fit_results(self):
-    """ Return all fitting results as a dictionary"""
+    """
+    fit_results()
+
+    Return the fitting results as a dictionary.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    A dictionary containing all the individual functions which were
+    fitted. The key-value combinations of this dictionary consist of
+    the function name, and its lmfit Parameters instance, which
+    contains the best-fit results.
+    """
     oResults={}
     for indFunc,cFunc in enumerate(self.funclist):
       oKeyname_base=cFunc['name']
@@ -439,41 +482,97 @@ class Fitter():
       while oResults.__contains__(oKeyname): #In case of duplicate function names
         oKeyind+=1
         oKeyname=oKeyname_base+'(duplicate '+str(oKeyind)+')'
-      oResults[cFunc['name']]=self.fit_result(indFunc)
+      oResults[cFunc['name']]=self.__fit_result(indFunc)
     return oResults
-  def fit_result(self,indFunc):
-    """ Return fitting results for a specific function """
-    oParlist=self.funclist[indFunc]['params']
+  def __fit_result(self,index):
+    """
+    __fit_result(index)
+
+    Return fitting results for a specific function in the internal
+    function list.
+
+    Parameters
+    ----------
+    index : int
+      Desired index of the function to fetch from the function lsit.
+
+    Returns
+    -------
+    An lmfit Parameters instance containing the fitting results for
+    the requested function.
+    """
+    oParlist=self.funclist[index]['params']
     for cParname in oParlist.keys():
-      coPar=self.fitpars[self.func_ident(indFunc)+cParname]
+      coPar=self.fitpars[self.__func_ident(index)+cParname]
       coPar.name=cParname
       oParlist[cParname]=coPar
     return oParlist
-  def parse_function(self,iPar,iFunc):
-    """ Parse the input function, insert parameters, return result """
-    if iFunc['type']=='empirical':
-      funcRes=muldata(iFunc['shape'],iPar['mul'].value)
-    elif iFunc['type']=='analytical':
-      funcRes=globals()[iFunc['shape']](self.target_x,iPar,self.psf)
+  def __parse_function(self,params,function):
+    """
+    __parse_function(params,function)
+
+    Parse the input function, insert parameters, return result.
+
+    Parameters
+    ----------
+    params : lmfit.parameter.Parameters
+      The lmfit Parameters instance to use as input parameters.
+    function : dict
+      A dictionary formatted in the style that the entries inside
+      funclist are formatted
+
+    Returns
+    -------
+    The result of the given function with given parameters.
+    """
+    if function['type']=='empirical':
+      funcres=muldata(function['shape'],params['mul'].value)
+    elif function['type']=='analytical':
+      funcres=globals()[function['shape']](self.target_x,params,self.psf)
     else:
       raise RuntimeError('Unknown function type!')
-    return funcRes
-  def extract_pars(self):
+    return funcres
+  def __extract_pars(self):
     """
-    Extract the paramers from the function list so they can be manipulated by the residual minimization routines.
+    __extract_pars()
+
+    Extracts the paramers from the function list and converts them to
+    a single lmfit Parameters instance, which can then be manipulated
+    by the residual minimization routines.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    An lmfit Parameters instance containing the parameters of *all* the
+    fittable functions in a single place.
     """
     oPars=Parameters()
     for indFunc,cFunc in enumerate(self.funclist):
       cParlist = cFunc['params']
       for cPar in cParlist.values():
-        oPars.add(self.func_ident(indFunc)+cPar.name,
+        oPars.add(self.__func_ident(indFunc)+cPar.name,
                   value=cPar.value,vary=cPar.vary,
                   min=cPar.min,max=cPar.max,
                   expr=cPar.expr)
     return oPars
-  def func_ident(self,indFunc):
+  def __func_ident(self,index):
     """ 
-    Return function identifier string.
-    Used with function fitting
+    __func_ident(index)
+
+    Generate a unique prefix string for a function, which can be
+    used by __extract_pars to generate its master Parameters list.
+    
+    Parameters
+    ----------
+    index : int
+      The index of the function.
+
+    Returns
+    -------
+    A unique identifier string pertaining to that function, which
+    can be used to generate unique parameter names.
     """
-    return '__Func'+str(indFunc)+'__'
+    return '__Func'+str(index)+'__'
