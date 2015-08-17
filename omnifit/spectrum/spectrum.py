@@ -490,8 +490,8 @@ class BaseSpectrum:
     if not(np.all(np.isfinite(baseline))):
       raise RuntimeError('Baseline is non-finite!')
     fixedY = self.y.value
-    for cPower in range(degree+1):
-      fixedY=fixedY-baseline[degree-cPower]*self.x.value**cPower
+    for cDegree in range(degree+1):
+      fixedY=fixedY-baseline[degree-cDegree]*self.x.value**cDegree
     self.y=fixedY*self.y.unit
     if self.dy is None:
       self.dy=np.abs(np.std(fixedY[iBaseline]))

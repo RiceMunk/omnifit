@@ -4,33 +4,69 @@ from astropy import units as u
 
 class Baseliner:
   """
-  baseliner of the objects
+  A class for interactive baseliner of spectroscopic data.
+
+  The class works by being fed a spectrum and a matplotlib axis on which
+  it should be plotted. The spectrum is then plotted to the given axis,
+  and a number of interactive options are made available to the user.
+
+  Left-clicking with the mouse for the first time starts defining a window
+  from the x-axis location of the click. A second click finishes the
+  window between the locations of the first and second click.
+  A third click will finish selecting windows, and perform the baselining.
+  Alternately, right-clicking will cancel the last left-clicking action,
+  allowing misplaced windows to be adjusted.
+
+  Two keys are also accepted:
+  Pressing "q" will cause the baselining process to be canceled,
+  effectively skipping the baselining of this spectrum.
+  Pressing "a" will allow an additional window to be defined, assuming
+  one has been defined so far (by left-clicking twice to define its 
+  boundaries).
+
+  Attributes
+  ----------
+  windows : list
+    A list of all the set windows.
   """
-  def __init__(self,ax,spec,power=1):
-    self.ax = ax
-    self.spec = spec
-    self.x = spec.x.value
-    self.y = spec.y.value
-    self.power = power
-    self.limlo=None
-    self.limhi=None
-    self.minx=np.min(self.x)
-    self.maxx=np.max(self.x)
-    self.miny=np.min(self.y)
-    self.maxy=np.max(self.y)
-    self.ax.set_xlim(self.minx,self.maxx)
-    self.ax.set_ylim(self.miny,self.maxy)
-    self.specplot,=self.ax.plot(self.x,self.y,'k-',drawstyle='steps-mid')
-    self.buttonListener = self.ax.figure.canvas.mpl_connect('button_press_event', self.mouse_press)
-    self.keyListener = self.ax.figure.canvas.mpl_connect('key_press_event', self.key_press)
+  def __init__(self,ax,spec):
+    """
+    Baseliner(ax,spec,order=1)
+
+    Initialise the Baseliner class by giving it the target axis and
+    spectrum.
+
+    Parameters
+    ----------
+    ax : matplotlib.axis
+      The matplotlib axis on which the interation will happen.
+    spec : BaseSpectrum
+      The spectrum which will be plotted as the visual reference on
+      the given axis.
+    """
+    self.__ax = ax
+    self.__spec = spec
+    self.__x = spec.x.value
+    self.__y = spec.y.value
+    self.__limlo=None
+    self.__limhi=None
+    self.__minx=np.min(self.__x)
+    self.__maxx=np.max(self.__x)
+    self.__miny=np.min(self.__y)
+    self.__maxy=np.max(self.__y)
+    self.__ax.set_xlim(self.__minx,self.__maxx)
+    self.__ax.set_ylim(self.__miny,self.__maxy)
+    self.__specplot,=self.__ax.plot(self.__x,self.__y,'k-',drawstyle='steps-mid')
+    self.__buttonListener = self.__ax.figure.canvas.mpl_connect('button_press_event', self.mouse_press)
+    self.__keyListener = self.__ax.figure.canvas.mpl_connect('key_press_event', self.key_press)
     self.windows=[]
   def key_press(self, event):
     if event.key=='q':
       self.skip()
-    if event.key=='a' and self.limlo != None and self.limhi != None:
-      self.addwindow(self.limlo,self.limhi)
-      self.ax.plot([self.limlo,self.limlo],[self.miny,self.maxy],'g-')
-      self.ax.plot([self.limhi,self.limhi],[self.miny,self.maxy],'g-')
+    if event.key=='a' and self.__limlo != None and self.__limhi != None:
+      self.addwindow(self.__limlo,self.__limhi)
+      self.__ax.plot([self.__limlo,self.__limlo],[self.__miny,self.__maxy],'g-')
+      self.__ax.plot([self.__limhi,self.__limhi],[self.__miny,self.__maxy],'g-')
       self.remlim()
       self.remlim()
       print 'Window added. Ready to receive another one.'
@@ -46,26 +82,26 @@ class Baseliner:
   def skip(self):
     plt.close()
   def setlim(self,i_x):
-    if self.limlo==None:
-      self.limlo=i_x
-      self.limloplot,=self.ax.plot([i_x,i_x],[self.miny,self.maxy],'b-')
-      self.ax.figure.canvas.draw()
-    elif self.limhi==None:
-      self.limhi=i_x
-      self.limhiplot,=self.ax.plot([i_x,i_x],[self.miny,self.maxy],'b-')
-      self.ax.figure.canvas.draw()
+    if self.__limlo==None:
+      self.__limlo=i_x
+      self.__limloplot,=self.__ax.plot([i_x,i_x],[self.__miny,self.__maxy],'b-')
+      self.__ax.figure.canvas.draw()
+    elif self.__limhi==None:
+      self.__limhi=i_x
+      self.__limhiplot,=self.__ax.plot([i_x,i_x],[self.__miny,self.__maxy],'b-')
+      self.__ax.figure.canvas.draw()
       print 'Ready for finalising. Press once more to do so, or press a to add another window.'
     else:
       self.finalise()
   def remlim(self):
-    if self.limhi!=None:
-      self.limhi=None
-      self.limhiplot.set_ydata([self.miny,self.miny])
-      self.ax.figure.canvas.draw()
-    elif self.limlo!=None:
-      self.limlo=None
-      self.limloplot.set_ydata([self.miny,self.miny])
-      self.ax.figure.canvas.draw()
+    if self.__limhi!=None:
+      self.__limhi=None
+      self.__limhiplot.set_ydata([self.__miny,self.__miny])
+      self.__ax.figure.canvas.draw()
+    elif self.__limlo!=None:
+      self.__limlo=None
+      self.__limloplot.set_ydata([self.__miny,self.__miny])
+      self.__ax.figure.canvas.draw()
     else:
       print 'No limits to cancel.'
   def addwindow(self,limlo,limhi):
@@ -73,10 +109,10 @@ class Baseliner:
       limlo,limhi = limhi,limlo
     self.windows.append([limlo,limhi])
   def finalise(self):
-    self.addwindow(self.limlo,self.limhi)
-    self.ax.figure.canvas.mpl_disconnect(self.buttonListener)
-    self.ax.figure.canvas.mpl_disconnect(self.keyListener)
-    plt.close(self.ax.figure)
+    self.addwindow(self.__limlo,self.__limhi)
+    self.__ax.figure.canvas.mpl_disconnect(self.__buttonListener)
+    self.__ax.figure.canvas.mpl_disconnect(self.__keyListener)
+    plt.close(self.__ax.figure)
 
 #Units definitions
 unit_od = u.def_unit('optical depth',doc='Optical depth of radiation')
@@ -87,7 +123,31 @@ unit_opticaldepth = unit_od
 #--------------------------
 def cde_correct(wn,n,k):
   """
-  CDE correction to  n,k data
+  cde_correct(wn,n,k)
+
+  Generate a CDE-corrected spectrum from a complex refractive index
+  spectrum.
+
+  Parameters
+  ----------
+  wn : numpy.ndarray
+    The frequency data of the input spectrum, in reciprocal
+    wavenumbers (cm^-1).
+  n : numpy.ndarray
+    The real component of the complex refractive index spectrum.
+  k : numpy.ndarray
+    The imaginary component of the complex refractive index spectrum.
+
+  Returns
+  -------
+  A list containing the following numpy arrays, in given order:
+    * The spectrum of the absorption cross section of the simulated grain.
+    * The spectrum of the absorption cross section of the simulated grain,
+      normalized by the volume distribution of the grain. This parameter
+      is the equivalent of optical depth in most cases.
+    * The spectrum of the scattering cross section of the simulated grain,
+      normalized by the volume distribution of the grain.
+    * The spectrum of the total cross section of the simulated grain.    
   """
   wl=1.e4/wn
   m=np.vectorize(complex)(n,k)

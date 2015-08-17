@@ -45,7 +45,7 @@ class TestFitterFitting:
                       ('lor3',    1.5, False,   None,   None,   None),
                       ('peak', 0.05,  True,   0.0,    0.1,    None),
                       ('pos',  2139.9,  True,   2129.9, 2149.9, None))
-    testfitter.add_analytical('lorentzian',testpars,funcname='test lorentzian')
+    testfitter.add_analytical('cde_lorentzian',testpars,funcname='test lorentzian')
     testpars=Parameters()
     #                (Name,    Value,  Vary,   Min,    Max,     Expr)
     testpars.add_many(
@@ -80,7 +80,7 @@ class TestFitterFitting:
                       ('lor3',    1.5, False,   None,   None,   None),
                       ('peak', 0.05,  True,   0.0,    0.1,    None),
                       ('pos',  2139.9,  True,   2129.9, 2149.9, None))
-    testfitter1.add_analytical('lorentzian',testpars,funcname='test lorentzian')
+    testfitter1.add_analytical('cde_lorentzian',testpars,funcname='test lorentzian')
     testfitter1.perform_fit()
 
     testspec2 = testspec.subspectrum(2500.,3700.,clone=True)
