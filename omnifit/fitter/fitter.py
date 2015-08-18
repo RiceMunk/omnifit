@@ -37,6 +37,7 @@ class Fitter():
   funclist : list
     A list containing all the fittable functions. Each list entry
     is a dictionary containing the following keys and values:
+
       * 'name' : A human-readable name for the function being fitted,
         in string format.
       * 'color' : A string inidcating the desired plotting color of
@@ -51,6 +52,7 @@ class Fitter():
         spectrum, this is the y-axis data from the spectrum.
       * 'params' : an lmfit.parameter instance containing the fitting
         parameters appropriate to the data being fitted.
+
   fitpars : lmfit.parameter.Parameters
     This is where the fitting parameters are stored during and after
     minimization.
@@ -321,6 +323,7 @@ class Fitter():
     information about the fitted data and the fit results which are not
     easily representable in a csv-formatted file. This data is
     formatted using the following XML elements:
+
       * INFO : Contains all the other elements described below, and has
         the attribute "file", which is the name of the csv file pair of
         this xml file.
@@ -330,9 +333,11 @@ class Fitter():
       * RMS_DATA : The uncertainty of the data.
       * NUMBER_FUNCTIONS : An integer indicating how many functions
         have been fitted to the total data.
+
     In addition to the above elements, each fitted function has its own
     element, designated FUNCTION, having the attribute "name" which is
     the name of the function. FUNCTION contains the following elements:
+
       * TYPE : If the function is an empirical one, this contains the
         string "empirical". Otherwise it contains the name of the
         called analytical function.
@@ -345,23 +350,25 @@ class Fitter():
         fitted data for this function.
       * NUMBER_PARAMS : Inidicates how many parameters are used by
         this function i.e. the number of PARAMETER elements.
+
     Finally, contained within each FUNCTION element is a number of
     PARAMETER elements, which list the best-fit data for each fitted
     parameter pertaining to that function. Each PARAMETER element
     contains the attribute "name", which tells the name of the
     parameter. In addition the following elements are contained by
     each PARAMETER element:
+
       * VALUE : The best-fit value for this parameter.
 
     Parameters
     ----------
-      filename : string
-        The extensionless version of the desired filename which the
-        data should be exported to. As a result the files
-        "filename.csv" and "filename.xml" are created.
-      detection_threshold : float
-        The threshold of detection to be used in determining whether
-        the value contained by the DETECTION element is true or not.
+    filename : string
+      The extensionless version of the desired filename which the
+      data should be exported to. As a result the files
+      "filename.csv" and "filename.xml" are created.
+    detection_threshold : float
+      The threshold of detection to be used in determining whether
+      the value contained by the DETECTION element is true or not.
     """
     filename_csv = filename+'.csv'
     filename_xml = filename+'.xml'

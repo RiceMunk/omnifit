@@ -437,11 +437,13 @@ class BaseSpectrum:
       Degree of order on the polynomial to fit.
     windows : list or string
       The windows can be designated in two different ways:
+
       * as a list of x axis coordinates, e.g. 
         [[200,250],[300,350]] for two windows
         of 200 to 250, and 300 to 350.
       * in an interactive matplotlib plotting window, by
         setting windows to 'manual'
+
       In the former case, no further input is required from
       the user after calling baseline, but in the latter case
       the baseliner class is invoked from omnifit.utils.
