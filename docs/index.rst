@@ -25,9 +25,9 @@ Omnifit Package Documentation
 
 Welcome to the Omnifit documentation!
 
-************
-Introduction
-************
+***********
+User manual
+***********
 .. only:: html
 
     :doc:`whatsnew/0.1`

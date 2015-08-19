@@ -14,27 +14,27 @@ class Fitter():
 
   Attributes
   ----------
-  target_x : numpy.ndarray
+  target_x : `numpy.ndarray`
     The x axis of the target spectrum, e.g. the wavelength.
-  target_y : numpy.ndarray
+  target_y : `numpy.ndarray`
     The y axis of the target spectrum, e.g. the optical depth.
-  target_dy : float
+  target_dy : `float`
     A single number expressing the average uncertainty of the y
     axis data.
-  modelname : string
+  modelname : `string`
     A human-readable name for the model being fitted.
-  psf : Nonetype or numpy.ndarray or astropy.convolution.Kernel
+  psf : `Nonetype`, `numpy.ndarray`, or `astropy.convolution.Kernel`
     If set, this attribute can be used to give a kernel which should
     be used to convolve all the fitted data with.
-  fitrange : Nonetype or list
+  fitrange : `Nonetype` or `list`
     If set, this specifies the inclusive limits to which
     the fitting should be performed in x axis coordinates.
     For example a fitrange of [[200,250],[300,350]] sets
     two fitting windows of 200 to 250, and 300 to 350.
-  color : string
+  color : `string`
     A string inidcating the desired plotting color of the target
     data, in a format understandable by matplotlib.
-  funclist : list
+  funclist : `list`
     A list containing all the fittable functions. Each list entry
     is a dictionary containing the following keys and values:
 
@@ -50,13 +50,13 @@ class Fitter():
         of an analytical function, this is a string indicating the
         callable name of the function. In the case of an empirical
         spectrum, this is the y-axis data from the spectrum.
-      * 'params' : an lmfit.parameter instance containing the fitting
+      * 'params' : an lmfit `Parameters` instance containing the fitting
         parameters appropriate to the data being fitted.
 
-  fitpars : lmfit.parameter.Parameters
+  fitpars : `Parameters`
     This is where the fitting parameters are stored during and after
     minimization.
-  fitres : lmfit.minimizer.Minimizer
+  fitres : `Minimizer`
     The fitting results are stored in this class, as documented in
     lmfit.
   """
@@ -69,24 +69,24 @@ class Fitter():
 
     Parameters
     ----------
-    x : numpy.ndarray
+    x : `numpy.ndarray`
       The x axis of the target spectrum, e.g. the wavelength.
-    y : numpy.ndarray
+    y : `numpy.ndarray`
       The y axis of the target spectrum, e.g. the optical depth.
-    dy : float
+    dy : `float`, optional
       A single number expressing the average uncertainty of the y
       axis data.
-    modelname : string
+    modelname : `string`, optional
       A human-readable name for the model being fitted.
-    psf : Nonetype or numpy.ndarray or astropy.convolution.Kernel
+    psf : Nonetype or numpy.ndarray or astropy.convolution.Kernel, optional
       This attribute can be used to give a kernel which should be
       used to convolve all the fitted data with.
-    fitrange : Nonetype or list
+    fitrange : `Nonetype` or `list`, optional
       If set, this specifies the inclusive limits to which
       the fitting should be performed in x axis coordinates.
       For example a fitrange of [[200,250],[300,350]] sets
       two fitting windows of 200 to 250, and 300 to 350.
-    color : string
+    color : `string`, optional
       A string inidcating the desired plotting color of the target
       data, in a format understandable by matplotlib.
     """
@@ -109,10 +109,14 @@ class Fitter():
     a spectrum. Extracted data from the spectrum are the x, y,
     and (if the spectrum has been baselined) dy parameters.
 
-    Attributes
+    Parameters
     ----------
-    spectrum : spectrum.BaseSpectrum
+    spectrum : `omnifit.spectrum.BaseSpectrum` or its child class
       The input spectrum.
+    **kwargs : Arguments, optional
+      Additional initialisation arguments can be passed to `Fitter`
+      using this. Note that x and y (and dy, if applicable) are defined
+      using the data contained in the input spectrum.
     """
     if spectrum.baselined:
       return cls(spectrum.x.value,spectrum.y.value,spectrum.dy,**kwargs)
@@ -127,17 +131,17 @@ class Fitter():
 
     Parameters
     ----------
-    spectrum : spectrum.BaseSpectrum
+    spectrum : `spectrum.BaseSpectrum`
       The input spectrum.
-    params : lmfit.parameter.Parameters
+    params : `Parameters`
       The input parameters. Specifically this must contain
       the 'mul' parameter, which indicates what value the
       spectrum will be multiplied with during fitting.
-    funcname : Nonetype or string
+    funcname : `Nonetype` or `string`, optional
       A human-readable name for the data being fitted.
       If this is left as None, the name of the spectrum will
       be used.
-    color : string
+    color : `string`, optional
       A string inidcating the desired plotting color of the
       data, in a format understandable by matplotlib.
     """
@@ -155,34 +159,35 @@ class Fitter():
 
     Parameters
     ----------
-    shape : string
+    shape : `string`
       The callable name of the function to be fitted.
-    params : lmfit.parameter.Parameters
+    params : `Parameters`
       The input parameters. These should be formatted in a way that
       the function defined by shape can understand them, and that
       function should be created in such a way that it can make use
       of lmfit parameters.
-    funcname : string
+    funcname : `string`, optional
       A human-readable name for the data being fitted.
-    color : string
+    color : `string`, optional
       A string inidcating the desired plotting color of the
       data, in a format understandable by matplotlib.
     """
     self.funclist.append({'type':'analytical','shape':shape,'params':params,'name':funcname,'color':color})
 
-  def perform_fit(self,*args,**kwargs):
+  def perform_fit(self,**kwargs):
     """
-    perform_fit(*args,**kwargs)
+    perform_fit(**kwargs)
 
-    Uses lmfit.minimize to perform least-squares fitting of all the
+    Uses `minimize` in lmfit to perform least-squares fitting of all the
     functions in the function list to the target data.
 
     Parameters
     ----------
-    *args and **kwargs are fed directly into lmfit.minimize.
+    **kwargs : Arguments, optional
+      This can be used to give additional arguments for `minimize`.
     """
     self.fitpars = self.__extract_pars()
-    self.fitres=minimize(self.__fit_residual,self.fitpars,*args,**kwargs)
+    self.fitres=minimize(self.__fit_residual,self.fitpars,**kwargs)
     if not(self.fitres.success):
       raise RuntimeError('Fitting failed!')
   def __fit_residual(self,params,custrange=None):
@@ -196,9 +201,9 @@ class Fitter():
 
     Parameters
     ----------
-    params : lmfit.parameter.Parameters
+    params : `Parameters`
       The parameters used for calculating the residual.
-    custrange : Nonetype or list
+    custrange : `Nonetype` or `list`, optional
       If set, this specifies the inclusive range within which
       the residual is calculated. Otherwise the fitting range
       specified during Initialisation is used.
@@ -243,7 +248,7 @@ class Fitter():
 
     Parameters
     ----------
-    checkrange : Nonetype or list
+    checkrange : `Nonetype` or `list`, optional
       If set, this specifies the inclusive range within which
       the chi squared value is calculated. Otherwise the fitting 
       range specified during Initialisation is used.
@@ -264,22 +269,23 @@ class Fitter():
 
     Parameters
     ----------
-    axis : matplotlib.axis
+    axis : `matplotlib.axis`
       The axis which the plot will be generated in.
-    lw : list
+    lw : `list`, optional
       This list of 3 numbers specifies the line widths of the target
       spectrum, the fitted functions, and the total fit, respectively.
-    color_total : string
+    color_total : `string`, optional
       A string inidcating the desired plotting color of the total sum
       of the fit results, in a format understandable by matplotlib.
       The colors of the target spectrum and the fitted functions are
       specified during their initialisation and addition.
-    legend : bool
+    legend : `bool`, optional
       If set to True, a legend is automatically created using the
       target spectrum and fitted function names.
-    **kwargs can be used to pass additional plotting
-      parameters to the matplotlib plotting routine, as documented
-      in the matplotlib documentation.
+    **kwargs : Arguments, optional
+      This can be used to pass additional arguments
+      to `matplotlib.pyplot.plot`, which is used by this 
+      method for its plotting.
     """
     ax.plot(self.target_x,self.target_y,color=self.color,lw=lw[0],**kwargs)
     legList = [self.modelname]
@@ -303,7 +309,7 @@ class Fitter():
     ax.plot(self.target_x,totRes,lw=lw[2],color=color_total,**kwargs)
     if legend:
       ax.legend(legList,shadow=True)
-  def fitresults_tofile(self,filename,detection_threshold=2.0):
+  def fitresults_tofile(self,filename,detection_threshold=5.0):
     """
     fitresults_tofile(filename)
 
@@ -362,11 +368,11 @@ class Fitter():
 
     Parameters
     ----------
-    filename : string
+    filename : `string`
       The extensionless version of the desired filename which the
       data should be exported to. As a result the files
       "filename.csv" and "filename.xml" are created.
-    detection_threshold : float
+    detection_threshold : `float`, optional
       The threshold of detection to be used in determining whether
       the value contained by the DETECTION element is true or not.
     """
@@ -429,7 +435,7 @@ class Fitter():
 
     Parameters
     ----------
-    sigma : float
+    sigma : `float`, optional
       The multiplier that should be applied to the noise when comparing
       it against the fitted function peaks.
 
@@ -500,13 +506,13 @@ class Fitter():
 
     Parameters
     ----------
-    index : int
+    index : `int`
       Desired index of the function to fetch from the function lsit.
 
     Returns
     -------
-    An lmfit Parameters instance containing the fitting results for
-    the requested function.
+    An `Parameters` instance containing the fitting
+    results for the desired function.
     """
     oParlist=self.funclist[index]['params']
     for cParname in oParlist.keys():
@@ -522,9 +528,9 @@ class Fitter():
 
     Parameters
     ----------
-    params : lmfit.parameter.Parameters
-      The lmfit Parameters instance to use as input parameters.
-    function : dict
+    params : `Parameters`
+      The lmfit `Parameters` instance to use as input parameters.
+    function : `dict`
       A dictionary formatted in the style that the entries inside
       funclist are formatted
 
@@ -553,8 +559,8 @@ class Fitter():
 
     Returns
     -------
-    An lmfit Parameters instance containing the parameters of *all* the
-    fittable functions in a single place.
+    An lmfit `Parameters` instance containing the parameters
+    of *all* the fittable functions in a single place.
     """
     oPars=Parameters()
     for indFunc,cFunc in enumerate(self.funclist):
@@ -570,11 +576,11 @@ class Fitter():
     __func_ident(index)
 
     Generate a unique prefix string for a function, which can be
-    used by __extract_pars to generate its master Parameters list.
+    used by `__extract_pars` to generate its master Parameters list.
     
     Parameters
     ----------
-    index : int
+    index : `int`
       The index of the function.
 
     Returns

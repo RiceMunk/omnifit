@@ -26,21 +26,21 @@ class Baseliner:
 
   Attributes
   ----------
-  windows : list
+  windows : `list`
     A list of all the set windows.
   """
   def __init__(self,ax,spec):
     """
     Baseliner(ax,spec,order=1)
 
-    Initialise the Baseliner class by giving it the target axis and
+    Initialise the `Baseliner` class by giving it the target axis and
     spectrum.
 
     Parameters
     ----------
-    ax : matplotlib.axis
+    ax : `matplotlib.axis`
       The matplotlib axis on which the interation will happen.
-    spec : BaseSpectrum
+    spec : `omnifit.spectrum.BaseSpectrum`
       The spectrum which will be plotted as the visual reference on
       the given axis.
     """
@@ -57,31 +57,31 @@ class Baseliner:
     self.__ax.set_xlim(self.__minx,self.__maxx)
     self.__ax.set_ylim(self.__miny,self.__maxy)
     self.__specplot,=self.__ax.plot(self.__x,self.__y,'k-',drawstyle='steps-mid')
-    self.__buttonListener = self.__ax.figure.canvas.mpl_connect('button_press_event', self.mouse_press)
-    self.__keyListener = self.__ax.figure.canvas.mpl_connect('key_press_event', self.key_press)
+    self.__buttonListener = self.__ax.figure.canvas.mpl_connect('button_press_event', self.__mouse_press)
+    self.__keyListener = self.__ax.figure.canvas.mpl_connect('key_press_event', self.__key_press)
     self.windows=[]
-  def key_press(self, event):
+  def __key_press(self, event):
     if event.key=='q':
-      self.skip()
+      self.__skip()
     if event.key=='a' and self.__limlo != None and self.__limhi != None:
-      self.addwindow(self.__limlo,self.__limhi)
+      self.__addwindow(self.__limlo,self.__limhi)
       self.__ax.plot([self.__limlo,self.__limlo],[self.__miny,self.__maxy],'g-')
       self.__ax.plot([self.__limhi,self.__limhi],[self.__miny,self.__maxy],'g-')
-      self.remlim()
-      self.remlim()
+      self.__remlim()
+      self.__remlim()
       print 'Window added. Ready to receive another one.'
     else:
       return
-  def mouse_press(self, event):
+  def __mouse_press(self, event):
     if event.button==1:
-      self.setlim(event.xdata)
+      self.__setlim(event.xdata)
     elif event.button==2:
       return
     elif event.button==3:
-      self.remlim()
-  def skip(self):
+      self.__remlim()
+  def __skip(self):
     plt.close()
-  def setlim(self,i_x):
+  def __setlim(self,i_x):
     if self.__limlo==None:
       self.__limlo=i_x
       self.__limloplot,=self.__ax.plot([i_x,i_x],[self.__miny,self.__maxy],'b-')
@@ -92,8 +92,8 @@ class Baseliner:
       self.__ax.figure.canvas.draw()
       print 'Ready for finalising. Press once more to do so, or press a to add another window.'
     else:
-      self.finalise()
-  def remlim(self):
+      self.__finalise()
+  def __remlim(self):
     if self.__limhi!=None:
       self.__limhi=None
       self.__limhiplot.set_ydata([self.__miny,self.__miny])
@@ -104,12 +104,12 @@ class Baseliner:
       self.__ax.figure.canvas.draw()
     else:
       print 'No limits to cancel.'
-  def addwindow(self,limlo,limhi):
+  def __addwindow(self,limlo,limhi):
     if limhi < limlo:
       limlo,limhi = limhi,limlo
     self.windows.append([limlo,limhi])
-  def finalise(self):
-    self.addwindow(self.__limlo,self.__limhi)
+  def __finalise(self):
+    self.__addwindow(self.__limlo,self.__limhi)
     self.__ax.figure.canvas.mpl_disconnect(self.__buttonListener)
     self.__ax.figure.canvas.mpl_disconnect(self.__keyListener)
     plt.close(self.__ax.figure)
@@ -130,12 +130,12 @@ def cde_correct(wn,n,k):
 
   Parameters
   ----------
-  wn : numpy.ndarray
+  wn : `numpy.ndarray`
     The frequency data of the input spectrum, in reciprocal
     wavenumbers (cm^-1).
-  n : numpy.ndarray
+  n : `numpy.ndarray`
     The real component of the complex refractive index spectrum.
-  k : numpy.ndarray
+  k : `numpy.ndarray`
     The imaginary component of the complex refractive index spectrum.
 
   Returns
