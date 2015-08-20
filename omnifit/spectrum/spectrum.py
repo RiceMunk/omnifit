@@ -606,7 +606,8 @@ class AbsorptionSpectrum(BaseSpectrum):
   The functionality of this class is otherwise identical to `BaseSpectrum`,
   except it contains an additional method for plotting the optical depth
   spectrum in either microns and kayser units, both of which it stores
-  as additional attributes.
+  as additional attributes. Upon initialisation it uses the kayser units
+  as its x axis units.
 
   Attributes
   -----------
@@ -631,7 +632,9 @@ class AbsorptionSpectrum(BaseSpectrum):
     wn : `astropy.units.Quantity`
       The absorption spectrum frequency data. Unlike `BaseSpectrum`,
       the initialisation of `AbsorptionSpectrum` requires this to be
-      in the specific units of reciprocal wavenumber.
+      in the specific units of reciprocal wavenumber. However, if it is
+      in a quantity convertable to kayser, conversion will be attempted
+      while a warning is given to notify the user of this.
     od : `astropy.units.Quantity`
       The absorption spectrum optical depth data. Unlike `BaseSpectrum`,
       the initialisation of `AbsorptionSpectrum` requires this to be
@@ -645,7 +648,9 @@ class AbsorptionSpectrum(BaseSpectrum):
     if type(wn) != u.quantity.Quantity:
       raise u.UnitsError('Input wn is not an astropy quantity.')
     if wn.unit != u.kayser:
-      raise u.UnitsError('Input wn is not in kayser units.')
+      warnings.warn('Input wn is not in kayser units. Converting...',RuntimeWarning)
+      with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+        wn=wn.to(u.kayser)
     if type(od) != u.quantity.Quantity:
       raise u.UnitsError('Input od is not an astropy quantity.')
     if od.unit != utils.unit_od:
@@ -722,8 +727,10 @@ class CDESpectrum(AbsorptionSpectrum):
     Parameters
     ----------
     wn : `astropy.units.Quantity` or `numpy.ndarray`
-      The absorption spectrum frequency data. Must either be in kayser
-      units or convertable to kayser units.
+      The absorption spectrum frequency data. If given as
+      `astropy.units.Quantity`, they must either be in kayser (reciprocal
+      wavenumbers) or convertable to kayser. If given as `numpy.ndarray`,
+      they are assumed to be in kayser.
     n : `numpy.ndarray`
       The real part of the complex refractive index spectrum of the data.
     k : `numpy.ndarray`
