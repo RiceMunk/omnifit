@@ -1,9 +1,6 @@
 Examples
 ========
-This page lists examples of likely ways to make use of Omnifit, and 
-
-CDE correction
---------------
+This page lists examples of likely ways to make use of Omnifit.
 
 Fitting from start to finish
 ----------------------------
@@ -17,16 +14,16 @@ The empirical spectrum being fitted to this, by contrast, is assumed to be a fil
   :linenos:
 
   import numpy as np
-  obs_wl,obs_od = np.loadtxt('./obsdata.dat',dtype=float,usecols=(0,1))
-  lab_wn,lab_n,lab_k = np.loadtxt('./labdata.dat',dtype=float,usecols=(0,1,2))
   from omnifit.spectrum import AbsorptionSpectrum,CDEspectrum
   from omnifit.utils import unit_od
   import astropy.units as u
+  from omnifit.fitter import Fitter
+  from lmfit import Parameters
+  obs_wl,obs_od = np.loadtxt('./obsdata.dat',dtype=float,usecols=(0,1))
+  lab_wn,lab_n,lab_k = np.loadtxt('./labdata.dat',dtype=float,usecols=(0,1,2))
   obs_spec = AbsorptionSpectrum(obs_wl*u.micron,obs_od*unit_od,specname='Observed data')
   lab_spec = CDESpectrum(lab_wn,lab_n,lab_k,specname='Laboratory data')
   interp_lab = lab_spec.interpolate(obs_spec)
-  from omnifit.fitter import Fitter
-  from lmfit import Parameters
   fitter_example = Fitter.fromspectrum(obs_spec,modelname='Example fit')
   lab_par = Parameters()
   lab_par.add('mul',value=0.5,min=0.0)
@@ -43,4 +40,17 @@ The empirical spectrum being fitted to this, by contrast, is assumed to be a fil
   fitter_example.plot_fitresults(ax)
   plt.savefig('example_fitres.pdf')
 
-In this, line 1-3 imports omnifit, numpy and matplotlib. Strictly speaking, importing numpy and matplotlib is not necessary because Omnifit already imports them, but this way we prevent any ambiguity when calling either package in this example session. Lines 4 and 5 involve reading the observational and laboratory datas into their respective arrays. On the observational data file, columns 1 and 2 contain the wavelength and optical depth, respectively. For the laboratory data file columns 1-3 contain the frequency (in cm^-1), and n and k values respectively. Line 6 initializes the observational spectrum in the spectrum class, while line 7 calculates a CDE-corrected spectrum of the laboratory data. Line 8 creates a version of the laboratory spectrum which is interpolated to match the spectral resolution of the observation spectrum. Line 9 initializes the fitter class with the x (wavenumber) and y (optical depth) data of the observational spectrum. Lines 10-13 add the interpolated laboratory spectrum to the collection of fittable functions with an initial guess of the multiplier at 0.5. Lines 14-20 add a Gaussian to the function collection, with initial guesses of 2.5, 3000.0, and 50.0 for the peak, centroid position and full width half-maximum of the function, and with a constraint on the centroid position which permits it to deviate only up to 200 cm^-1 from the initial guess. Line 21 performs the actual fit, and line 22 saves the fit results to two files starting with "example_fitres". The files created are "example_fitres.xml" which contains various information (such as the best-fit parameters) and "example_fitres.csv" which contains the x,y information of the target data and the best-fitted data each separated to their own columns. Finally, lines 23-27 plot and save the fit results to the file "example_fitres.pdf".
+In this, line 1-6 import the various components needed for the full fit.
+Lines 7 and 8 read the spectrum data from the two files which contain the target spectrum and the complex refractive index spectrum.
+
+Line 9 initialises the target spectrum as an absorption spectrum using the data read in line 7, and line 10 initialises the CDE-corrected spectrum using the data read in line 8.
+
+Line 11 interpolates the data in the CDE-corrected spectrum to match the spectral resolution of the fitting target spectrum, which is also used to initialise the fitter on line 12.
+
+Lines 13 and 14 prepare the fitting parameters for an empirical data, containing only an initial guess (0.5) for the best-fit multiplier. These parameters and the data to be fitted are then given to the fitter on line 15.
+
+Similarly lines 16-19 involve setting up the initial guess and constrains on the parameters for a Gaussian fit, which are then given to the fitter (with instruction to try and fit a Gaussian) on line 20.
+
+Line 21 is used to make the fitting itself happen. After it is done, the command on line 22 can be called to produce two files, example_fitres.csv and example_fitres.xml, which contain all the information on the fit results, as documented in `omnifit.fitter.Fitter.fitresults_tofile`.
+
+Finally, lines 23-26 are used to produce a plot of the fit results in the file example_fitres.pdf.

@@ -1,5 +1,7 @@
 .. Much of what is found below has been shamelessly copied from the astropy documentation layout.
 
+:tocdepth: 2
+
 .. the "raw" directive below is used to hide the title in favor of just the logo being visible
 .. raw:: html
 
@@ -28,35 +30,22 @@ Welcome to the Omnifit documentation!
 ***********
 User manual
 ***********
-.. only:: html
+:doc:`changelog_link`
+---------------------
 
-    :doc:`whatsnew/0.1`
-    -------------------
-
-.. only:: latex
-
-    .. toctree::
-       :maxdepth: 1
-
-       whatsnew/0.1
-
-**Omnifit basics**
+Omnifit basics
+--------------
 
 .. toctree::
   :maxdepth: 1
 
   overview
+  installation
   examples
 
 *************
 Reference/API
 *************
-Spectrum
-========
   .. automodapi:: omnifit.spectrum
-Fitter
-========
   .. automodapi:: omnifit.fitter
-Utils
-=====
   .. automodapi:: omnifit.utils
