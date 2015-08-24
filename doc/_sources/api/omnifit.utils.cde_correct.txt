@@ -1,0 +1,8 @@
+
+
+cde_correct
+=========================
+
+.. currentmodule:: omnifit.utils
+
+.. autofunction:: cde_correct

@@ -1,0 +1,29 @@
+
+
+Baseliner
+=======================
+
+.. currentmodule:: omnifit.utils
+
+.. autoclass:: Baseliner
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

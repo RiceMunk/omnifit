@@ -1,0 +1,44 @@
+
+
+CDESpectrum
+============================
+
+.. currentmodule:: omnifit.spectrum
+
+.. autoclass:: CDESpectrum
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~CDESpectrum.plotnk
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: plotnk
+
+   
+   

@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Baseliner &mdash; omnifit v0.1.dev34</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1.dev34',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="omnifit v0.1.dev34" href="../index.html" />
+    <link rel="prev" title="cde_correct" href="omnifit.utils.cde_correct.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body role="document">
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="omnifit.utils.cde_correct.html" title="cde_correct">
+	  &laquo; previous
+	</a>
+	
+      </li>
+      <li>
+	<a href="../index.html">omnifit v0.1.dev34</a>
+	 &raquo;
+      </li>
+      
+      <li>Baseliner</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="baseliner">
+<h1>Baseliner<a class="headerlink" href="#baseliner" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="omnifit.utils.Baseliner">
+<em class="property">class </em><code class="descclassname">omnifit.utils.</code><code class="descname">Baseliner</code><span class="sig-paren">(</span><em>ax</em>, <em>spec</em>, <em>order=1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/utils/utils.html#Baseliner"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/master/omnifit/utils/utils.py#L5" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.utils.Baseliner" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class for interactive baseliner of spectroscopic data.</p>
+<p>The class works by being fed a spectrum and a matplotlib axis on which
+it should be plotted. The spectrum is then plotted to the given axis,
+and a number of interactive options are made available to the user.</p>
+<p>Left-clicking with the mouse for the first time starts defining a window
+from the x-axis location of the click. A second click finishes the
+window between the locations of the first and second click.
+A third click will finish selecting windows, and perform the baselining.
+Alternately, right-clicking will cancel the last left-clicking action,
+allowing misplaced windows to be adjusted.</p>
+<p>Two keys are also accepted:
+Pressing &#8220;q&#8221; will cause the baselining process to be canceled,
+effectively skipping the baselining of this spectrum.
+Pressing &#8220;a&#8221; will allow an additional window to be defined, assuming
+one has been defined so far (by left-clicking twice to define its 
+boundaries).</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>windows</td>
+<td>(<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">list</span></code></a>) A list of all the set windows.</td>
+</tr>
+</tbody>
+</table>
+<p>Initialise the <a class="reference internal" href="#omnifit.utils.Baseliner" title="omnifit.utils.Baseliner"><code class="xref py py-obj docutils literal"><span class="pre">Baseliner</span></code></a> class by giving it the target axis and
+spectrum.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax</strong> : <a class="reference external" href="http://matplotlib.org/api/axis_api.html#module-matplotlib.axis" title="(in Matplotlib v1.4.3)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.axis</span></code></a></p>
+<blockquote>
+<div><p>The matplotlib axis on which the interation will happen.</p>
+</div></blockquote>
+<p><strong>spec</strong> : <a class="reference internal" href="omnifit.spectrum.BaseSpectrum.html#omnifit.spectrum.BaseSpectrum" title="omnifit.spectrum.BaseSpectrum"><code class="xref py py-obj docutils literal"><span class="pre">omnifit.spectrum.BaseSpectrum</span></code></a></p>
+<blockquote class="last">
+<div><p>The spectrum which will be plotted as the visual reference on
+the given axis.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Baseliner</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/RiceMunk/omnifit/tree/master/docs/api/omnifit.utils.Baseliner.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/omnifit.utils.Baseliner.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2015, Aleksi Suutarinen.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
+    Last built 24 Aug 2015. <br/>
+  </p>
+</footer>
+  </body>
+</html>
