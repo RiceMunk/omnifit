@@ -163,3 +163,16 @@ def cde_correct(wn,n,k):
     cscat_vol=np.hstack([cscat_vol,(c_wn**3.0/(6*np.pi))*t_cabs])
   ctot=cabs+cscat_vol
   return cabs,cabs_vol,cscat_vol,ctot
+
+def kramers_kronig():
+  """
+  kramers_kronig()
+
+  Kramers-kronig correction.
+
+  Parameters
+  ----------
+
+  Returns
+  -------
+  """
