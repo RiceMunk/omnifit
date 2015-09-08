@@ -14,7 +14,7 @@ Omnifit has the following requirements (including their dependencies):
 ### Using pip
 Installation using pip works by running
 
-  pip install omnifit
+  pip install --pre omnifit
 
 ### Building from source
 First you must download the source code for omnifit.
@@ -37,3 +37,6 @@ After installation completes you should be able to import omnifit in Python usin
   import omnifit
 
 If this does not raise an error, omnifit has been successfully installed on your system!
+
+##Citing Omnifit
+The main paper showcasing Omnifit is currently in the final stages of preparation. In the meantime, it is possible to cite Omnifit using Zenodo, with the DOI 10.5281/zenodo.29354.
