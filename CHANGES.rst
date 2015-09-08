@@ -1,6 +1,11 @@
 Changelog
 =========
 
+Changes in 0.1.1
+----------------
+ * Added pypi support.
+ * Added BSD license notification.
+
 Changes in 0.1
 --------------
  * This is the first public release version of Omnifit.
