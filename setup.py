@@ -32,6 +32,7 @@ AUTHOR = metadata.get('author', '')
 AUTHOR_EMAIL = metadata.get('author_email', '')
 LICENSE = metadata.get('license', 'unknown')
 URL = metadata.get('url', 'http://astropy.org')
+DOWNLOAD_URL = metadata.get('download_url','')
 
 # Get the long description from the package's docstring
 __import__(PACKAGENAME)
@@ -43,7 +44,7 @@ LONG_DESCRIPTION = package.__doc__
 builtins._ASTROPY_PACKAGE_NAME_ = PACKAGENAME
 
 # VERSION should be PEP386 compatible (http://www.python.org/dev/peps/pep-0386)
-VERSION = '0.1'
+VERSION = '0.1.1'
 
 # Indicates if this version is a release version
 RELEASE = 'dev' not in VERSION
@@ -109,6 +110,7 @@ setup(name=PACKAGENAME,
       author_email=AUTHOR_EMAIL,
       license=LICENSE,
       url=URL,
+      download_url=DOWNLOAD_URL,
       long_description=LONG_DESCRIPTION,
       cmdclass=cmdclassd,
       zip_safe=False,
