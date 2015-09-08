@@ -5,14 +5,16 @@ Omnifit is a Python library originally created to easily facilitate multi-compon
 
 ## Requirements
 Omnifit has the following requirements (including their dependencies):
-  * Python <http://www.python.org> 2.7 (support for 3.x is planned)
-  * Numpy <http://www.numpy.org> (tested to work with 1.9.2)
-  * lmfit <http://lmfit.github.io/lmfit-py/> 0.8.3 or later (tested to work with 0.8.3)
-  * Astropy <http://astropy.org> 1.0 or later (tested to work with 1.0.3)
+ * Python <http://www.python.org> 2.7 (support for 3.x is planned)
+ * Numpy <http://www.numpy.org> (tested to work with 1.9.2)
+ * lmfit <http://lmfit.github.io/lmfit-py/> 0.8.3 or later (tested to work with 0.8.3)
+ * Astropy <http://astropy.org> 1.0 or later (tested to work with 1.0.3)
 
 ## Installation
 ### Using pip
-Pip support is coming soon.
+Installation using pip works by running
+
+  pip install omnifit
 
 ### Building from source
 First you must download the source code for omnifit.
