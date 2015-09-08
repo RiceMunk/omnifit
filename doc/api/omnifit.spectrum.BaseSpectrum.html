@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>BaseSpectrum &mdash; omnifit v0.1</title>
+    <title>BaseSpectrum &mdash; omnifit v0.1.1b</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1',
+        VERSION:     '0.1.1b',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.1" href="../index.html" />
+    <link rel="top" title="omnifit v0.1.1b" href="../index.html" />
     <link rel="next" title="CDESpectrum" href="omnifit.spectrum.CDESpectrum.html" />
     <link rel="prev" title="AbsorptionSpectrum" href="omnifit.spectrum.AbsorptionSpectrum.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
@@ -68,7 +68,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">omnifit v0.1</a>
+	<a href="../index.html">omnifit v0.1.1b</a>
 	 &raquo;
       </li>
       
@@ -86,7 +86,7 @@
 <h1>BaseSpectrum<a class="headerlink" href="#basespectrum" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="omnifit.spectrum.BaseSpectrum">
-<em class="property">class </em><code class="descclassname">omnifit.spectrum.</code><code class="descname">BaseSpectrum</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>dy=None</em>, <em>specname='Unknown spectrum'</em>, <em>nondata=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L32" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">omnifit.spectrum.</code><code class="descname">BaseSpectrum</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>dy=None</em>, <em>specname='Unknown spectrum'</em>, <em>nondata=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L32" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class to represent spectroscopic data.</p>
 <p>This class is designed to work for spectroscopic data of ices, but 
 may work for other types of spectroscopic data as well.
@@ -190,7 +190,7 @@ the BaseSpectrum class.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.baseline">
-<code class="descname">baseline</code><span class="sig-paren">(</span><em>degree=1,windows=[[0.0,1.0e6]],exclusive=False,usefile=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.baseline"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L425" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.baseline" title="Permalink to this definition">¶</a></dt>
+<code class="descname">baseline</code><span class="sig-paren">(</span><em>degree=1,windows=[[0.0,1.0e6]],exclusive=False,usefile=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.baseline"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L425" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.baseline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit and subtract a polynomial baseline from the spectrum, within
 the specified windows. The fitting windows can either be designated
 as a list of x axis coordinates, or specified interactively within
@@ -243,7 +243,7 @@ set usefile to point to the desired path of the new file.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.convert2">
-<code class="descname">convert2</code><span class="sig-paren">(</span><em>newunit</em>, <em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.convert2"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.convert2" title="Permalink to this definition">¶</a></dt>
+<code class="descname">convert2</code><span class="sig-paren">(</span><em>newunit</em>, <em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.convert2"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.convert2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the x axis data to given spectral units.
 Re-sort the data afterwards.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -268,7 +268,7 @@ of operating on the existing spectrum.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.convert2wl">
-<code class="descname">convert2wl</code><span class="sig-paren">(</span><em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.convert2wl"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.convert2wl" title="Permalink to this definition">¶</a></dt>
+<code class="descname">convert2wl</code><span class="sig-paren">(</span><em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.convert2wl"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.convert2wl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the x axis data to wavelength (in microns) units.
 Re-sort the data afterwards.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -288,7 +288,7 @@ of operating on the existing spectrum.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.convert2wn">
-<code class="descname">convert2wn</code><span class="sig-paren">(</span><em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.convert2wn"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.convert2wn" title="Permalink to this definition">¶</a></dt>
+<code class="descname">convert2wn</code><span class="sig-paren">(</span><em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.convert2wn"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.convert2wn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert the x axis data to kayser (reciprocal wavenumber) units.
 Re-sort the data afterwards.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -308,7 +308,7 @@ of operating on the existing spectrum.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.convolve">
-<code class="descname">convolve</code><span class="sig-paren">(</span><em>kernel</em>, <em>clone=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.convolve"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.convolve" title="Permalink to this definition">¶</a></dt>
+<code class="descname">convolve</code><span class="sig-paren">(</span><em>kernel</em>, <em>clone=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.convolve"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.convolve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.convolution.convolve.html#astropy.convolution.convolve" title="(in Astropy v1.0.4)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.convolution.convolve</span></code></a> to convolve the y axis data of the
 spectrum with the given kernel.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -337,7 +337,7 @@ to <a class="reference external" href="http://docs.astropy.org/en/stable/api/ast
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.gconvolve">
-<code class="descname">gconvolve</code><span class="sig-paren">(</span><em>fwhm</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.gconvolve"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.gconvolve" title="Permalink to this definition">¶</a></dt>
+<code class="descname">gconvolve</code><span class="sig-paren">(</span><em>fwhm</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.gconvolve"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.gconvolve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolve spectrum using a gaussian of given fwhm.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -360,7 +360,7 @@ to <a class="reference internal" href="#omnifit.spectrum.BaseSpectrum.convolve" 
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.info">
-<code class="descname">info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.info"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L572" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.info" title="Permalink to this definition">¶</a></dt>
+<code class="descname">info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.info"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L572" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints out a simple human-readable summary of the spectrum,
 containing the name of the spectrum, the units on its axes,
 and their limits. Also shows whether the spectrum has been
@@ -379,7 +379,7 @@ baselined or convolved yet.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.interpolate">
-<code class="descname">interpolate</code><span class="sig-paren">(</span><em>target_spectrum</em>, <em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.interpolate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.interpolate" title="Permalink to this definition">¶</a></dt>
+<code class="descname">interpolate</code><span class="sig-paren">(</span><em>target_spectrum</em>, <em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.interpolate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.interpolate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate spectrum to match target spectrum resolution.
 Does not modify current spectrum, but returns a new one, which is
 a copy of the current spectrum but with the interpolated data on
@@ -408,7 +408,7 @@ of operating on the existing spectrum.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.max">
-<code class="descname">max</code><span class="sig-paren">(</span><em>checkrange=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.max"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L518" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.max" title="Permalink to this definition">¶</a></dt>
+<code class="descname">max</code><span class="sig-paren">(</span><em>checkrange=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.max"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L518" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.max" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns maximum y of the spectrum.
 If checkrange is set, returns maximum inside of that range.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -433,7 +433,7 @@ between which the maximum is looked for.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.min">
-<code class="descname">min</code><span class="sig-paren">(</span><em>checkrange=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.min"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L545" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.min" title="Permalink to this definition">¶</a></dt>
+<code class="descname">min</code><span class="sig-paren">(</span><em>checkrange=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.min"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L545" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.min" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns minimum y of the spectrum.
 If checkrange is set, returns minimum inside of that range.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -458,7 +458,7 @@ between which the minimum is looked for.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.plot">
-<code class="descname">plot</code><span class="sig-paren">(</span><em>axis</em>, <em>x='x'</em>, <em>y='y'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.plot"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L189" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.plot" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot</code><span class="sig-paren">(</span><em>axis</em>, <em>x='x'</em>, <em>y='y'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.plot"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L189" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.plot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the contents of the spectrum into a given matplotlib axis.
 Defaults to the data contained in the x and y attributes, but
 can also plot other data content if instructed to do so.</p>
@@ -492,7 +492,7 @@ method for its plotting.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.shift">
-<code class="descname">shift</code><span class="sig-paren">(</span><em>amount</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.shift"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L502" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.shift" title="Permalink to this definition">¶</a></dt>
+<code class="descname">shift</code><span class="sig-paren">(</span><em>amount</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.shift"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L502" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.shift" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shifts the spectrum by amount
 specified, in primary x axis
 units.</p>
@@ -513,7 +513,7 @@ added to it, effectively shifting it.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.smooth">
-<code class="descname">smooth</code><span class="sig-paren">(</span><em>window_len=11</em>, <em>window='hanning'</em>, <em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.smooth"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.smooth" title="Permalink to this definition">¶</a></dt>
+<code class="descname">smooth</code><span class="sig-paren">(</span><em>window_len=11</em>, <em>window='hanning'</em>, <em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.smooth"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.smooth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Smooth the spectrum using the given window of requested type and size.
 The supported smoothing functions are: Bartlett, Blackman, Hanning,
 Hamming, and flat (i.e. moving average).
@@ -543,7 +543,7 @@ of operating on the existing spectrum.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.subspectrum">
-<code class="descname">subspectrum</code><span class="sig-paren">(</span><em>limit_lower</em>, <em>limit_upper</em>, <em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.subspectrum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.subspectrum" title="Permalink to this definition">¶</a></dt>
+<code class="descname">subspectrum</code><span class="sig-paren">(</span><em>limit_lower</em>, <em>limit_upper</em>, <em>clone=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.subspectrum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L13" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.subspectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Cropped the spectrum along along the x axis using the given
 inclusive limits.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -573,7 +573,7 @@ of operating on the existing spectrum.</p>
 
 <dl class="method">
 <dt id="omnifit.spectrum.BaseSpectrum.yat">
-<code class="descname">yat</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.yat"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1/omnifit/spectrum/spectrum.py#L330" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.yat" title="Permalink to this definition">¶</a></dt>
+<code class="descname">yat</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#BaseSpectrum.yat"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/spectrum/spectrum.py#L330" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.BaseSpectrum.yat" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return interpolated value of y at requested x.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -613,14 +613,14 @@ of operating on the existing spectrum.</p>
     </div>
 <footer class="footer">
   <p class="pull-right">
-    <a href="http://github.com/RiceMunk/omnifit/tree/v0.1/docs/api/omnifit.spectrum.BaseSpectrum.rst">Edit This Page on Github</a> &nbsp;
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/docs/api/omnifit.spectrum.BaseSpectrum.rst">Edit This Page on Github</a> &nbsp;
     <a href="../_sources/api/omnifit.spectrum.BaseSpectrum.txt"
        rel="nofollow">Page Source</a> &nbsp;
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 25 Aug 2015. <br/>
+    Last built 08 Sep 2015. <br/>
   </p>
 </footer>
   </body>
