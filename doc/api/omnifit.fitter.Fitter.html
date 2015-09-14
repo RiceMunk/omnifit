@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Fitter &mdash; omnifit v0.1.1b</title>
+    <title>Fitter &mdash; omnifit v0.1.2</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.1b',
+        VERSION:     '0.1.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.1.1b" href="../index.html" />
+    <link rel="top" title="omnifit v0.1.2" href="../index.html" />
     <link rel="next" title="cde_correct" href="omnifit.utils.cde_correct.html" />
     <link rel="prev" title="CDESpectrum" href="omnifit.spectrum.CDESpectrum.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
@@ -68,7 +68,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">omnifit v0.1.1b</a>
+	<a href="../index.html">omnifit v0.1.2</a>
 	 &raquo;
       </li>
       
@@ -86,7 +86,7 @@
 <h1>Fitter<a class="headerlink" href="#fitter" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="omnifit.fitter.Fitter">
-<em class="property">class </em><code class="descclassname">omnifit.fitter.</code><code class="descname">Fitter</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>dy=1.0</em>, <em>modelname='Unknown model'</em>, <em>psf=None</em>, <em>fitrange=None</em>, <em>color='black'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/fitter/fitter.py#L7" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">omnifit.fitter.</code><code class="descname">Fitter</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>dy=1.0</em>, <em>modelname='Unknown model'</em>, <em>psf=None</em>, <em>fitrange=None</em>, <em>color='black'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/fitter/fitter.py#L7" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter" title="Permalink to this definition">¶</a></dt>
 <dd><p>A class for multi-component fitting to spectroscopic data of ices.</p>
 <p>This is the heart of Omnifit, which receives spectra from the spectrum
 module, and is then capable of fitting an arbitrary number of different
@@ -186,7 +186,7 @@ data, in a format understandable by matplotlib.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="omnifit.fitter.Fitter.add_analytical">
-<code class="descname">add_analytical</code><span class="sig-paren">(</span><em>shape</em>, <em>params</em>, <em>funcname=None</em>, <em>color='red'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.add_analytical"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/fitter/fitter.py#L153" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.add_analytical" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_analytical</code><span class="sig-paren">(</span><em>shape</em>, <em>params</em>, <em>funcname=None</em>, <em>color='red'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.add_analytical"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/fitter/fitter.py#L153" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.add_analytical" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add analytical data in the form of a callable function to the
 fitting list.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -221,7 +221,7 @@ data, in a format understandable by matplotlib.</p>
 
 <dl class="method">
 <dt id="omnifit.fitter.Fitter.add_empirical">
-<code class="descname">add_empirical</code><span class="sig-paren">(</span><em>spectrum</em>, <em>params</em>, <em>funcname=None</em>, <em>color='red'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.add_empirical"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/fitter/fitter.py#L125" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.add_empirical" title="Permalink to this definition">¶</a></dt>
+<code class="descname">add_empirical</code><span class="sig-paren">(</span><em>spectrum</em>, <em>params</em>, <em>funcname=None</em>, <em>color='red'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.add_empirical"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/fitter/fitter.py#L125" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.add_empirical" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add empirical data in the form of a spectrum to the fitting list.
 The spectrum must be interpolated to match the target x axis.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -257,7 +257,7 @@ data, in a format understandable by matplotlib.</p>
 
 <dl class="method">
 <dt id="omnifit.fitter.Fitter.chisq">
-<code class="descname">chisq</code><span class="sig-paren">(</span><em>checkrange=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.chisq"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/fitter/fitter.py#L242" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.chisq" title="Permalink to this definition">¶</a></dt>
+<code class="descname">chisq</code><span class="sig-paren">(</span><em>checkrange=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.chisq"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/fitter/fitter.py#L242" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.chisq" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return chi squared of fit, either in a custom range 
 or in the range used by the fit.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -281,7 +281,7 @@ range specified during Initialisation is used.</p>
 
 <dl class="method">
 <dt id="omnifit.fitter.Fitter.fit_results">
-<code class="descname">fit_results</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.fit_results"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/fitter/fitter.py#L473" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.fit_results" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fit_results</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.fit_results"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/fitter/fitter.py#L472" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.fit_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the fitting results as a dictionary.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -302,7 +302,7 @@ range specified during Initialisation is used.</p>
 
 <dl class="method">
 <dt id="omnifit.fitter.Fitter.fitresults_tofile">
-<code class="descname">fitresults_tofile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.fitresults_tofile"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/fitter/fitter.py#L312" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.fitresults_tofile" title="Permalink to this definition">¶</a></dt>
+<code class="descname">fitresults_tofile</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.fitresults_tofile"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/fitter/fitter.py#L312" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.fitresults_tofile" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export fit results to two output files which are intended to be
 easily readable and paraseable with other software.</p>
 <p>The first file is filename.csv, which contains x and y data of
@@ -383,7 +383,7 @@ the value contained by the DETECTION element is true or not.</p>
 
 <dl class="classmethod">
 <dt id="omnifit.fitter.Fitter.fromspectrum">
-<em class="property">classmethod </em><code class="descname">fromspectrum</code><span class="sig-paren">(</span><em>spectrum</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.fromspectrum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/fitter/fitter.py#L103" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.fromspectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="descname">fromspectrum</code><span class="sig-paren">(</span><em>spectrum</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.fromspectrum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/fitter/fitter.py#L103" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.fromspectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>An alternate way to initialise Fitter, by directly giving it
 a spectrum. Extracted data from the spectrum are the x, y,
 and (if the spectrum has been baselined) dy parameters.</p>
@@ -409,7 +409,7 @@ using the data contained in the input spectrum.</p>
 
 <dl class="method">
 <dt id="omnifit.fitter.Fitter.is_nondet">
-<code class="descname">is_nondet</code><span class="sig-paren">(</span><em>sigma=5.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.is_nondet"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/fitter/fitter.py#L423" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.is_nondet" title="Permalink to this definition">¶</a></dt>
+<code class="descname">is_nondet</code><span class="sig-paren">(</span><em>sigma=5.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.is_nondet"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/fitter/fitter.py#L423" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.is_nondet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determines whether the fitted functions in the function list can
 be considered detections or non-detections using the given detection
 thereshold. This is done by comparing the peak of the fitted function
@@ -441,7 +441,7 @@ it against the fitted function peaks.</p>
 
 <dl class="method">
 <dt id="omnifit.fitter.Fitter.perform_fit">
-<code class="descname">perform_fit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.perform_fit"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/fitter/fitter.py#L177" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.perform_fit" title="Permalink to this definition">¶</a></dt>
+<code class="descname">perform_fit</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.perform_fit"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/fitter/fitter.py#L177" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.perform_fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uses <a class="reference external" href="https://lmfit.github.io/lmfit-py/fitting.html#minimize" title="(in lmfit v)"><code class="xref py py-obj docutils literal"><span class="pre">minimize</span></code></a> in lmfit to perform least-squares fitting of all the
 functions in the function list to the target data.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -460,7 +460,7 @@ functions in the function list to the target data.</p>
 
 <dl class="method">
 <dt id="omnifit.fitter.Fitter.plot_fitresults">
-<code class="descname">plot_fitresults</code><span class="sig-paren">(</span><em>ax,lw=[1,2,3],color_total='blue',legend=True,**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.plot_fitresults"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/omnifit/fitter/fitter.py#L262" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.plot_fitresults" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plot_fitresults</code><span class="sig-paren">(</span><em>ax,lw=[1,2,3],color_total='blue',legend=True,**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/fitter/fitter.html#Fitter.plot_fitresults"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/fitter/fitter.py#L262" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.fitter.Fitter.plot_fitresults" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the fitting results to the given matplotlib axis, with a
 number of optional parameters specifying how the different plottable
 components are presented.</p>
@@ -522,14 +522,14 @@ method for its plotting.</p>
     </div>
 <footer class="footer">
   <p class="pull-right">
-    <a href="http://github.com/RiceMunk/omnifit/tree/v0.1.1b/docs/api/omnifit.fitter.Fitter.rst">Edit This Page on Github</a> &nbsp;
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/docs/api/omnifit.fitter.Fitter.rst">Edit This Page on Github</a> &nbsp;
     <a href="../_sources/api/omnifit.fitter.Fitter.txt"
        rel="nofollow">Page Source</a> &nbsp;
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 08 Sep 2015. <br/>
+    Last built 14 Sep 2015. <br/>
   </p>
 </footer>
   </body>
