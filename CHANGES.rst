@@ -1,5 +1,8 @@
 Changelog
 =========
+Changes in 0.1.2
+----------------
+ * Fixed issue #12 of interpolation breaking units
 
 Changes in 0.1.1
 ----------------
