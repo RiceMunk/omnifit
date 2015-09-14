@@ -1,12 +1,12 @@
 include README.md
 include CHANGES.rst
+include LICENSE.rst
 
 include ez_setup.py
 include ah_bootstrap.py
 include setup.cfg
 
 recursive-include docs *
-recursive-include licenses *
 
 prune build
 prune docs/_build
