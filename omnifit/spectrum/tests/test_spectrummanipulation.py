@@ -94,6 +94,15 @@ class TestSpectrumManipulation_misc:
     testspec2.y = testspec2.y.value * u.kg
     with pytest.raises(Exception):
       testspec1.interpolate(testspec2)
+    #test that units are retained on interpolation
+    testspec1 = generate_cdespectrum()
+    testspec2 = generate_absspectrum()
+    oldunit_y = testspec1.y.unit
+    oldunit_x = testspec1.x.unit
+    testspec1.interpolate(testspec2)
+    assert testspec1.x.unit == oldunit_x
+    assert testspec1.y.unit == oldunit_y
+
   def test_subspectrum(self):
     """
     Test the extraction of a subspectrum from a spectrum
