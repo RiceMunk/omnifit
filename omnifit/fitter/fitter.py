@@ -447,7 +447,6 @@ class Fitter():
     using the criteria outlined above.
     """
     minY = sigma*self.target_dy
-    print self.target_dy
     out = {}
     totRes = np.zeros(len(self.target_x))
     for indFunc,cFunc in enumerate(self.funclist):

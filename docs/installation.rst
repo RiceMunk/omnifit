@@ -12,7 +12,11 @@ Installing Omnifit
 ******************
 Using pip
 ---------
-Pip support is coming soon.
+Installation using pip works by running
+
+::
+
+  pip install omnifit
 
 Building from source
 --------------------

@@ -1,5 +1,14 @@
 Changelog
 =========
+Changes in 0.1.2
+----------------
+ * Fixed issue #12 of interpolation breaking units
+ * Fixed example in documentation and made it more easy to test
+
+Changes in 0.1.1
+----------------
+ * Added pypi support.
+ * Added BSD license notification.
 
 Changes in 0.1
 --------------
