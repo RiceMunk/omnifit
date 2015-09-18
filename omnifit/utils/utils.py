@@ -168,7 +168,7 @@ def kramers_kronig():
   """
   kramers_kronig()
 
-  Kramers-kronig correction.
+  Kramers-kronig relation.
 
   Parameters
   ----------
@@ -176,3 +176,7 @@ def kramers_kronig():
   Returns
   -------
   """
+  Refl = lambda Np,Nq: (Np-Nq)/(Np+Nq) # Complex reflection coefficient medium p-->q 
+  Trans = lambda Np,Nq: (2.*Np.real)/(Np+Nq) # Complex transmission coefficient medium p-->q
+
+  
