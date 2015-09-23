@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
 from scipy.integrate import simps
+from sys import float_info
 
 class Baseliner:
   """
@@ -169,7 +170,7 @@ def cde_correct(wn,n,k):
   ctot=cabs+cscat_vol
   return cabs,cabs_vol,cscat_vol,ctot
 
-def complex_transmission_reflection(in_m0,in_cm1,in_m2):
+def complex_transmission_reflection(in_m0,in_m1,in_m2):
   """
   Calculate the complex transmission and reflection coefficients between
   media 0, 1, and 2 given their complex refractive indices.
@@ -183,20 +184,21 @@ def complex_transmission_reflection(in_m0,in_cm1,in_m2):
           complex_transmission(in_m0,in_m2),
           complex_transmission(in_m1,in_m2),
           complex_reflection(in_m0,in_m1),
-          complex_reflection(in_m1,in_m2),
+          complex_reflection(in_m0,in_m2),
           complex_reflection(in_m1,in_m2)
         )
 
 def kkint(freq,alpha,n0):
   """
-  kkint(freq,alpha[freq_sorter],n0)
+  kkint(freq,alpha,n0)
 
   Kramers-Kronig integration.
   presented in Hudgins et al 1993 (1993ApJS...86..713H).
   """
-  intfunc = alpha/(freq.reshape(len(freq),1)**2-freq**2)
-  kkint = n0+simps(intfun,axis=1)/(2*np.pi*np.pi)
-  m_ice = kkint+1j*alpha*wavel/(4*np.pi)
+  sfreq=(freq-float_info.epsilon).reshape(len(freq),1) #epsilon-shifted frequency to avoid singularities
+  intfunc = alpha/(freq**2-sfreq**2)
+  kkint = n0+simps(intfunc,axis=0)/(2*np.pi*np.pi)
+  return kkint
 
 
 def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,m_guess=1.3+0.0j):
@@ -244,7 +246,8 @@ def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,m_guess=1.3+0.0j)
   #this is an evil equation. do NOT touch it
   #it calculates the lambert absorption coefficient using the current best guess at m_ice
   alpha = (-1./d_substrate)*(np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d*m_ice/wavel)))**2.))
-  m_ice = kkint(freq,alpha[freq_sorter],n0)
+  #using the new alpha, calculate a new n (and thus m) for the ice
+  m_ice = kkint(freq,alpha[freq_sorter],n0) + 1j*alpha*wavel/(4*np.pi)
   #calculate transmission and relfection coefficients (again)
   #in these 0 means vacuum, 1 means ice, 2 means substrate
   t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
