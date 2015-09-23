@@ -50,3 +50,14 @@ class TestKKrelation_supportfuncs:
     res_n = utils.kkint(testfreq,testalpha,testn0)
 
     assert res_n.shape == testfreq.shape #is the shape as expected?
+
+# class TestKKIter:
+#   def test_kkiterbasic(self):
+#     """
+#     Test basic functionality of KK iteration
+#     """
+#     testspec = generate_absspectrum()
+#     assert testspec.x.unit == u.kayser
+#     assert testspec.y.unit == utils.unit_od
+#     wavel = 1.e4/testspec.x
+#     transmittance = testspec.y
