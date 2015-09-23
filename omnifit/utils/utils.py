@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
+from scipy.integrate import simps
 
 class Baseliner:
   """
@@ -122,9 +123,9 @@ unit_absorbance = unit_abs
 unit_od = u.def_unit('optical depth',doc='Optical depth of radiation')
 unit_opticaldepth = unit_od
 
-#--------------------------
-#Misc. function definitions
-#--------------------------
+#------------------------------------------------------
+#Functions related to light scattering and transmission
+#------------------------------------------------------
 def cde_correct(wn,n,k):
   """
   cde_correct(wn,n,k)
@@ -168,6 +169,36 @@ def cde_correct(wn,n,k):
   ctot=cabs+cscat_vol
   return cabs,cabs_vol,cscat_vol,ctot
 
+def complex_transmission_reflection(in_m0,in_cm1,in_m2):
+  """
+  Calculate the complex transmission and reflection coefficients between
+  media 0, 1, and 2 given their complex refractive indices.
+  In the Kramers-Kronig implementation media 0, 1, and 2 correspond
+  respectively to the vacuum, ice, and substrate.
+  """
+  complex_transmission = lambda m1,m2: (2.*m1.real)/(m1+m2)
+  complex_reflection = lambda m1,m2: (m1-m2)/(m1+m2)
+  return (
+          complex_transmission(in_m0,in_m1),
+          complex_transmission(in_m0,in_m2),
+          complex_transmission(in_m1,in_m2),
+          complex_reflection(in_m0,in_m1),
+          complex_reflection(in_m1,in_m2),
+          complex_reflection(in_m1,in_m2)
+        )
+
+def kkint(freq,alpha,n0):
+  """
+  kkint(freq,alpha[freq_sorter],n0)
+
+  Kramers-Kronig integration.
+  presented in Hudgins et al 1993 (1993ApJS...86..713H).
+  """
+  intfunc = alpha/(freq.reshape(len(freq),1)**2-freq**2)
+  kkint = n0+simps(intfun,axis=1)/(2*np.pi*np.pi)
+  m_ice = kkint+1j*alpha*wavel/(4*np.pi)
+
+
 def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,m_guess=1.3+0.0j):
   """
   kramers_kronig()
@@ -182,17 +213,6 @@ def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,m_guess=1.3+0.0j)
   Returns
   -------
   """
-  def kkint(wavel,alpha,n0):
-    """
-    Kramers-Kronig integration, for determining the real part
-    of the complex refractive index
-    """
-    # intres = ##
-    return n0+intres/(2*np.pi*np.pi)
-  #set up lambda functions for calculation complex reflective and
-  #transmission coefficients
-  reflection_coeff = lambda Np,Nq: (Np-Nq)/(Np+Nq) # Complex reflection coefficient medium p-->q 
-  transmission_coeff = lambda Np,Nq: (2.*Np.real)/(Np+Nq) # Complex transmission coefficient medium p-->q
   #set up constants
   m_vacuum = 1.0+0.0j
   #make sure the input array units are correct; convert if necessary
@@ -209,34 +229,28 @@ def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,m_guess=1.3+0.0j)
   sorter = np.argsort(wavel)
   wavel = wavel[sorter].value
   transmittance = transmittance[sorter].value
+  freq = 1.e4/wavel #kayser are also needed
+  freq_sorter = np.argsort(freq)
+  freq = freq[freq_sorter]
   #initialise complex refractive index and alpha arrays
-  m = np.ones_like(wavel)*np.nan
-  alpha = np.ones_like(wavel)*np.nan
+  m = np.full_like(wavel,np.nan)
+  alpha = np.full_like(wavel,np.nan)
   #initial guess at m at first index
-  cM = m_guess
-  for cIndex,(cWavel,cTransmittance) in enumerate(zip(wavel,transmittance)):
-    #calculate transmission and relfection coefficients
-    #in these 0 means vacuum, 1 means ice, 2 means substrate
-    t01 = transmission_coeff(m_vacuum,cM)
-    t02 = transmission_coeff(m_vacuum,m_substrate)
-    t12 = transmission_coeff(cM,m_substrate)
-    r01 = reflection_coeff(m_vacuum,cM)
-    r12 = reflection_coeff(cM,self.m_substrate)
+  m_ice = np.full_like(wavel,m_guess)
 
-    #this is an evil equation. do NOT touch it
-    #it calculates the lambert absorption coefficient using the current best guess at m_ice
-    cAlpha = (-1./d_substrate)*(np.log(cTransmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d*cM/cWavel)))**2.))
+  #calculate transmission and relfection coefficients
+  #in these 0 means vacuum, 1 means ice, 2 means substrate
+  t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
+  #this is an evil equation. do NOT touch it
+  #it calculates the lambert absorption coefficient using the current best guess at m_ice
+  alpha = (-1./d_substrate)*(np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d*m_ice/wavel)))**2.))
+  m_ice = kkint(freq,alpha[freq_sorter],n0)
+  #calculate transmission and relfection coefficients (again)
+  #in these 0 means vacuum, 1 means ice, 2 means substrate
+  t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
+  #model a transmittance using given m_ice and alpha
+  #yes, this is another evil equation
+  transmittance_model = np.exp(-alpha*d_substrate)*np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d*m_ice/wavel)))**2.
 
-    #calculate a new m_ice based on the just calculated alpha
-    cM = kkint()+1j*cAlpha*cWavel/(4*np.pi)
-    #calculate transmission and relfection coefficients
-    #in these 0 means vacuum, 1 means ice, 2 means substrate
-    t01 = transmission_coeff(m_vacuum,cM)
-    t02 = transmission_coeff(m_vacuum,m_substrate)
-    t12 = transmission_coeff(cM,m_substrate)
-    r01 = reflection_coeff(m_vacuum,cM)
-    r12 = reflection_coeff(cM,self.m_substrate)
-    #model a transmittance using given m_ice and alpha
-    #yes, this is another evil equation
-    transmittance_model = np.exp(-cAlpha*d_substrate)*np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d*cM/cWavel)))**2.
+  #at this point we are done
   return m_ice
