@@ -120,17 +120,18 @@ class Baseliner:
 #New units definitions
 #---------------------
 #the units themselves
-unit_t = u.def_unit('tranmittance',doc='Transmittance of radiation')
+unit_t = u.def_unit('tranmittance units',doc='Transmittance of radiation')
 unit_transmittance = unit_t
-unit_abs = u.def_unit('absorbance',doc='Absorbance of radiation')
+unit_abs = u.def_unit('absorbance units',doc='Absorbance of radiation')
 unit_absorbance = unit_abs
-unit_od = u.def_unit('optical depth',doc='Optical depth of radiation')
+unit_od = u.def_unit('optical depth units',doc='Optical depth of radiation')
 unit_opticaldepth = unit_od
 
 #the equivalencies between the units
 equivalencies_absorption = [
     (unit_t,unit_abs,lambda x:-np.log10(x),lambda x:10**-x),
     (unit_od,unit_abs,lambda x:x/np.log(10),lambda x:x*np.log(10)),
+    (unit_od,unit_t,lambda x:10**(-x/np.log(10)),lambda x:-np.log10(x)*np.log(10))
     ]
 
 #------------------------------------------------------
