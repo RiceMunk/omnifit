@@ -46,18 +46,48 @@ class TestKKrelation_supportfuncs:
     testalpha = testspec.k #not actually truly alpha, but close enough
     assert testspec.x.unit == u.kayser
     testfreq = testspec.x.value
-
+    # pytest.set_trace()
     res_n = utils.kkint(testfreq,testalpha,testn0)
 
     assert res_n.shape == testfreq.shape #is the shape as expected?
 
-# class TestKKIter:
-#   def test_kkiterbasic(self):
-#     """
-#     Test basic functionality of KK iteration
-#     """
-#     testspec = generate_absspectrum()
-#     assert testspec.x.unit == u.kayser
-#     assert testspec.y.unit == utils.unit_od
-#     wavel = 1.e4/testspec.x
-#     transmittance = testspec.y
+class TestKKIter:
+  def test_kkiterbasic(self):
+    """
+    Test basic functionality of KK iteration.
+    Not going for a full iteration; just making sure it doesn't crash
+    and that it returns an array of what looks like the right shape
+    """
+    testspec = helpers.generate_absspectrum()
+    assert testspec.x.unit == u.kayser
+    assert testspec.y.unit == utils.unit_od
+    testspec.subspectrum(2200.,3900.)
+    wavel = 1.e4/testspec.x
+    transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
+    m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
+    d_substrate = 0.2
+    n0 = 1.3
+    m_ice = utils.kramers_kronig(wavel,transmittance,m_substrate,d_substrate,n0,maxiter=2)
+    assert m_ice.shape == wavel.shape
+
+
+  def test_kkitertocde(self):
+    """
+    Check the sanity of CDE spectra generated from KK iteration results
+    """
+    testspec = helpers.generate_absspectrum()
+    assert testspec.x.unit == u.kayser
+    assert testspec.y.unit == utils.unit_od
+    testspec.subspectrum(2500.,4500.)
+    wavel = 1.e4/testspec.x
+    transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
+    m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
+    d_substrate = 0.2
+    n0 = 1.3
+    pytest.set_trace()
+    m_ice = utils.kramers_kronig(wavel,transmittance,m_substrate,d_substrate,n0)
+    assert m_ice.shape == wavel.shape
+    cdespec = spectrum.CDESpectrum(testspec.x,m_ice.real,m_ice.imag)
+
+#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(wavel,m_ice.real);ax1.plot(wavel,m_ice.imag);plt.show();plt.close()
+#plt.plot(wavel,alpha);plt.show();plt.close()

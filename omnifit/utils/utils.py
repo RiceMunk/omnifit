@@ -211,7 +211,7 @@ def kkint(freq,alpha,n0):
   return kkint
 
 
-def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,m_guess=1.3+0.0j,tol=0.1,maxiter=100):
+def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,n0,m_guess=1.3+0.0j,tol=0.1,maxiter=100):
   """
   kramers_kronig()
 
@@ -247,19 +247,20 @@ def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,m_guess=1.3+0.0j,
   wavel_sorter = np.argsort(1.e4/freq)
   freq = freq[freq_sorter]
   #initialise complex refractive index and alpha arrays
-  m = np.full_like(wavel,np.nan)
-  alpha = np.full_like(wavel,np.nan)
+  m = np.full_like(wavel,np.nan+np.nan*1j,dtype=complex)
+  alpha = np.full_like(wavel,np.nan+np.nan*1j,dtype=complex)
   #initial guess at m at first index
-  m_ice = np.full_like(wavel,m_guess)
+  m_ice = np.full_like(wavel,m_guess,dtype=complex)
   #iteration begin!
   niter = 0
-  while squaresum_sqdiff < tol and niter < maxiter:
+  squaresum_diff = tol+1
+  while squaresum_diff > tol and niter < maxiter:
     #calculate transmission and relfection coefficients
     #in these 0 means vacuum, 1 means ice, 2 means substrate
     t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
     #this is an evil equation. do NOT touch it
     #it calculates the lambert absorption coefficient using the current best guess at m_ice
-    alpha = (-1./d_substrate)*(np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d*m_ice/wavel)))**2.))
+    alpha = (1./d_substrate)*(-np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice/wavel)))**2.))
     #using the new alpha, calculate a new n (and thus m) for the ice
     m_ice = kkint(freq,alpha[freq_sorter],n0)[wavel_sorter] + 1j*alpha*wavel/(4*np.pi)
     #calculate transmission and relfection coefficients (again)
@@ -267,7 +268,7 @@ def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,m_guess=1.3+0.0j,
     t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
     #model a transmittance using given m_ice and alpha
     #yes, this is another evil equation
-    transmittance_model = np.exp(-alpha*d_substrate)*np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d*m_ice/wavel)))**2.
+    transmittance_model = np.exp(-alpha*d_substrate)*np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice/wavel)))**2.
     diff = transmittance - transmittance_model
     squaresum_diff = np.sum(diff**2) #square sum of difference
     niter += 1
