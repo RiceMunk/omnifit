@@ -62,7 +62,7 @@ class TestKKIter:
     assert testspec.x.unit == u.kayser
     assert testspec.y.unit == utils.unit_od
     testspec.subspectrum(2200.,3900.)
-    wavel = 1.e4/testspec.x
+    wavel = testspec.x.to(u.micron,equivalencies=u.equivalencies.spectral())
     transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
     m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
     d_substrate = 0.2
@@ -79,7 +79,7 @@ class TestKKIter:
     assert testspec.x.unit == u.kayser
     assert testspec.y.unit == utils.unit_od
     testspec.subspectrum(2500.,4500.)
-    wavel = 1.e4/testspec.x
+    wavel = testspec.x.to(u.micron,equivalencies=u.equivalencies.spectral())
     transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
     m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
     d_substrate = 0.2
@@ -89,5 +89,11 @@ class TestKKIter:
     assert m_ice.shape == wavel.shape
     cdespec = spectrum.CDESpectrum(testspec.x,m_ice.real,m_ice.imag)
 
+#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,m_ice.real);ax1.plot(freq,m_ice.imag);plt.show();plt.close()
+#plt.plot(freq,alpha);plt.show();plt.close()
+#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,transmittance);ax1.plot(freq,transmittance_model);plt.show();plt.close()
+
+
 #fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(wavel,m_ice.real);ax1.plot(wavel,m_ice.imag);plt.show();plt.close()
 #plt.plot(wavel,alpha);plt.show();plt.close()
+#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(wavel,transmittance);ax1.plot(wavel,transmittance_model);plt.show();plt.close()
