@@ -206,15 +206,17 @@ def kkint(freq,alpha,n0):
   Kramers-Kronig integration.
   presented in Hudgins et al 1993 (1993ApJS...86..713H).
   """
-  sfreq=(freq-np.mean(np.diff(freq))*0.001).reshape(len(freq),1) #frequency shifted by a tiny amount to avoid singularities
+  # sfreq=(freq-np.mean(np.diff(freq))*0.001).reshape(len(freq),1) #frequency shifted by a tiny amount to avoid singularities
+  sfreq=(freq).reshape(len(freq),1)
   intfunc = alpha/(freq**2-sfreq**2)
+  intfunc[np.logical_not(np.isfinite(intfunc))] = 0.
   kkint = n0+simps(intfunc,axis=0)/(2*np.pi*np.pi)
   if np.any(kkint < 0):
     warnings.warn('KK integration is returning negative refractive indices! Something is probably wrong.',RuntimeWarning)
   return kkint
 
 
-def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=1.3+0.0j,tol=0.1,maxiter=100):
+def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=None,tol=0.1,maxiter=100):
   """
   kramers_kronig()
 
@@ -248,6 +250,9 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=1.3+0.0
     d_substrate *= u.cm
   else:
     d_substrate = d_substrate.to(u.cm)
+  #m_guess is set to be 0+n0*j if None
+  if m_guess is None:
+    m_guess = n0+0.0j
   #sort the arrays and get rid of units; won't need them after this
   initial_sorter = np.argsort(freq)
   freq = freq[initial_sorter].value
