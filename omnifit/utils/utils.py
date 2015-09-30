@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from astropy import units as u
 from scipy.integrate import simps
 from sys import float_info
+import warnings
 
 class Baseliner:
   """
@@ -208,10 +209,12 @@ def kkint(freq,alpha,n0):
   sfreq=(freq-np.mean(np.diff(freq))*0.001).reshape(len(freq),1) #frequency shifted by a tiny amount to avoid singularities
   intfunc = alpha/(freq**2-sfreq**2)
   kkint = n0+simps(intfunc,axis=0)/(2*np.pi*np.pi)
+  if np.any(kkint < 0):
+    warnings.warn('KK integration is returning negative refractive indices! Something is probably wrong.',RuntimeWarning)
   return kkint
 
 
-def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,n0,m_guess=1.3+0.0j,tol=0.1,maxiter=100):
+def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=1.3+0.0j,tol=0.1,maxiter=100):
   """
   kramers_kronig()
 
@@ -228,31 +231,33 @@ def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,n0,m_guess=1.3+0.
   #set up constants
   m_vacuum = 1.0+0.0j
   #make sure the input array units are correct; convert if necessary
-  if type(wavel) != u.quantity.Quantity:
-    wavel *= u.micron
+  if type(freq) != u.quantity.Quantity:
+    warnings.warn('No units detected in input freq. Assuming kayser.',RuntimeWarning)
+    freq *= u.kayser
   else:
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-      wavel=wavel.to(u.micron)
+      freq=freq.to(u.kayser)
   if type(transmittance) != u.quantity.Quantity:
+    warnings.warn('No units detected in input transmittance. Assuming transmittance units.',RuntimeWarning)
     transmittance *= unit_t
   else:
     with u.set_enabled_equivalencies(equivalencies_absorption):
       transmittance = transmittance.to(unit_t)
+  if type(d_substrate) != u.quantity.Quantity:
+    warnings.warn('No units detected in input d_substrate. Assuming centimeters.',RuntimeWarning)
+    d_substrate *= u.cm
+  else:
+    d_substrate = d_substrate.to(u.cm)
   #sort the arrays and get rid of units; won't need them after this
-  initial_sorter = np.argsort(wavel)
-  wavel = wavel[initial_sorter].value
+  initial_sorter = np.argsort(freq)
+  freq = freq[initial_sorter].value
   transmittance = transmittance[initial_sorter].value
-  freq = 1.e4/wavel #kayser are also needed
-  freq_sorter = np.argsort(freq)
-  wavel_sorter = np.argsort(1.e4/freq)
-  freq = freq[freq_sorter]
-  transmittance = transmittance[freq_sorter]
-
+  d_substrate = d_substrate.value
   #initialise complex refractive index and alpha arrays
-  m = np.full_like(wavel,np.nan+np.nan*1j,dtype=complex)
-  alpha = np.full_like(wavel,np.nan+np.nan*1j,dtype=complex)
+  m = np.full_like(freq,np.nan+np.nan*1j,dtype=complex)
+  alpha = np.full_like(freq,np.nan+np.nan*1j,dtype=complex)
   #initial guess at m at first index
-  m_ice = np.full_like(wavel,m_guess,dtype=complex)
+  m_ice = np.full_like(freq,m_guess,dtype=complex)
   #iteration begin!
   niter = 0
   squaresum_diff = tol+1
@@ -262,32 +267,19 @@ def kramers_kronig(wavel,transmittance,m_substrate,d_substrate,n0,m_guess=1.3+0.
     t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
     #this is an evil equation. do NOT touch it
     #it calculates the lambert absorption coefficient using the current best guess at m_ice
-
-
-    # alpha = (1./d_substrate)*(-np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice/wavel)))**2.))
     alpha = (1./d_substrate)*(-np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.))
-
-
     #using the new alpha, calculate a new n (and thus m) for the ice
-
-
-    # m_ice = kkint(freq,alpha[freq_sorter],n0)[wavel_sorter] + 1j*alpha*wavel/(4*np.pi)
     m_ice = kkint(freq,alpha,n0) + 1j*alpha/(4*np.pi*freq)
-
-
     #calculate transmission and relfection coefficients (again)
     #in these 0 means vacuum, 1 means ice, 2 means substrate
     t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
     #model a transmittance using given m_ice and alpha
     #yes, this is another evil equation
-
-    # transmittance_model = np.exp(-alpha*d_substrate)*np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice/wavel)))**2.
-
-
     transmittance_model = np.exp(-alpha*d_substrate)*np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.
-
     diff = transmittance - transmittance_model
     squaresum_diff = np.sum(diff**2) #square sum of difference
     niter += 1
   #at this point we are done
+  if niter==maxiter:
+    warnings.warn('Maximum number of iterations reached before convergence criterion was met.',RuntimeWarning)
   return m_ice

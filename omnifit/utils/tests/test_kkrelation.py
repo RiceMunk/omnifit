@@ -62,13 +62,13 @@ class TestKKIter:
     assert testspec.x.unit == u.kayser
     assert testspec.y.unit == utils.unit_od
     testspec.subspectrum(2200.,3900.)
-    wavel = testspec.x.to(u.micron,equivalencies=u.equivalencies.spectral())
+    freq = testspec.x
     transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
     m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
-    d_substrate = 0.2
+    d_substrate = 0.2*u.micron
     n0 = 1.3
-    m_ice = utils.kramers_kronig(wavel,transmittance,m_substrate,d_substrate,n0,maxiter=2)
-    assert m_ice.shape == wavel.shape
+    m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,maxiter=2)
+    assert m_ice.shape == freq.shape
 
 
   def test_kkitertocde(self):
@@ -79,15 +79,15 @@ class TestKKIter:
     assert testspec.x.unit == u.kayser
     assert testspec.y.unit == utils.unit_od
     testspec.subspectrum(2500.,4500.)
-    wavel = testspec.x.to(u.micron,equivalencies=u.equivalencies.spectral())
+    freq = testspec.x
     transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
     m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
-    d_substrate = 0.2
+    d_substrate = 0.2*u.cm
     n0 = 1.3
     pytest.set_trace()
-    m_ice = utils.kramers_kronig(wavel,transmittance,m_substrate,d_substrate,n0)
-    assert m_ice.shape == wavel.shape
-    cdespec = spectrum.CDESpectrum(testspec.x,m_ice.real,m_ice.imag)
+    m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0)
+    assert m_ice.shape == freq.shape
+    cdespec = spectrum.CDESpectrum(freq,m_ice.real,m_ice.imag)
 
 #fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,m_ice.real);ax1.plot(freq,m_ice.imag);plt.show();plt.close()
 #plt.plot(freq,alpha);plt.show();plt.close()
@@ -97,3 +97,5 @@ class TestKKIter:
 #fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(wavel,m_ice.real);ax1.plot(wavel,m_ice.imag);plt.show();plt.close()
 #plt.plot(wavel,alpha);plt.show();plt.close()
 #fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(wavel,transmittance);ax1.plot(wavel,transmittance_model);plt.show();plt.close()
+
+#np.log(transmittance/np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.)
