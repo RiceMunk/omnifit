@@ -168,16 +168,21 @@ def cde_correct(wn,n,k):
   """
   wl=1.e4/wn
   m=np.vectorize(complex)(n,k)
-  cabs_vol=np.empty(0)
-  cabs=np.empty(0)
-  cscat_vol=np.empty(0)
-  for c_wn,c_wl,c_m in zip(wn,wl,m):
-    m2=c_m**2.0
-    im_part=((m2/(m2-1))*np.log(m2)).imag
-    cabs_vol=np.hstack([cabs_vol,2.*(2.*np.pi/c_wl)*im_part])
-    t_cabs=c_wn*(2.0*c_m.imag/(c_m.imag-1))*np.log10(c_m.imag)
-    cabs=np.hstack([cabs,t_cabs])
-    cscat_vol=np.hstack([cscat_vol,(c_wn**3.0/(6*np.pi))*t_cabs])
+  # cabs_vol=np.empty(0)
+  # cabs=np.empty(0)
+  # cscat_vol=np.empty(0)
+  m2=m**2.0
+  im_part=((m2/(m2-1.0))*np.log(m2)).imag
+  cabs_vol=(4.0*np.pi/wl)*im_part
+  cabs=wn*(2.0*m.imag/(m.imag-1))*np.log10(m.imag)
+  cscat_vol=(wn**3.0/(6.0*np.pi))*cabs
+  # for c_wn,c_wl,c_m in zip(wn,wl,m):
+  #   m2=c_m**2.0
+  #   im_part=((m2/(m2-1))*np.log(m2)).imag
+  #   cabs_vol=np.hstack([cabs_vol,2.*(2.*np.pi/c_wl)*im_part])
+  #   t_cabs=c_wn*(2.0*c_m.imag/(c_m.imag-1))*np.log10(c_m.imag)
+  #   cabs=np.hstack([cabs,t_cabs])
+  #   cscat_vol=np.hstack([cscat_vol,(c_wn**3.0/(6*np.pi))*t_cabs])
   ctot=cabs+cscat_vol
   return cabs,cabs_vol,cscat_vol,ctot
 
@@ -216,7 +221,7 @@ def kkint(freq,alpha,n0):
   return kkint
 
 
-def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=None,tol=0.1,maxiter=100):
+def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=None,tol=0.05,maxiter=100,ignore_fraction=0.1):
   """
   kramers_kronig()
 
@@ -263,6 +268,11 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=None,to
   alpha = np.full_like(freq,np.nan+np.nan*1j,dtype=complex)
   #initial guess at m at first index
   m_ice = np.full_like(freq,m_guess,dtype=complex)
+  #find top and bottom fraction indices. These will be replaced with dummy values after each integration to get rid of edge effects
+  if ignore_fraction > 0.5 or ignore_fraction < 0:
+    raise RuntimeError('ignore_fraction must be between 0.0 and 0.5')
+  bot_fraction = round(ignore_fraction*len(freq))
+  top_fraction = len(freq)-bot_fraction
   #iteration begin!
   niter = 0
   squaresum_diff = tol+1
@@ -275,6 +285,10 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=None,to
     alpha = (1./d_substrate)*(-np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.))
     #using the new alpha, calculate a new n (and thus m) for the ice
     m_ice = kkint(freq,alpha,n0) + 1j*alpha/(4*np.pi*freq)
+    #replace top and bottom fractions of m_ice with the value closest to that edge
+    #this is done to combat edge effects arising from integrating over a non-infinite range
+    m_ice[:bot_fraction] = m_ice[bot_fraction]
+    m_ice[top_fraction:] = m_ice[top_fraction]
     #calculate transmission and relfection coefficients (again)
     #in these 0 means vacuum, 1 means ice, 2 means substrate
     t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)

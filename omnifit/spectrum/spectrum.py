@@ -751,7 +751,8 @@ class CDESpectrum(AbsorptionSpectrum):
     self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=utils.cde_correct(wn.value,n,k)
     self.n=np.array(n,dtype='float64')
     self.k=np.array(k,dtype='float64')
-    AbsorptionSpectrum.__init__(self,wn,self.cabs_vol*utils.unit_od,**kwargs)
+    od = self.cabs_vol*utils.unit_od#utils.unit_absorbance).to(utils.unit_od,equivalencies=utils.equivalencies_absorption)
+    AbsorptionSpectrum.__init__(self,wn,od,**kwargs)
   def plotnk(self,ax_n,ax_k,**kwargs):
     """
     plotnk(ax_n,ax_k,**kwargs)

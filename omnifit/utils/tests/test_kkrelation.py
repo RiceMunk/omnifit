@@ -78,7 +78,7 @@ class TestKKIter:
     testspec = helpers.generate_absspectrum()
     assert testspec.x.unit == u.kayser
     assert testspec.y.unit == utils.unit_od
-    testspec.subspectrum(2500.,4500.)
+    testspec.subspectrum(2000.,4500.)
     freq = testspec.x
     transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
     m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
@@ -99,3 +99,7 @@ class TestKKIter:
 #fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(wavel,transmittance);ax1.plot(wavel,transmittance_model);plt.show();plt.close()
 
 #np.log(transmittance/np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.)
+
+#import matplotlib.pyplot as plt
+#fig=plt.figure();ax1=fig.add_subplot(111);cdespec.plotod(ax1);testspec.plotod(ax1);plt.show();plt.close()
+#cdespec.od/=np.log(10)
