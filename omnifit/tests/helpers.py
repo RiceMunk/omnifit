@@ -21,7 +21,16 @@ def generate_absspectrum():
   """
   filepath_waterice = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/waterice_absorption.txt')
   wn, absorbance = np.loadtxt(filepath_waterice,delimiter=', ',skiprows=0,unpack=True)
-  return spectrum.AbsorptionSpectrum(wn*u.kayser,-1.0*np.log(10**(-1.0*absorbance))*utils.unit_od,specname='test water spectrum (absorption)')
+  return spectrum.AbsorptionSpectrum(wn*u.kayser,absorbance*np.log(10)*utils.unit_od,specname='test water spectrum (absorption)')
+
+def generate_absspectrum_alt():
+  """
+  Generate and return an absorption spectrum suitable for testing
+  alternate version using a different set of data
+  """
+  filepath_watermeth = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/watermethanol_absorption.txt')
+  wn, absorbance = np.loadtxt(filepath_watermeth,skiprows=0,unpack=True)
+  return spectrum.AbsorptionSpectrum(wn*u.kayser,absorbance*np.log(10)*utils.unit_od,specname='test water spectrum (absorption)')
 
 def generate_cdespectrum():
   """
