@@ -84,7 +84,7 @@ class TestKKIter:
     freq = testspec.x
     transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
     m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
-    d_substrate = 0.2*u.micron#*u.cm
+    d_substrate = 2.0*u.micron#*u.cm
     n0 = 1.3
     pytest.set_trace()
     m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0)
