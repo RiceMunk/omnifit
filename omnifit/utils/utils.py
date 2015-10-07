@@ -168,21 +168,11 @@ def cde_correct(wn,n,k):
   """
   wl=1.e4/wn
   m=np.vectorize(complex)(n,k)
-  # cabs_vol=np.empty(0)
-  # cabs=np.empty(0)
-  # cscat_vol=np.empty(0)
   m2=m**2.0
   im_part=((m2/(m2-1.0))*np.log(m2)).imag
   cabs_vol=(4.0*np.pi/wl)*im_part
   cabs=wn*(2.0*m.imag/(m.imag-1))*np.log10(m.imag)
   cscat_vol=(wn**3.0/(6.0*np.pi))*cabs
-  # for c_wn,c_wl,c_m in zip(wn,wl,m):
-  #   m2=c_m**2.0
-  #   im_part=((m2/(m2-1))*np.log(m2)).imag
-  #   cabs_vol=np.hstack([cabs_vol,2.*(2.*np.pi/c_wl)*im_part])
-  #   t_cabs=c_wn*(2.0*c_m.imag/(c_m.imag-1))*np.log10(c_m.imag)
-  #   cabs=np.hstack([cabs,t_cabs])
-  #   cscat_vol=np.hstack([cscat_vol,(c_wn**3.0/(6*np.pi))*t_cabs])
   ctot=cabs+cscat_vol
   return cabs,cabs_vol,cscat_vol,ctot
 
@@ -204,129 +194,7 @@ def complex_transmission_reflection(in_m0,in_m1,in_m2):
           complex_reflection(in_m1,in_m2)
         )
 
-# # def kkint(freq_denominator,alpha,n0):
-# #   """
-# #   kkint(freq,alpha,n0)
-
-# #   Kramers-Kronig integration.
-# #   presented in Hudgins et al 1993 (1993ApJS...86..713H).
-# #   """
-# #   kkint = n0+simps(alpha*freq_denominator,axis=0)/(2*np.pi*np.pi)
-# #   if np.any(kkint < 0):
-# #     warnings.warn('KK integration is returning negative refractive indices! Something is probably wrong.',RuntimeWarning)
-# #   return kkint
-
-
-# def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=None,tol=0.05,maxiter=100,ignore_fraction=0.1):
-#   """
-#   kramers_kronig()
-
-#   Kramers-Kronig relation.
-#   This is an implementation of the Kramers-Kronig relation calculation
-#   presented in Hudgins et al 1993 (1993ApJS...86..713H).
-
-#   Parameters
-#   ----------
-
-#   Returns
-#   -------
-#   """
-#   #set up constants
-#   m_vacuum = 1.0+0.0j
-#   #make sure the input array units are correct; convert if necessary
-#   if type(freq) != u.quantity.Quantity:
-#     warnings.warn('No units detected in input freq. Assuming kayser.',RuntimeWarning)
-#     freq *= u.kayser
-#   else:
-#     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-#       freq=freq.to(u.kayser)
-#   if type(transmittance) != u.quantity.Quantity:
-#     warnings.warn('No units detected in input transmittance. Assuming transmittance units.',RuntimeWarning)
-#     transmittance *= unit_t
-#   else:
-#     with u.set_enabled_equivalencies(equivalencies_absorption):
-#       transmittance = transmittance.to(unit_t)
-#   if type(d_substrate) != u.quantity.Quantity:
-#     warnings.warn('No units detected in input d_substrate. Assuming centimeters.',RuntimeWarning)
-#     d_substrate *= u.cm
-#   else:
-#     d_substrate = d_substrate.to(u.cm)
-#   #m_guess is set to be 0+n0*j if None
-#   if m_guess is None:
-#     m_guess = n0+0.0j
-#   #sort the arrays and get rid of units; won't need them after this
-#   initial_sorter = np.argsort(freq)
-#   freq = freq[initial_sorter].value
-#   transmittance = transmittance[initial_sorter].value
-#   d_substrate = d_substrate.value
-#   #initialise complex refractive index and alpha arrays
-#   m = np.full_like(freq,np.nan+np.nan*1j,dtype=complex)
-#   alpha = np.full_like(freq,np.nan+np.nan*1j,dtype=complex)
-#   #pre-calculate the reciprocal square frequency difference denominator thing used by kkint
-#   #it can be super-slow to calculate but only needs to be done once, thankfully
-#   sfreq=(freq).reshape(len(freq),1)
-#   freq_denominator = 1./(freq**2-sfreq**2)
-#   freq_denominator[np.logical_not(np.isfinite(freq_denominator))] = 0.
-#   kkint_denominator = simps(freq_denominator,axis=0)
-#   #pre-calculate inverse of frequency
-#   inv_freq = 1./freq
-#   #initial guess at m at first index
-#   m_ice = np.full_like(freq,m_guess,dtype=complex)
-#   #find top and bottom fraction indices. These will be replaced with dummy values after each integration to get rid of edge effects
-#   if ignore_fraction > 0.5 or ignore_fraction < 0:
-#     raise RuntimeError('ignore_fraction must be between 0.0 and 0.5')
-#   bot_fraction = round(ignore_fraction*len(freq))
-#   top_fraction = len(freq)-bot_fraction
-#   #iteration begin!
-#   niter = 0
-#   squaresum_diff = tol+1
-#   while squaresum_diff > tol and niter < maxiter:
-#     #calculate transmission and relfection coefficients
-#     #in these 0 means vacuum, 1 means ice, 2 means substrate
-#     t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
-#     #this is an evil equation. do NOT touch it
-#     #it calculates the lambert absorption coefficient using the current best guess at m_ice
-#     alpha = (1./d_substrate)*(-np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.))
-#     #using the new alpha, calculate a new n (and thus m) for the ice
-#     # intfunc = alpha*freq_denominator
-#     # kkint = n0+alpha*kkint_denominator/(2*np.pi*np.pi)
-#     m_ice = n0+alpha*kkint_denominator/(2*np.pi*np.pi) + 1j*alpha*inv_freq/(4*np.pi)
-
-#     #replace top and bottom fractions of m_ice with the value closest to that edge
-#     #this is done to combat edge effects arising from integrating over a non-infinite range
-#     m_ice[:bot_fraction] = m_ice[bot_fraction]
-#     m_ice[top_fraction:] = m_ice[top_fraction]
-#     #calculate transmission and relfection coefficients (again)
-#     #in these 0 means vacuum, 1 means ice, 2 means substrate
-#     t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
-#     #model a transmittance using given m_ice and alpha
-#     #yes, this is another evil equation
-#     transmittance_model = np.exp(-alpha*d_substrate)*np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.
-#     diff = transmittance - transmittance_model
-#     squaresum_diff = np.sum(diff**2) #square sum of difference
-#     niter += 1
-#   #at this point we are done
-#   if niter==maxiter:
-#     warnings.warn('Maximum number of iterations reached before convergence criterion was met.',RuntimeWarning)
-#   return m_ice
-
-def kkint(freq,alpha,n0):
-  """
-  kkint(freq,alpha,n0)
-  Kramers-Kronig integration.
-  presented in Hudgins et al 1993 (1993ApJS...86..713H).
-  """
-  # sfreq=(freq-np.mean(np.diff(freq))*0.001).reshape(len(freq),1) #frequency shifted by a tiny amount to avoid singularities
-  sfreq=(freq).reshape(len(freq),1)
-  intfunc = alpha/(freq**2-sfreq**2)
-  intfunc[np.logical_not(np.isfinite(intfunc))] = 0.
-  kkint = n0+simps(intfunc,axis=1)/(2*np.pi*np.pi)
-  if np.any(kkint < 0):
-    warnings.warn('KK integration is returning negative refractive indices! Something is probably wrong.',RuntimeWarning)
-  return kkint
-
-
-def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=None,tol=0.05,maxiter=100,ignore_fraction=0.1):
+def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=None,tol=0.001,maxiter=100,ignore_fraction=0.1):
   """
   kramers_kronig()
   Kramers-Kronig relation.
@@ -375,6 +243,10 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=None,to
     raise RuntimeError('ignore_fraction must be between 0.0 and 0.5')
   bot_fraction = round(ignore_fraction*len(freq))
   top_fraction = len(freq)-bot_fraction
+  #pre-calculate denominator component of the KK integration
+  sfreq=(freq).reshape(len(freq),1)
+  kkint_deno = 1./(freq**2-sfreq**2)
+  kkint_deno[np.logical_not(np.isfinite(kkint_deno))] = 0.
   #iteration begin!
   niter = 0
   squaresum_diff = tol+1
@@ -386,7 +258,17 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,m_guess=None,to
     #it calculates the lambert absorption coefficient using the current best guess at m_ice
     alpha = (1./d_substrate)*(-np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.))
     #using the new alpha, calculate a new n (and thus m) for the ice
-    m_ice = kkint(freq,alpha,n0) + 1j*alpha/(4*np.pi*freq)
+    #this is done in a parallel for loop, to avoid killing the computer when dealing with large amounts of data
+    kkint_nomi = alpha/(2*np.pi*np.pi)
+    kkint = np.full_like(alpha,n0)
+    numcols = kkint_deno.shape[0]
+    for current_col in range(numcols):
+      kkint[current_col]+=simps(kkint_nomi*kkint_deno[current_col,:])
+    # kkint = n0+simps(alpha*kkint_deno,axis=1)/(2*np.pi*np.pi)
+    if np.any(kkint<1):
+      warnings.warn('KK integration is producing refractive indices below unity! Unexpected behaviour may follow.',RuntimeWarning)
+      kkint[kkint<1]=1.
+    m_ice = kkint+1j*alpha/(4*np.pi*freq)
     #replace top and bottom fractions of m_ice with the value closest to that edge
     #this is done to combat edge effects arising from integrating over a non-infinite range
     m_ice[:bot_fraction] = m_ice[bot_fraction]

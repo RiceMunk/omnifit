@@ -35,24 +35,6 @@ class TestKKrelation_supportfuncs:
     assert np.all(r02 == complex_reflection(testm0,testm2))
     assert np.all(r12 == complex_reflection(testm1,testm2))
 
-  # def test_kkint(self):
-  #   """
-  #   Make sure that the Kramers-Kronig integration
-  #   works as expected
-  #   """
-
-  #   testspec = helpers.generate_cdespectrum()
-  #   testn0 = 1.3
-  #   testalpha = testspec.k #not actually truly alpha, but close enough
-  #   assert testspec.x.unit == u.kayser
-  #   testfreq = testspec.x.value
-  #   sfreq=(testfreq).reshape(len(testfreq),1)
-  #   freq_denominator = 1./(testfreq**2-sfreq**2)
-  #   freq_denominator[np.logical_not(np.isfinite(freq_denominator))] = 0.
-  #   res_n = utils.kkint(freq_denominator,testalpha,testn0)
-
-  #   assert res_n.shape == testfreq.shape #is the shape as expected?
-
 class TestKKIter:
   def test_kkiterbasic(self):
     """
@@ -72,7 +54,6 @@ class TestKKIter:
     m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,maxiter=2)
     assert m_ice.shape == freq.shape
 
-
   def test_kkitertocde(self):
     """
     Check the sanity of CDE spectra generated from KK iteration results
@@ -84,24 +65,7 @@ class TestKKIter:
     freq = testspec.x
     transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
     m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
-    d_substrate = 2.0*u.micron#*u.cm
+    d_substrate = 0.5*u.micron #not probably true, but good enough for testing
     n0 = 1.3
-    pytest.set_trace()
     m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0)
     assert m_ice.shape == freq.shape
-    cdespec = spectrum.CDESpectrum(freq,m_ice.real,m_ice.imag)
-
-#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,m_ice.real);ax1.plot(freq,m_ice.imag);plt.show();plt.close()
-#plt.plot(freq,alpha);plt.show();plt.close()
-#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,transmittance);ax1.plot(freq,transmittance_model);plt.show();plt.close()
-
-
-#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(wavel,m_ice.real);ax1.plot(wavel,m_ice.imag);plt.show();plt.close()
-#plt.plot(wavel,alpha);plt.show();plt.close()
-#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(wavel,transmittance);ax1.plot(wavel,transmittance_model);plt.show();plt.close()
-
-#np.log(transmittance/np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.)
-
-#import matplotlib.pyplot as plt
-#fig=plt.figure();ax1=fig.add_subplot(111);cdespec.plotod(ax1);testspec.plotod(ax1);plt.show();plt.close()
-#cdespec.od/=np.log(10)
