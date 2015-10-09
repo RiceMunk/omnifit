@@ -54,6 +54,47 @@ class TestKKIter:
     m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,maxiter=2)
     assert m_ice.shape == freq.shape
 
+  # def test_kkitertocde(self):
+  #   """
+  #   Check the sanity of CDE spectra generated from KK iteration results
+  #   """
+  #   testspec = helpers.generate_absspectrum()
+  #   assert testspec.x.unit == u.kayser
+  #   assert testspec.y.unit == utils.unit_od
+  #   testspec.subspectrum(2000.,4500.)
+  #   freq = testspec.x
+  #   transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
+  #   m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
+  #   d_substrate = 0.5*u.micron #not probably true, but good enough for testing
+  #   n0 = 1.3
+  #   m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0)
+  #   assert m_ice.shape == freq.shape
+
+  # def test_kkitertocde(self):
+  #   """
+  #   Check the sanity of CDE spectra generated from KK iteration results
+  #   """
+  #   filepath_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../tests/data/achuv15.csv')
+  #   wl, transmittance = np.loadtxt(filepath_data,delimiter=',',skiprows=0,unpack=True)
+  #   wl *= u.kayser#u.nm
+  #   with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+  #     freq=wl.to(u.kayser)
+  #   sorter = np.argsort(freq)
+  #   freq = freq[sorter]
+  #   transmittance = transmittance[sorter]
+  #   transmittance *= utils.unit_transmittance
+  #   freq = freq[:-1]
+  #   transmittance = transmittance[:-1]
+
+  #   m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
+  #   d_substrate = 0.8*u.micron #not probably true, but good enough for testing
+  #   m0 = 1.5 + 0.0j
+  #   with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+  #     freq_m0 = (1000.*u.nm).to(u.kayser).value
+  #   pytest.set_trace()    # invoke PDB debugger and tracing
+  #   m_ice = utils.kramers_kronig_alt(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,ignore_fraction=0.02)
+  #   assert m_ice.shape == freq.shape
+
   def test_kkitertocde(self):
     """
     Check the sanity of CDE spectra generated from KK iteration results
@@ -66,6 +107,18 @@ class TestKKIter:
     transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
     m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
     d_substrate = 0.5*u.micron #not probably true, but good enough for testing
-    n0 = 1.3
-    m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0)
+    m0 = 1.3 + 0.0j
+    with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+      freq_m0 = (250.*u.micron).to(u.kayser).value
+    pytest.set_trace()    # invoke PDB debugger and tracing
+    m_ice = utils.kramers_kronig_alt(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,ignore_fraction=0.1)
     assert m_ice.shape == freq.shape
+
+
+#import matplotlib.pyplot as plt
+#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,transmittance);plt.show();plt.close()
+
+#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,m_ice.real);ax1.plot(freq,m_ice.imag);plt.show();plt.close()
+#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,alpha);plt.show();plt.close()
+#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,kkint);plt.show();plt.close()
+#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,transmittance);ax1.plot(freq,transmittance_model);plt.show();plt.close()
