@@ -36,7 +36,7 @@ class TestKKrelation_supportfuncs:
     assert np.all(r12 == complex_reflection(testm1,testm2))
 
 class TestKKIter:
-  def test_kkiterbasic(self):
+  def test_kkiternoconverge(self):
     """
     Test basic functionality of KK iteration.
     Not going for a full iteration; just making sure it doesn't crash
@@ -49,112 +49,51 @@ class TestKKIter:
     freq = testspec.x
     transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
     m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
-    d_substrate = 0.2*u.micron
-    n0 = 1.3
-    m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0,maxiter=2)
-    assert m_ice.shape == freq.shape
-
-  # def test_kkitertocde(self):
-  #   """
-  #   Check the sanity of CDE spectra generated from KK iteration results
-  #   """
-  #   testspec = helpers.generate_absspectrum()
-  #   assert testspec.x.unit == u.kayser
-  #   assert testspec.y.unit == utils.unit_od
-  #   testspec.subspectrum(2000.,4500.)
-  #   freq = testspec.x
-  #   transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
-  #   m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
-  #   d_substrate = 0.5*u.micron #not probably true, but good enough for testing
-  #   n0 = 1.3
-  #   m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,n0)
-  #   assert m_ice.shape == freq.shape
-
-  # def test_kkitertocde(self):
-  #   """
-  #   Check the sanity of CDE spectra generated from KK iteration results
-  #   """
-  #   filepath_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../tests/data/achuv15.csv')
-  #   wl, transmittance = np.loadtxt(filepath_data,delimiter=',',skiprows=0,unpack=True)
-  #   wl *= u.kayser#u.nm
-  #   with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-  #     freq=wl.to(u.kayser)
-  #   sorter = np.argsort(freq)
-  #   freq = freq[sorter]
-  #   transmittance = transmittance[sorter]
-  #   transmittance *= utils.unit_transmittance
-  #   freq = freq[:-1]
-  #   transmittance = transmittance[:-1]
-
-  #   m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
-  #   d_substrate = 0.8*u.micron #not probably true, but good enough for testing
-  #   m0 = 1.5 + 0.0j
-  #   with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-  #     freq_m0 = (1000.*u.nm).to(u.kayser).value
-  #   pytest.set_trace()    # invoke PDB debugger and tracing
-  #   m_ice = utils.kramers_kronig_alt(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,ignore_fraction=0.02)
-  #   assert m_ice.shape == freq.shape
-
-  # def test_kkitertocde(self):
-  #   """
-  #   Check the sanity of CDE spectra generated from KK iteration results
-  #   """
-  #   testspec = helpers.generate_absspectrum()
-  #   assert testspec.x.unit == u.kayser
-  #   assert testspec.y.unit == utils.unit_od
-  #   testspec.subspectrum(2000.,4500.)
-  #   freq = testspec.x
-  #   transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
-  #   m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
-  #   d_substrate = 0.5*u.micron #not probably true, but good enough for testing
-  #   m0 = 1.3 + 0.0j
-  #   with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-  #     freq_m0 = (250.*u.micron).to(u.kayser).value
-  #   pytest.set_trace()    # invoke PDB debugger and tracing
-  #   m_ice = utils.kramers_kronig_alt(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,ignore_fraction=0.1)
-  #   assert m_ice.shape == freq.shape
-
-  def test_kkitertocde(self):
-    """
-    Check the sanity of CDE spectra generated from KK iteration results
-    """
-    filepath_data = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../tests/data/achuv15.csv')
-    wl, transmittance = np.loadtxt(filepath_data,delimiter=',',skiprows=0,unpack=True)
-    wl *= u.kayser#u.nm
+    d_substrate = 2.0*u.micron
+    m0 = 1.3 + 0.0j
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-      freq=wl.to(u.kayser)
-    sorter = np.argsort(freq)
-    freq = freq[sorter]
-    transmittance = transmittance[sorter]
-    transmittance *= utils.unit_transmittance
-    freq = freq[:-1]
-    transmittance = transmittance[:-1]
-    #experiment at frequency range homogenization(?)
-    newfreq = np.linspace(freq[0],400000.*freq.unit,10000)
-    newtrans = np.interp(newfreq,freq,transmittance)
-    freq,transmittance = newfreq,newtrans*transmittance.unit
-    #experiment at frequency padding
-    padfreq = np.linspace(0.0001*freq[0],freq[0],np.round(0.2*len(freq)))[:-1]
-    padtrans = np.full_like(padfreq.value,transmittance[0])*transmittance.unit
-    freq = np.append(padfreq.value,freq.value)*freq.unit
-    transmittance  = np.append(padtrans.value,transmittance.value)*transmittance.unit
+      freq_m0 = (250.*u.micron).to(u.kayser).value
+    with pytest.raises(RuntimeError) as excinfo:
+      m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,maxiter=1,ignore_fraction=0.1)
+    assert 'Maximum number of iterations reached before convergence criterion was met.' in str(excinfo.value)
+
+  def test_kkiternanfailure(self):
+    """
+    Make sure that KK iteration stops instantly when it starts producing NaNs.
+    Producing NaNs means that the iteration has been given input parameters which fail
+    to converge to anything sane.
+    """
+    testspec = helpers.generate_absspectrum()
+    assert testspec.x.unit == u.kayser
+    assert testspec.y.unit == utils.unit_od
+    testspec.subspectrum(2200.,3900.)
+    freq = testspec.x
+    transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
     m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
-    d_substrate = 20.0*u.nm #not probably true, but good enough for testing
-    m0 = 1.5 + 0.0j
+    d_substrate = 0.1*u.micron
+    m0 = 1.3 + 0.0j
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-      freq_m0 = (1.*u.nm).to(u.kayser).value
-    pytest.set_trace()    # invoke PDB debugger and tracing
-    m_ice = utils.kramers_kronig_alt(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,ignore_fraction=0.1)
+      freq_m0 = (250.*u.micron).to(u.kayser).value
+    with pytest.raises(RuntimeError) as excinfo:
+      m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,ignore_fraction=0.1)
+    assert 'Produced complex refractive index contains NaNs. Check your input parameters.' in str(excinfo.value)
+
+  def test_kkiterfull(self):
+    """
+    Make sure that a longer iteration converges nicely
+    """
+    testspec = helpers.generate_absspectrum()
+    assert testspec.x.unit == u.kayser
+    assert testspec.y.unit == utils.unit_od
+    testspec.subspectrum(2000.,4500.)
+    freq = testspec.x
+    transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
+    m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
+    d_substrate = 2.0*u.micron #not probably true, but good enough for testing
+    m0 = 1.3 + 0.0j
+    with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+      freq_m0 = (250.*u.micron).to(u.kayser).value
+    m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,ignore_fraction=0.1)
     assert m_ice.shape == freq.shape
-
-
-#import matplotlib.pyplot as plt
-#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,transmittance);plt.show();plt.close()
-
-#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,m_ice.real);ax1.plot(freq,m_ice.imag);plt.show();plt.close()
-#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,alpha);plt.show();plt.close()
-#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,kkint);plt.show();plt.close()
-#fig=plt.figure();ax1=fig.add_subplot(111);ax1.plot(freq,transmittance);ax1.plot(freq,transmittance_model);plt.show();plt.close()
-#plt.plot(np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.));plt.show();plt.close()
-#plt.plot(alpha/(4*np.pi*freq));plt.show();plt.close()
-#plt.plot(-np.log(transmittance));plt.show();plt.close()
+    assert np.all(np.logical_not(np.isnan(m_ice.real)))
+    assert np.all(np.logical_not(np.isnan(m_ice.imag)))
