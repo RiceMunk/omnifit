@@ -121,7 +121,7 @@ class Baseliner:
 #New units definitions
 #---------------------
 #the units themselves
-unit_t = u.def_unit('tranmittance units',doc='Transmittance of radiation')
+unit_t = u.def_unit('transmittance units',doc='Transmittance of radiation')
 unit_transmittance = unit_t
 unit_abs = u.def_unit('absorbance units',doc='Absorbance of radiation')
 unit_absorbance = unit_abs
@@ -361,7 +361,6 @@ def kramers_kronig_alt(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,m_g
     numcols = kkint_deno1.shape[0]
     for current_col in range(numcols):
       kkint[current_col]+=kkint_mul*simps((alpha-alpha[current_col])*kkint_deno1[current_col,:]-kkint_nomi*kkint_deno2)
-    # kkint = n0+simps(alpha*kkint_deno,axis=1)/(2*np.pi*np.pi)
     if np.any(kkint<1):
       warnings.warn('KK integration is producing refractive indices below unity! Unexpected behaviour may follow.',RuntimeWarning)
       kkint[kkint<1]=1.
