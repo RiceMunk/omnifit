@@ -196,7 +196,7 @@ def complex_transmission_reflection(in_m0,in_m1,in_m2):
           complex_reflection(in_m1,in_m2)
         )
 
-def kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,m_guess=None,tol=0.001,maxiter=100,ignore_fraction=0.1,force_kkint_unity=False):
+def kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,m_guess=None,tol=0.001,maxiter=100,ignore_fraction=0.1,force_kkint_unity=False,precalc=False):
   """
   kramers_kronig()
   Kramers-Kronig relation.
@@ -245,13 +245,19 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,m_guess
     raise RuntimeError('ignore_fraction must be between 0.0 and 0.5')
   bot_fraction = round(ignore_fraction*len(freq))
   top_fraction = len(freq)-bot_fraction
-  #pre-calculate denominator component of the KK integration
-  sfreq=(freq).reshape(len(freq),1)
-
-  kkint_deno1 = freq**2-sfreq**2
-  kkint_deno1[kkint_deno1!=0] = 1./kkint_deno1[kkint_deno1!=0]
-  kkint_deno2 = 1./(freq**2-freq_m0**2)
-
+  #pre-calculate the large denominator component of the KK integration, if desired
+  if precalc:
+    try:
+      sfreq=(freq).reshape(len(freq),1)
+      kkint_deno1 = freq**2-sfreq**2
+      kkint_deno1[kkint_deno1!=0] = 1./kkint_deno1[kkint_deno1!=0]
+      precalc = True
+    #or at least try to do so; if run out of memory, switch to the slower no-precalc mode
+    except MemoryError:
+      precalc = False
+  #this component is much smaller, so it can always be precalced
+  kkint_deno2 = freq**2-freq_m0**2
+  kkint_deno2[kkint_deno2!=0] = 1./kkint_deno2[kkint_deno2!=0]
   #calculate alpha at freq0
   alpha0 = m0.imag/(4*np.pi*freq)
   #iteration begin!
@@ -269,9 +275,14 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,m_guess
     kkint_mul = 1./(2*np.pi*np.pi)
     kkint_nomi = alpha-alpha0
     kkint = np.full_like(alpha,m0.real)
-    numcols = kkint_deno1.shape[0]
+    numcols = kkint_nomi.shape[0]
     for current_col in range(numcols):
-      kkint[current_col]+=kkint_mul*simps((alpha-alpha[current_col])*kkint_deno1[current_col,:]-kkint_nomi*kkint_deno2)
+      if precalc:
+        kkint[current_col]+=kkint_mul*simps((alpha-alpha[current_col])*kkint_deno1[current_col,:]-kkint_nomi*kkint_deno2)
+      else:
+        kkint_deno1 = freq[current_col]**2-freq**2
+        kkint_deno1[kkint_deno1!=0] = 1./kkint_deno1[kkint_deno1!=0]
+        kkint[current_col]+=kkint_mul*simps((alpha-alpha[current_col])*kkint_deno1-kkint_nomi/(freq**2-freq_m0**2))
     if np.any(kkint<1):
       if np.any(kkint<0):
         warnings.warn('KK integration is producing negative refractive indices! This will most likely produce nonsensical results.',RuntimeWarning)
