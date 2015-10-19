@@ -54,7 +54,7 @@ class TestKKIter:
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
       freq_m0 = (250.*u.micron).to(u.kayser).value
     with pytest.raises(RuntimeError) as excinfo:
-      m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,maxiter=1,ignore_fraction=0.1)
+      m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,maxiter=1)
     assert 'Maximum number of iterations reached before convergence criterion was met.' in str(excinfo.value)
 
   def test_kkiternanfailure(self):
@@ -75,7 +75,7 @@ class TestKKIter:
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
       freq_m0 = (250.*u.micron).to(u.kayser).value
     with pytest.raises(RuntimeError) as excinfo:
-      m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,ignore_fraction=0.1)
+      m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0)
     assert 'Produced complex refractive index contains NaNs. Check your input parameters.' in str(excinfo.value)
 
   def test_kkiterfull(self):
@@ -93,7 +93,7 @@ class TestKKIter:
     m0 = 1.3 + 0.0j
     with u.set_enabled_equivalencies(u.equivalencies.spectral()):
       freq_m0 = (250.*u.micron).to(u.kayser).value
-    m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,ignore_fraction=0.1)
+    m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0)
     assert m_ice.shape == freq.shape
     assert np.all(np.logical_not(np.isnan(m_ice.real)))
     assert np.all(np.logical_not(np.isnan(m_ice.imag)))
