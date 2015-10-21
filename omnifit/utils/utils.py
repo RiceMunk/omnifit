@@ -196,7 +196,7 @@ def complex_transmission_reflection(in_m0,in_m1,in_m2):
           complex_reflection(in_m1,in_m2)
         )
 
-def kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,m_guess=None,tol=0.001,maxiter=100,ignore_fraction=0.1,force_kkint_unity=False,precalc=False):
+def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0.0j,tol=0.001,maxiter=100,ignore_fraction=0.1,force_kkint_unity=False,precalc=False):
   """
   kramers_kronig()
   Kramers-Kronig relation.
@@ -222,19 +222,16 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,m_guess
   else:
     with u.set_enabled_equivalencies(equivalencies_absorption):
       transmittance = transmittance.to(unit_t)
-  if type(d_substrate) != u.quantity.Quantity:
-    warnings.warn('No units detected in input d_substrate. Assuming centimeters.',RuntimeWarning)
-    d_substrate *= u.cm
+  if type(d_ice) != u.quantity.Quantity:
+    warnings.warn('No units detected in input d_ice. Assuming centimeters.',RuntimeWarning)
+    d_ice *= u.cm
   else:
-    d_substrate = d_substrate.to(u.cm)
-  #m_guess is set to be 0+n0*j if None
-  if m_guess is None:
-    m_guess = m0
+    d_ice = d_ice.to(u.cm)
   #sort the arrays and get rid of units; won't need them after this
   initial_sorter = np.argsort(freq)
   freq = freq[initial_sorter].value
   transmittance = transmittance[initial_sorter].value
-  d_substrate = d_substrate.value
+  d_ice = d_ice.value
   #initialise complex refractive index and alpha arrays
   m = np.full_like(freq,np.nan+np.nan*1j,dtype=complex)
   alpha = np.full_like(freq,np.nan+np.nan*1j,dtype=complex)
@@ -255,7 +252,8 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,m_guess
     #or at least try to do so; if run out of memory, switch to the slower no-precalc mode
     except MemoryError:
       precalc = False
-  #this component is much smaller, so it can always be precalced
+  #some other parts can always be precalced
+  kkint_mul = 1./(2*np.pi*np.pi)
   kkint_deno2 = freq**2-freq_m0**2
   kkint_deno2[kkint_deno2!=0] = 1./kkint_deno2[kkint_deno2!=0]
   #calculate alpha at freq0
@@ -267,12 +265,13 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,m_guess
     #calculate transmission and relfection coefficients
     #in these 0 means vacuum, 1 means ice, 2 means substrate
     t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
+    #the reflection component
+    # reflection_component = np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_ice*m_ice*freq)))**2.)
     #this is an evil equation. do NOT touch it
     #it calculates the lambert absorption coefficient using the current best guess at m_ice
-    alpha = (1./d_substrate)*(-np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.))
+    alpha = (1./d_ice)*(-np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_ice*m_ice*freq)))**2.))
     #using the new alpha, calculate a new n (and thus m) for the ice
     #this is done in a parallel for loop, to avoid killing the computer when dealing with large amounts of data
-    kkint_mul = 1./(2*np.pi*np.pi)
     kkint_nomi = alpha-alpha0
     kkint = np.full_like(alpha,m0.real)
     numcols = kkint_nomi.shape[0]
@@ -302,7 +301,7 @@ def kramers_kronig(freq,transmittance,m_substrate,d_substrate,m0,freq_m0,m_guess
     t01,t02,t12,r01,r02,r12 = complex_transmission_reflection(m_vacuum,m_ice,m_substrate)
     #model a transmittance using given m_ice and alpha
     #yes, this is another evil equation
-    transmittance_model = np.exp(-alpha*d_substrate)*np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_substrate*m_ice*freq)))**2.
+    transmittance_model = np.exp(-alpha*d_ice)*np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_ice*m_ice*freq)))**2.
     diff = transmittance - transmittance_model
     diff[:bot_fraction] = 0. #ignore top...
     diff[top_fraction:] = 0. #...and bottom fraction differences
