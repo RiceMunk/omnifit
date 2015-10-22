@@ -140,16 +140,16 @@ equivalencies_absorption = [
 #------------------------------------------------------
 #Functions related to light scattering and transmission
 #------------------------------------------------------
-def cde_correct(wn,n,k):
+def cde_correct(freq,n,k):
   """
-  cde_correct(wn,n,k)
+  cde_correct(freq,n,k)
 
   Generate a CDE-corrected spectrum from a complex refractive index
   spectrum.
 
   Parameters
   ----------
-  wn : `numpy.ndarray`
+  freq : `numpy.ndarray`
     The frequency data of the input spectrum, in reciprocal
     wavenumbers (cm^-1).
   n : `numpy.ndarray`
@@ -168,13 +168,13 @@ def cde_correct(wn,n,k):
       normalized by the volume distribution of the grain.
     * The spectrum of the total cross section of the simulated grain.    
   """
-  wl=1.e4/wn
+  wl=1.e4/freq
   m=np.vectorize(complex)(n,k)
   m2=m**2.0
   im_part=((m2/(m2-1.0))*np.log(m2)).imag
   cabs_vol=(4.0*np.pi/wl)*im_part
-  cabs=wn*(2.0*m.imag/(m.imag-1))*np.log10(m.imag)
-  cscat_vol=(wn**3.0/(6.0*np.pi))*cabs
+  cabs=freq*(2.0*m.imag/(m.imag-1))*np.log10(m.imag)
+  cscat_vol=(freq**3.0/(6.0*np.pi))*cabs
   ctot=cabs+cscat_vol
   return cabs,cabs_vol,cscat_vol,ctot
 
@@ -198,12 +198,35 @@ def complex_transmission_reflection(in_m0,in_m1,in_m2):
 
 def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0.0j,tol=0.001,maxiter=100,ignore_fraction=0.1,force_kkint_unity=False,precalc=False):
   """
-  kramers_kronig()
+  kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,
+                 m_guess=1.0+0.0j,tol=0.001,maxiter=100,ignore_fraction=0.1,
+                 force_kkint_unity=False,precalc=False)
+
   Kramers-Kronig relation.
   This is an implementation of the Kramers-Kronig relation calculation
-  presented in Hudgins et al 1993 (1993ApJS...86..713H).
+  presented in Hudgins et al 1993 (1993ApJS...86..713H), with an improved
+  integration method adapted from Trotta et al 1996 
+  (The Cosmic Dust Connection, 1996 169-184)
+
   Parameters
   ----------
+  wn : `astropy.units.Quantity` or `numpy.ndarray`
+    The frequency data of the input spectrum. If no units are given, this
+    is assumed to be in reciprocal wavenumbers (cm^-1).
+  transmittance : `astropy.units.Quantity` or `numpy.ndarray`
+    The transmittance data of the input spectrum. This can be given in
+    units other than transmittance, as long as they can be converted to 
+    transmittance by making use of the `utils.equivalencies_absorption`
+    equivalency information. If no units are given, transmittance is
+    assumed.
+  m_substrate : `complex`
+    The complex refractive index of the substrate on which the ice being
+    studied was grown.
+  d_ice : `astropy.units.Quantity` or `float`
+    The thickness of the ice which is being studied. If no units are given,
+    centimeters are assumed.
+
+
   Returns
   -------
   """
