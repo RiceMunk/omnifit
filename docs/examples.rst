@@ -59,3 +59,38 @@ Finally, lines 23-27 are used to produce a plot of the fit results in the file e
 The plotted file should look something like this:
 
 .. image:: _static/example_fitres.png
+
+Kramers-Kronig relation
+-----------------------
+
+You can download the laboratory data file used in this example from :download:`here <./_files/labdata_raw.csv>`.
+
+.. code-block:: python
+  :linenos:
+
+  from omnifit import utils
+  import astropy.units as u
+  import numpy as np
+  import matplotlib.pyplot as plt
+
+  d_ice = 1.5*u.micron
+  m_substrate = 1.4+0.0j
+  m0 = 1.3
+  with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+        freq_m0 = (0.5*u.micron).to(u.kayser).value
+
+  freq,absorbance = np.loadtxt('labdata_raw.csv',delimiter=', ',skiprows=0,unpack=True)
+  freq *= u.kayser
+  absorbance *= utils.unit_absorbance
+  transmittance = absorbance.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
+  cropind = np.logical_and(freq.value>=2500.,freq.value<=4000.)
+  freq = freq[cropind]
+  absorbance = absorbance[cropind]
+  transmittance = transmittance[cropind]
+  m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0)
+
+  fig = plt.figure()
+  ax1,ax2 = fig.add_subplot(211),fig.add_subplot(212)
+  ax1.plot(freq,m_ice.real)
+  ax2.plot(freq,m_ice.imag)
+  plt.savefig('example_kk.pdf')
