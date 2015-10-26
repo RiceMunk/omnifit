@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
-from scipy.integrate import simps
+import scipy.integrate
 from sys import float_info
 import warnings
 
@@ -376,11 +376,11 @@ def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0
     numcols = kkint_nomi.shape[0]
     for current_col in range(numcols):
       if precalc:
-        kkint[current_col]+=kkint_mul*simps((alpha-alpha[current_col])*kkint_deno1[current_col,:]-kkint_nomi*kkint_deno2)
+        kkint[current_col]+=kkint_mul*scipy.integrate.simps((alpha-alpha[current_col])*kkint_deno1[current_col,:]-kkint_nomi*kkint_deno2)
       else:
         kkint_deno1 = freq[current_col]**2-freq**2
         kkint_deno1[kkint_deno1!=0] = 1./kkint_deno1[kkint_deno1!=0]
-        kkint[current_col]+=kkint_mul*simps((alpha-alpha[current_col])*kkint_deno1-kkint_nomi/(freq**2-freq_m0**2))
+        kkint[current_col]+=kkint_mul*scipy.integrate.simps((alpha-alpha[current_col])*kkint_deno1-kkint_nomi/(freq**2-freq_m0**2))
     if np.any(kkint<1):
       if np.any(kkint<0):
         warnings.warn('KK integration is producing negative refractive indices! This will most likely produce nonsensical results.',RuntimeWarning)
