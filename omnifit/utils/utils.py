@@ -180,10 +180,32 @@ def cde_correct(freq,n,k):
 
 def complex_transmission_reflection(in_m0,in_m1,in_m2):
   """
+  complex_transmission_reflection(in_m0,in_m1,in_m2)
+
   Calculate the complex transmission and reflection coefficients between
   media 0, 1, and 2 given their complex refractive indices.
-  In the Kramers-Kronig implementation media 0, 1, and 2 correspond
+  In the Kramers-Kronig implementation (in which this is most likely used
+  in the context of Omnifit) media 0, 1, and 2 correspond
   respectively to the vacuum, ice, and substrate.
+
+  Parameters
+  ----------
+  in_m0 : `complex` or `numpy.ndarray`
+    The complex refractive index of medium 0.
+  in_m1 : `complex` or `numpy.ndarray`
+    The complex refractive index of medium 1.
+  in_m2 : `complex` or `numpy.ndarray`
+    The complex refractive index of medium 2.
+
+  Returns
+  -------
+  A tuple containing the following eleemnts:
+    * The complex transmission coefficient between media 0 and 1
+    * The complex transmission coefficient between media 0 and 2
+    * The complex transmission coefficient between media 1 and 2
+    * The complex reflection coefficient between media 0 and 1
+    * The complex reflection coefficient between media 0 and 2
+    * The complex reflection coefficient between media 1 and 2
   """
   complex_transmission = lambda m1,m2: (2.*m1.real)/(m1+m2)
   complex_reflection = lambda m1,m2: (m1-m2)/(m1+m2)
@@ -225,10 +247,61 @@ def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0
   d_ice : `astropy.units.Quantity` or `float`
     The thickness of the ice which is being studied. If no units are given,
     centimeters are assumed.
-
+  m0 : `complex`
+    The complex refractive index of the ice at the reference frequency
+    defined by `freq_m0` (see below).
+  freq_m0 : `astropy.units.Quantity` or `float`
+    The frequency at which the reference complex refractive index `m0`
+    (see above) is defined. Best results are usually achieved if this
+    frequency is high compared to the frequency range being probed by
+    the spectrum.
+    If this is not defined as `astropy.units.Quantity` in spectroscopic
+    units, it is assumed to be in reciprocal wavenumbers (cm^-1).
+  m_guess : `complex` or `numpy.ndarray`
+    The starting guess of the complex refractive index of the ice. This
+    can either be a single number (in which case it is assumed to be this
+    number throughout the entire spectrum) or an array
+  tol : `float`
+    The square-sum of the residual between the original transmittance and
+    the transmittance modeled with the iterated complex refractive index
+    of the ice must be below this value for the iteration to converge. In
+    other words, the smaller this number is, the better the final result
+    will be at the expense of extra iterations.
+  maxiter : `int`
+    The maximum number of iterations allowed. If this number is reached,
+    the iteration is considered to not have converged, and an exception is
+    raised.
+  ignore_fraction : `float` between 0 and 0.5
+    The edges of the spectrum are blanked out (and replaced with the
+    non-blanked value closest to the edge) during iteration to avoid edge
+    effects arising from the usage of a non-infinite integration range.
+    This parameter controls how large of a fraction of the edges is blanked
+    out.
+  force_kkint_unity : `bool`
+    The results of the Kramers-Kronig integration are responsible for
+    determining the real part of the complex refractive index i.e. the
+    one which represents refraction. Normally this number should not drop
+    below unity, and unexpected behaviour can arise if it does.
+    Usually this means that there is something wrong with the input
+    parameters, but sometimes forcing the result to always be greater or
+    equal to unity can help. It should be noted, however, that the
+    accuracy of the results of an integration forced in this way are
+    suspect at best.
+  precalc : `bool`
+    The Kramers-Kronig iteration can be a very computationally intensive
+    operation. In some situations it may result in a faster iteration to
+    pre-calculate the large denominator which is part of the
+    Kramers-Kronig integration instead of computing new values of it in a
+    for loop. This denominator can be, however, a very
+    large variable as it contains a number of elements equal to the size
+    of the spectrum squared. Pre-calculating this can outright fail on
+    lower-end computers as Python runs out of available memory.
+    High-end systems may benefit from such pre-calculation, though.
 
   Returns
   -------
+  A `numpy.ndarray` which contains the complex refractive index of the
+  ice, in order of increasing frequency.
   """
   #set up constants
   m_vacuum = 1.0+0.0j
@@ -259,7 +332,10 @@ def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0
   m = np.full_like(freq,np.nan+np.nan*1j,dtype=complex)
   alpha = np.full_like(freq,np.nan+np.nan*1j,dtype=complex)
   #initial guess at m at first index
-  m_ice = np.full_like(freq,m_guess,dtype=complex)
+  if type(m_guess)==complex:
+    m_ice = np.full_like(freq,m_guess,dtype=complex)
+  else:
+    m_ice = m_guess
   #find top and bottom fraction indices. These will be replaced with dummy values after each integration to get rid of edge effects
   if ignore_fraction > 0.5 or ignore_fraction < 0:
     raise RuntimeError('ignore_fraction must be between 0.0 and 0.5')
