@@ -39,7 +39,7 @@ The empirical spectrum being fitted to this, by contrast, is assumed to be a fil
   ax = plt.subplots()
   fitter_example.plot_fitresults(ax[1])
   ax[1].set_xlim(3700.,2400.)
-  plt.savefig('example_fitres.pdf')
+  plt.savefig('example_fitres.png')
 
 In this, line 1-6 import the various components needed for the full fit.
 Lines 7 and 8 read the spectrum data from the two files which contain the target spectrum and the complex refractive index spectrum.
@@ -93,4 +93,8 @@ You can download the laboratory data file used in this example from :download:`h
   ax1,ax2 = fig.add_subplot(211),fig.add_subplot(212)
   ax1.plot(freq,m_ice.real)
   ax2.plot(freq,m_ice.imag)
-  plt.savefig('example_kk.pdf')
+  plt.savefig('example_kk.png')
+
+The plotted file should look something like this:
+
+.. image:: _static/example_kk.png
