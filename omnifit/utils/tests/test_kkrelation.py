@@ -15,9 +15,7 @@ class TestKKrelation_supportfuncs:
     """
 
     testspec = helpers.generate_cdespectrum()
-    testn = testspec.n
-    testk = testspec.k
-    testm1 = testspec.n + testspec.k * 1j
+    testm1 = testspec.m
     testm0 = 1.0+0.0j
     testm2 = 1.3+1.3j
 

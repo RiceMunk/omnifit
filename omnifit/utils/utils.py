@@ -140,9 +140,9 @@ equivalencies_absorption = [
 #------------------------------------------------------
 #Functions related to light scattering and transmission
 #------------------------------------------------------
-def cde_correct(freq,n,k):
+def cde_correct(freq,m):
   """
-  cde_correct(freq,n,k)
+  cde_correct(freq,m)
 
   Generate a CDE-corrected spectrum from a complex refractive index
   spectrum.
@@ -152,10 +152,8 @@ def cde_correct(freq,n,k):
   freq : `numpy.ndarray`
     The frequency data of the input spectrum, in reciprocal
     wavenumbers (cm^-1).
-  n : `numpy.ndarray`
-    The real component of the complex refractive index spectrum.
-  k : `numpy.ndarray`
-    The imaginary component of the complex refractive index spectrum.
+  m : `numpy.ndarray`
+    The complex refractive index spectrum.
 
   Returns
   -------
@@ -169,7 +167,6 @@ def cde_correct(freq,n,k):
     * The spectrum of the total cross section of the simulated grain.    
   """
   wl=1.e4/freq
-  m=np.vectorize(complex)(n,k)
   m2=m**2.0
   im_part=((m2/(m2-1.0))*np.log(m2)).imag
   cabs_vol=(4.0*np.pi/wl)*im_part
@@ -199,7 +196,7 @@ def complex_transmission_reflection(in_m0,in_m1,in_m2):
 
   Returns
   -------
-  A tuple containing the following eleemnts:
+  A tuple containing the following elements:
     * The complex transmission coefficient between media 0 and 1
     * The complex transmission coefficient between media 0 and 2
     * The complex transmission coefficient between media 1 and 2

@@ -38,4 +38,4 @@ def generate_cdespectrum():
   """
   filepath_waterice = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data/waterice_nandk.txt')
   wn, n, k, dum1, dum2 = np.loadtxt(filepath_waterice,skiprows=1,unpack=True)
-  return spectrum.CDESpectrum(wn,n,k,specname='test water spectrum (n and k)')
+  return spectrum.CDESpectrum(wn,np.vectorize(complex)(n,k),specname='test water spectrum (n and k)')
