@@ -1,8 +1,14 @@
 Changelog
 =========
+Changes in 0.2.0
+----------------
+ * Kramer-Kronig relation implementation added to utils
+ * Example for using the KK relation added to documentation
+ * Tests for KK relation
 Changes in 0.1.2
 ----------------
  * Fixed issue #12 of interpolation breaking units
+ * Fixed example in documentation and made it more easy to test
 
 Changes in 0.1.1
 ----------------

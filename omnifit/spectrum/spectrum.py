@@ -701,11 +701,8 @@ class CDESpectrum(AbsorptionSpectrum):
   Attributes
   -----------
   All the attributes stored in `AbsorptionSpectrum`, plus the following:
-  n : `numpy.ndarray`
-    The real part of the complex refractive index spectrum of the data.
-  k : `numpy.ndarray`
-    The imaginary part of the complex refractive index spectrum of the
-    data.
+  m : `numpy.ndarray`
+    The complex refractive index spectrum of the data.
   cabs : `numpy.ndarray`
     The spectrum of the absorption cross section of the simulated grain.
   cabs_vol : `numpy.ndarray`
@@ -718,9 +715,9 @@ class CDESpectrum(AbsorptionSpectrum):
   ctot : `numpy.ndarray`
     The spectrum of the total cross section of the simulated grain.
   """
-  def __init__(self,wn,n,k,**kwargs):
+  def __init__(self,wn,m,**kwargs):
     """
-    CDESpectrum(wn,n,k,**kwargs)
+    CDESpectrum(wn,m,**kwargs)
 
     Constructor for the `CDESpectrum` class.
 
@@ -731,27 +728,24 @@ class CDESpectrum(AbsorptionSpectrum):
       `astropy.units.Quantity`, they must either be in kayser (reciprocal
       wavenumbers) or convertable to kayser. If given as `numpy.ndarray`,
       they are assumed to be in kayser.
-    n : `numpy.ndarray`
-      The real part of the complex refractive index spectrum of the data.
-    k : `numpy.ndarray`
-      The imaginary part of the complex refractive index spectrum of the
-      data.
+    m : `numpy.ndarray`
+      The complex refractive index spectrum of the data.
     **kwargs : Arguments, optional
       Additional initialisation arguments can be passed to
       `AbsorptionSpectrum` using this. Note that x and y are defined using
       the other initialisation parameters of `CDESpectrum`.
     """
-    if len(wn) != len(n) or len(k) != len(n):
+    if len(wn) != len(m):
       raise RuntimeError('Input arrays have different sizes.')
     if type(wn) != u.quantity.Quantity:
       wn = wn * u.kayser
     if wn.unit != u.kayser:
       with u.set_enabled_equivalencies(u.equivalencies.spectral()):
         wn=wn.to(u.kayser)
-    self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=utils.cde_correct(wn.value,n,k)
-    self.n=np.array(n,dtype='float64')
-    self.k=np.array(k,dtype='float64')
-    AbsorptionSpectrum.__init__(self,wn,self.cabs_vol*utils.unit_od,**kwargs)
+    self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=utils.cde_correct(wn.value,m)
+    self.m=np.array(m,dtype='float64')
+    od = self.cabs_vol*utils.unit_od#utils.unit_absorbance).to(utils.unit_od,equivalencies=utils.equivalencies_absorption)
+    AbsorptionSpectrum.__init__(self,wn,od,**kwargs)
   def plotnk(self,ax_n,ax_k,**kwargs):
     """
     plotnk(ax_n,ax_k,**kwargs)
@@ -770,5 +764,5 @@ class CDESpectrum(AbsorptionSpectrum):
       to `matplotlib.pyplot.plot`, which is used by this 
       method for its plotting.
     """
-    ax_n.plot(self.wn,self.n,**kwargs)
-    ax_k.plot(self.wn,self.k,**kwargs)
+    ax_n.plot(self.wn,self.m.real,**kwargs)
+    ax_k.plot(self.wn,self.m.imag,**kwargs)
