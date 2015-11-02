@@ -92,6 +92,6 @@ class TestSpectrumCreation_absorption:
     """
     xdata = np.arange(1000,2000,10,dtype=np.float)*u.micron
     ndata = np.arange(0,100,1,dtype=np.float)[1:]
-    kdata = np.arange(0,100,1,dtype=np.float)[2:]
+    kdata = np.arange(0,100,1,dtype=np.float)[1:]
     with pytest.raises(RuntimeError):
-      testspec = spectrum.CDESpectrum(xdata,ndata,kdata,specname='test water spectrum (n and k)')
+      testspec = spectrum.CDESpectrum(xdata[2:],np.vectorize(complex)(ndata,kdata),specname='test water spectrum (n and k)')
