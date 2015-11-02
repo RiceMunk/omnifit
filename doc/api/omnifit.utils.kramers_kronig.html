@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>kramers_kronig &mdash; omnifit v0.2</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="omnifit v0.2" href="../index.html" />
+    <link rel="next" title="Baseliner" href="omnifit.utils.Baseliner.html" />
+    <link rel="prev" title="complex_transmission_reflection" href="omnifit.utils.complex_transmission_reflection.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body role="document">
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="omnifit.utils.Baseliner.html" title="Baseliner">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="omnifit.utils.complex_transmission_reflection.html" title="complex_transmission_reflection">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">omnifit v0.2</a>
+	 &raquo;
+      </li>
+      
+      <li>kramers_kronig</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="kramers-kronig">
+<h1>kramers_kronig<a class="headerlink" href="#kramers-kronig" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="omnifit.utils.kramers_kronig">
+<code class="descclassname">omnifit.utils.</code><code class="descname">kramers_kronig</code><span class="sig-paren">(</span><em>freq</em>, <em>transmittance</em>, <em>m_substrate</em>, <em>d_ice</em>, <em>m0</em>, <em>freq_m0</em>, <em>m_guess=1.0+0.0j</em>, <em>tol=0.001</em>, <em>maxiter=100</em>, <em>ignore_fraction=0.1</em>, <em>force_kkint_unity=False</em>, <em>precalc=False</em><span class="sig-paren">)</span><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.2/omnifit/utils/utils.py#L218" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.utils.kramers_kronig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kramers-Kronig relation.
+This is an implementation of the Kramers-Kronig relation calculation
+presented in Hudgins et al 1993 (1993ApJS...86..713H), with an improved
+integration method adapted from Trotta et al 1996 
+(The Cosmic Dust Connection, 1996 169-184)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>wn</strong> : <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a> or <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote>
+<div><p>The frequency data of the input spectrum. If no units are given, this
+is assumed to be in reciprocal wavenumbers (cm^-1).</p>
+</div></blockquote>
+<p><strong>transmittance</strong> : <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a> or <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote>
+<div><p>The transmittance data of the input spectrum. This can be given in
+units other than transmittance, as long as they can be converted to 
+transmittance by making use of the <code class="xref py py-obj docutils literal"><span class="pre">utils.equivalencies_absorption</span></code>
+equivalency information. If no units are given, transmittance is
+assumed.</p>
+</div></blockquote>
+<p><strong>m_substrate</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#complex" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">complex</span></code></a></p>
+<blockquote>
+<div><p>The complex refractive index of the substrate on which the ice being
+studied was grown.</p>
+</div></blockquote>
+<p><strong>d_ice</strong> : <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a> or <a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a></p>
+<blockquote>
+<div><p>The thickness of the ice which is being studied. If no units are given,
+centimeters are assumed.</p>
+</div></blockquote>
+<p><strong>m0</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#complex" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">complex</span></code></a></p>
+<blockquote>
+<div><p>The complex refractive index of the ice at the reference frequency
+defined by <code class="xref py py-obj docutils literal"><span class="pre">freq_m0</span></code> (see below).</p>
+</div></blockquote>
+<p><strong>freq_m0</strong> : <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a> or <a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a></p>
+<blockquote>
+<div><p>The frequency at which the reference complex refractive index <code class="xref py py-obj docutils literal"><span class="pre">m0</span></code>
+(see above) is defined. Best results are usually achieved if this
+frequency is high compared to the frequency range being probed by
+the spectrum.
+If this is not defined as <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a> in spectroscopic
+units, it is assumed to be in reciprocal wavenumbers (cm^-1).</p>
+</div></blockquote>
+<p><strong>m_guess</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#complex" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">complex</span></code></a> or <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote>
+<div><p>The starting guess of the complex refractive index of the ice. This
+can either be a single number (in which case it is assumed to be this
+number throughout the entire spectrum) or an array</p>
+</div></blockquote>
+<p><strong>tol</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a></p>
+<blockquote>
+<div><p>The square-sum of the residual between the original transmittance and
+the transmittance modeled with the iterated complex refractive index
+of the ice must be below this value for the iteration to converge. In
+other words, the smaller this number is, the better the final result
+will be at the expense of extra iterations.</p>
+</div></blockquote>
+<p><strong>maxiter</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">int</span></code></a></p>
+<blockquote>
+<div><p>The maximum number of iterations allowed. If this number is reached,
+the iteration is considered to not have converged, and an exception is
+raised.</p>
+</div></blockquote>
+<p><strong>ignore_fraction</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#float" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">float</span></code></a> between 0 and 0.5</p>
+<blockquote>
+<div><p>The edges of the spectrum are blanked out (and replaced with the
+non-blanked value closest to the edge) during iteration to avoid edge
+effects arising from the usage of a non-infinite integration range.
+This parameter controls how large of a fraction of the edges is blanked
+out.</p>
+</div></blockquote>
+<p><strong>force_kkint_unity</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a></p>
+<blockquote>
+<div><p>The results of the Kramers-Kronig integration are responsible for
+determining the real part of the complex refractive index i.e. the
+one which represents refraction. Normally this number should not drop
+below unity, and unexpected behaviour can arise if it does.
+Usually this means that there is something wrong with the input
+parameters, but sometimes forcing the result to always be greater or
+equal to unity can help. It should be noted, however, that the
+accuracy of the results of an integration forced in this way are
+suspect at best.</p>
+</div></blockquote>
+<p><strong>precalc</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#bool" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">bool</span></code></a></p>
+<blockquote>
+<div><p>The Kramers-Kronig iteration can be a very computationally intensive
+operation. In some situations it may result in a faster iteration to
+pre-calculate the large denominator which is part of the
+Kramers-Kronig integration instead of computing new values of it in a
+for loop. This denominator can be, however, a very
+large variable as it contains a number of elements equal to the size
+of the spectrum squared. Pre-calculating this can outright fail on
+lower-end computers as Python runs out of available memory.
+High-end systems may benefit from such pre-calculation, though.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a> which contains the complex refractive index of the</p>
+<p class="last">ice, in order of increasing frequency.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">kramers_kronig</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2/docs/api/omnifit.utils.kramers_kronig.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/omnifit.utils.kramers_kronig.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2015, Aleksi Suutarinen.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
+    Last built 02 Nov 2015. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>complex_transmission_reflection &mdash; omnifit v0.2</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="omnifit v0.2" href="../index.html" />
+    <link rel="next" title="kramers_kronig" href="omnifit.utils.kramers_kronig.html" />
+    <link rel="prev" title="cde_correct" href="omnifit.utils.cde_correct.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body role="document">
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="omnifit.utils.kramers_kronig.html" title="kramers_kronig">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="omnifit.utils.cde_correct.html" title="cde_correct">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">omnifit v0.2</a>
+	 &raquo;
+      </li>
+      
+      <li>complex_transmission_reflection</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="complex-transmission-reflection">
+<h1>complex_transmission_reflection<a class="headerlink" href="#complex-transmission-reflection" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="omnifit.utils.complex_transmission_reflection">
+<code class="descclassname">omnifit.utils.</code><code class="descname">complex_transmission_reflection</code><span class="sig-paren">(</span><em>in_m0</em>, <em>in_m1</em>, <em>in_m2</em><span class="sig-paren">)</span><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.2/omnifit/utils/utils.py#L178" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.utils.complex_transmission_reflection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the complex transmission and reflection coefficients between
+media 0, 1, and 2 given their complex refractive indices.
+In the Kramers-Kronig implementation (in which this is most likely used
+in the context of Omnifit) media 0, 1, and 2 correspond
+respectively to the vacuum, ice, and substrate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>in_m0</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#complex" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">complex</span></code></a> or <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote>
+<div><p>The complex refractive index of medium 0.</p>
+</div></blockquote>
+<p><strong>in_m1</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#complex" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">complex</span></code></a> or <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote>
+<div><p>The complex refractive index of medium 1.</p>
+</div></blockquote>
+<p><strong>in_m2</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#complex" title="(in Python v2.7)"><code class="xref py py-obj docutils literal"><span class="pre">complex</span></code></a> or <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<blockquote>
+<div><p>The complex refractive index of medium 2.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A tuple containing the following elements:</p>
+<blockquote class="last">
+<div><ul class="simple">
+<li>The complex transmission coefficient between media 0 and 1</li>
+<li>The complex transmission coefficient between media 0 and 2</li>
+<li>The complex transmission coefficient between media 1 and 2</li>
+<li>The complex reflection coefficient between media 0 and 1</li>
+<li>The complex reflection coefficient between media 0 and 2</li>
+<li>The complex reflection coefficient between media 1 and 2</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">complex_transmission_reflection</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2/docs/api/omnifit.utils.complex_transmission_reflection.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/omnifit.utils.complex_transmission_reflection.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2015, Aleksi Suutarinen.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
+    Last built 02 Nov 2015. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+
+
+complex_transmission_reflection
+=============================================
+
+.. currentmodule:: omnifit.utils
+
+.. autofunction:: complex_transmission_reflection

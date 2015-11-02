@@ -1,0 +1,8 @@
+
+
+kramers_kronig
+============================
+
+.. currentmodule:: omnifit.utils
+
+.. autofunction:: kramers_kronig
