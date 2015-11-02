@@ -34,7 +34,11 @@ class TestSpectrumManipulation_convolution:
     Test the functionality of the gaussian convolution
     """
     testspec = generate_cdespectrum()
+    oldunit_x = testspec.x.unit
+    oldunit_y = testspec.y.unit
     testspec.gconvolve(10.)
+    assert testspec.x.unit == oldunit_x
+    assert testspec.y.unit == oldunit_y
   def test_repeatedconvolution(self,recwarn):
     """
     Make sure that a warning is raised if convolution is repeated
