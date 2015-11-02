@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>cde_correct &mdash; omnifit v0.1.2</title>
+    <title>cde_correct &mdash; omnifit v0.2</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.1.2" href="../index.html" />
-    <link rel="next" title="Baseliner" href="omnifit.utils.Baseliner.html" />
+    <link rel="top" title="omnifit v0.2" href="../index.html" />
+    <link rel="next" title="complex_transmission_reflection" href="omnifit.utils.complex_transmission_reflection.html" />
     <link rel="prev" title="Fitter" href="omnifit.fitter.Fitter.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
 <script type="text/javascript" src="../_static/copybutton.js"></script>
@@ -57,7 +57,7 @@
     <h3>Navigation</h3>
     <ul>
       <li class="right">
-	<a href="omnifit.utils.Baseliner.html" title="Baseliner">
+	<a href="omnifit.utils.complex_transmission_reflection.html" title="complex_transmission_reflection">
 	  next &raquo;
 	</a>
       </li>
@@ -68,7 +68,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">omnifit v0.1.2</a>
+	<a href="../index.html">omnifit v0.2</a>
 	 &raquo;
       </li>
       
@@ -86,25 +86,21 @@
 <h1>cde_correct<a class="headerlink" href="#cde-correct" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="omnifit.utils.cde_correct">
-<code class="descclassname">omnifit.utils.</code><code class="descname">cde_correct</code><span class="sig-paren">(</span><em>wn</em>, <em>n</em>, <em>k</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/utils/utils.html#cde_correct"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/utils/utils.py#L124" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.utils.cde_correct" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">omnifit.utils.</code><code class="descname">cde_correct</code><span class="sig-paren">(</span><em>freq</em>, <em>m</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/utils/utils.html#cde_correct"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.2/omnifit/utils/utils.py#L143" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.utils.cde_correct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a CDE-corrected spectrum from a complex refractive index
 spectrum.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>wn</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>freq</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
 <blockquote>
 <div><p>The frequency data of the input spectrum, in reciprocal
 wavenumbers (cm^-1).</p>
 </div></blockquote>
-<p><strong>n</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<p><strong>m</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
 <blockquote>
-<div><p>The real component of the complex refractive index spectrum.</p>
-</div></blockquote>
-<p><strong>k</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
-<blockquote>
-<div><p>The imaginary component of the complex refractive index spectrum.</p>
+<div><p>The complex refractive index spectrum.</p>
 </div></blockquote>
 </td>
 </tr>
@@ -145,14 +141,14 @@ normalized by the volume distribution of the grain.</li>
     </div>
 <footer class="footer">
   <p class="pull-right">
-    <a href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/docs/api/omnifit.utils.cde_correct.rst">Edit This Page on Github</a> &nbsp;
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2/docs/api/omnifit.utils.cde_correct.rst">Edit This Page on Github</a> &nbsp;
     <a href="../_sources/api/omnifit.utils.cde_correct.txt"
        rel="nofollow">Page Source</a> &nbsp;
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 14 Sep 2015. <br/>
+    Last built 02 Nov 2015. <br/>
   </p>
 </footer>
   </body>

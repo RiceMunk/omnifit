@@ -16,7 +16,7 @@ Installation using pip works by running
 
 ::
 
-  pip install --pre omnifit
+  pip install omnifit
 
 Building from source
 --------------------

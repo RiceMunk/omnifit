@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>AbsorptionSpectrum &mdash; omnifit v0.1.2</title>
+    <title>AbsorptionSpectrum &mdash; omnifit v0.2</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.1.2" href="../index.html" />
+    <link rel="top" title="omnifit v0.2" href="../index.html" />
     <link rel="next" title="BaseSpectrum" href="omnifit.spectrum.BaseSpectrum.html" />
     <link rel="prev" title="Examples" href="../examples.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
@@ -68,7 +68,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">omnifit v0.1.2</a>
+	<a href="../index.html">omnifit v0.2</a>
 	 &raquo;
       </li>
       
@@ -86,7 +86,7 @@
 <h1>AbsorptionSpectrum<a class="headerlink" href="#absorptionspectrum" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="omnifit.spectrum.AbsorptionSpectrum">
-<em class="property">class </em><code class="descclassname">omnifit.spectrum.</code><code class="descname">AbsorptionSpectrum</code><span class="sig-paren">(</span><em>wn</em>, <em>od</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#AbsorptionSpectrum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/spectrum/spectrum.py#L601" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.AbsorptionSpectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">omnifit.spectrum.</code><code class="descname">AbsorptionSpectrum</code><span class="sig-paren">(</span><em>wn</em>, <em>od</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#AbsorptionSpectrum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.2/omnifit/spectrum/spectrum.py#L603" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.AbsorptionSpectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">omnifit.spectrum.spectrum.BaseSpectrum</span></code></p>
 <p>A class specialized in representing absorption spectra of the type
 often used in ice spectroscopy.</p>
@@ -106,13 +106,13 @@ as its x axis units.</p>
 <td>&nbsp;</td>
 </tr>
 <tr class="row-even"><td>wn</td>
-<td>(<a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.4)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a>) The data on the x-axis of the spectrum, expressed in kayser (reciprocal wavenumber) units.</td>
+<td>(<a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a>) The data on the x-axis of the spectrum, expressed in kayser (reciprocal wavenumber) units.</td>
 </tr>
 <tr class="row-odd"><td>wl</td>
-<td>(<a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.4)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a>) The data on the x-axis of the spectrum, expressed in microns.</td>
+<td>(<a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a>) The data on the x-axis of the spectrum, expressed in microns.</td>
 </tr>
 <tr class="row-even"><td>od</td>
-<td>(<a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.4)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a>) The data on the y-axis spectrum, expressed as optical depth units (using omnifit.utils.unit_od).</td>
+<td>(<a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a>) The data on the y-axis spectrum, expressed as optical depth units (using omnifit.utils.unit_od).</td>
 </tr>
 </tbody>
 </table>
@@ -121,7 +121,7 @@ as its x axis units.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>wn</strong> : <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.4)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>wn</strong> : <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a></p>
 <blockquote>
 <div><p>The absorption spectrum frequency data. Unlike <a class="reference internal" href="omnifit.spectrum.BaseSpectrum.html#omnifit.spectrum.BaseSpectrum" title="omnifit.spectrum.BaseSpectrum"><code class="xref py py-obj docutils literal"><span class="pre">BaseSpectrum</span></code></a>,
 the initialisation of <a class="reference internal" href="#omnifit.spectrum.AbsorptionSpectrum" title="omnifit.spectrum.AbsorptionSpectrum"><code class="xref py py-obj docutils literal"><span class="pre">AbsorptionSpectrum</span></code></a> requires this to be
@@ -129,7 +129,7 @@ in the specific units of reciprocal wavenumber. However, if it is
 in a quantity convertable to kayser, conversion will be attempted
 while a warning is given to notify the user of this.</p>
 </div></blockquote>
-<p><strong>od</strong> : <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.4)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a></p>
+<p><strong>od</strong> : <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a></p>
 <blockquote>
 <div><p>The absorption spectrum optical depth data. Unlike <a class="reference internal" href="omnifit.spectrum.BaseSpectrum.html#omnifit.spectrum.BaseSpectrum" title="omnifit.spectrum.BaseSpectrum"><code class="xref py py-obj docutils literal"><span class="pre">BaseSpectrum</span></code></a>,
 the initialisation of <a class="reference internal" href="#omnifit.spectrum.AbsorptionSpectrum" title="omnifit.spectrum.AbsorptionSpectrum"><code class="xref py py-obj docutils literal"><span class="pre">AbsorptionSpectrum</span></code></a> requires this to be
@@ -158,14 +158,14 @@ initialisation parameters of <a class="reference internal" href="#omnifit.spectr
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="omnifit.spectrum.AbsorptionSpectrum.plotod">
-<code class="descname">plotod</code><span class="sig-paren">(</span><em>ax</em>, <em>in_wl=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#AbsorptionSpectrum.plotod"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/spectrum/spectrum.py#L665" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.AbsorptionSpectrum.plotod" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plotod</code><span class="sig-paren">(</span><em>ax</em>, <em>in_wl=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#AbsorptionSpectrum.plotod"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.2/omnifit/spectrum/spectrum.py#L667" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.AbsorptionSpectrum.plotod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the optical depth spectrum as either a function of reciprocal
 wavenumber or wavelength to the given axis.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>axis</strong> : <a class="reference external" href="http://matplotlib.org/api/axis_api.html#module-matplotlib.axis" title="(in Matplotlib v1.4.3)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.axis</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>axis</strong> : <a class="reference external" href="http://matplotlib.org/api/axis_api.html#module-matplotlib.axis" title="(in Matplotlib v1.5.0)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.axis</span></code></a></p>
 <blockquote>
 <div><p>The axis which the plot will be generated in.</p>
 </div></blockquote>
@@ -177,7 +177,7 @@ wavelength; otherwise it will be in reciprocal wavenumbers.</p>
 <p><strong>**kwargs</strong> : Arguments, optional</p>
 <blockquote class="last">
 <div><p>This can be used to pass additional arguments
-to <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot" title="(in Matplotlib v1.4.3)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.pyplot.plot</span></code></a>, which is used by this 
+to <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot" title="(in Matplotlib v1.5.0)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.pyplot.plot</span></code></a>, which is used by this 
 method for its plotting.</p>
 </div></blockquote>
 </td>
@@ -207,14 +207,14 @@ method for its plotting.</p>
     </div>
 <footer class="footer">
   <p class="pull-right">
-    <a href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/docs/api/omnifit.spectrum.AbsorptionSpectrum.rst">Edit This Page on Github</a> &nbsp;
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2/docs/api/omnifit.spectrum.AbsorptionSpectrum.rst">Edit This Page on Github</a> &nbsp;
     <a href="../_sources/api/omnifit.spectrum.AbsorptionSpectrum.txt"
        rel="nofollow">Page Source</a> &nbsp;
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 14 Sep 2015. <br/>
+    Last built 02 Nov 2015. <br/>
   </p>
 </footer>
   </body>

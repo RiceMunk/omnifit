@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>CDESpectrum &mdash; omnifit v0.1.2</title>
+    <title>CDESpectrum &mdash; omnifit v0.2</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1.2',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.1.2" href="../index.html" />
+    <link rel="top" title="omnifit v0.2" href="../index.html" />
     <link rel="next" title="Fitter" href="omnifit.fitter.Fitter.html" />
     <link rel="prev" title="BaseSpectrum" href="omnifit.spectrum.BaseSpectrum.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
@@ -68,7 +68,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">omnifit v0.1.2</a>
+	<a href="../index.html">omnifit v0.2</a>
 	 &raquo;
       </li>
       
@@ -86,7 +86,7 @@
 <h1>CDESpectrum<a class="headerlink" href="#cdespectrum" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="omnifit.spectrum.CDESpectrum">
-<em class="property">class </em><code class="descclassname">omnifit.spectrum.</code><code class="descname">CDESpectrum</code><span class="sig-paren">(</span><em>wn</em>, <em>n</em>, <em>k</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#CDESpectrum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/spectrum/spectrum.py#L690" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.CDESpectrum" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">omnifit.spectrum.</code><code class="descname">CDESpectrum</code><span class="sig-paren">(</span><em>wn</em>, <em>m</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#CDESpectrum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.2/omnifit/spectrum/spectrum.py#L692" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.CDESpectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">omnifit.spectrum.spectrum.AbsorptionSpectrum</span></code></p>
 <p>A class specialized in representing CDE-corrected absorption spectra.</p>
 <p>The functionality of this class is otherwise identical to
@@ -105,23 +105,20 @@ correction, as documented below.</p>
 <tr class="row-odd"><td>All the attributes stored in <a class="reference internal" href="omnifit.spectrum.AbsorptionSpectrum.html#omnifit.spectrum.AbsorptionSpectrum" title="omnifit.spectrum.AbsorptionSpectrum"><code class="xref py py-obj docutils literal"><span class="pre">AbsorptionSpectrum</span></code></a>, plus the following:</td>
 <td>&nbsp;</td>
 </tr>
-<tr class="row-even"><td>n</td>
-<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The real part of the complex refractive index spectrum of the data.</td>
+<tr class="row-even"><td>m</td>
+<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The complex refractive index spectrum of the data.</td>
 </tr>
-<tr class="row-odd"><td>k</td>
-<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The imaginary part of the complex refractive index spectrum of the data.</td>
+<tr class="row-odd"><td>cabs</td>
+<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The spectrum of the absorption cross section of the simulated grain.</td>
 </tr>
-<tr class="row-even"><td>cabs</td>
-<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The spectrum of the absorption cross section of the simulated grain.</td>
+<tr class="row-even"><td>cabs_vol</td>
+<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The spectrum of the absorption cross section of the simulated grain, normalized by the volume distribution of the grain. This parameter is the equivalent of optical depth in most cases.</td>
 </tr>
-<tr class="row-odd"><td>cabs_vol</td>
-<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The spectrum of the absorption cross section of the simulated grain, normalized by the volume distribution of the grain. This parameter is the equivalent of optical depth in most cases.</td>
+<tr class="row-odd"><td>cscat_vol</td>
+<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The spectrum of the scattering cross section of the simulated grain, normalized by the volume distribution of the grain.</td>
 </tr>
-<tr class="row-even"><td>cscat_vol</td>
-<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The spectrum of the scattering cross section of the simulated grain, normalized by the volume distribution of the grain.</td>
-</tr>
-<tr class="row-odd"><td>ctot</td>
-<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The spectrum of the total cross section of the simulated grain.</td>
+<tr class="row-even"><td>ctot</td>
+<td>(<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>) The spectrum of the total cross section of the simulated grain.</td>
 </tr>
 </tbody>
 </table>
@@ -130,21 +127,16 @@ correction, as documented below.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>wn</strong> : <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.4)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a> or <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>wn</strong> : <a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a> or <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
 <blockquote>
 <div><p>The absorption spectrum frequency data. If given as
-<a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.4)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a>, they must either be in kayser (reciprocal
-wavenumbers) or convertable to kayser. If given as <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>,
+<a class="reference external" href="http://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v1.0.6)"><code class="xref py py-obj docutils literal"><span class="pre">astropy.units.Quantity</span></code></a>, they must either be in kayser (reciprocal
+wavenumbers) or convertable to kayser. If given as <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a>,
 they are assumed to be in kayser.</p>
 </div></blockquote>
-<p><strong>n</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
+<p><strong>m</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.10)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
 <blockquote>
-<div><p>The real part of the complex refractive index spectrum of the data.</p>
-</div></blockquote>
-<p><strong>k</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.9)"><code class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></code></a></p>
-<blockquote>
-<div><p>The imaginary part of the complex refractive index spectrum of the
-data.</p>
+<div><p>The complex refractive index spectrum of the data.</p>
 </div></blockquote>
 <p><strong>**kwargs</strong> : Arguments, optional</p>
 <blockquote class="last">
@@ -168,25 +160,25 @@ the other initialisation parameters of <a class="reference internal" href="#omni
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="omnifit.spectrum.CDESpectrum.plotnk">
-<code class="descname">plotnk</code><span class="sig-paren">(</span><em>ax_n</em>, <em>ax_k</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#CDESpectrum.plotnk"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/omnifit/spectrum/spectrum.py#L755" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.CDESpectrum.plotnk" title="Permalink to this definition">¶</a></dt>
+<code class="descname">plotnk</code><span class="sig-paren">(</span><em>ax_n</em>, <em>ax_k</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/omnifit/spectrum/spectrum.html#CDESpectrum.plotnk"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/RiceMunk/omnifit/tree/v0.2/omnifit/spectrum/spectrum.py#L751" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#omnifit.spectrum.CDESpectrum.plotnk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the complex refractive indices as function of wavenumber to
 the two given matplotlib axes.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax_n</strong> : <a class="reference external" href="http://matplotlib.org/api/axis_api.html#module-matplotlib.axis" title="(in Matplotlib v1.4.3)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.axis</span></code></a></p>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>ax_n</strong> : <a class="reference external" href="http://matplotlib.org/api/axis_api.html#module-matplotlib.axis" title="(in Matplotlib v1.5.0)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.axis</span></code></a></p>
 <blockquote>
 <div><p>The axis which the plot of n will be generated in.</p>
 </div></blockquote>
-<p><strong>ax_k</strong> : <a class="reference external" href="http://matplotlib.org/api/axis_api.html#module-matplotlib.axis" title="(in Matplotlib v1.4.3)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.axis</span></code></a></p>
+<p><strong>ax_k</strong> : <a class="reference external" href="http://matplotlib.org/api/axis_api.html#module-matplotlib.axis" title="(in Matplotlib v1.5.0)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.axis</span></code></a></p>
 <blockquote>
 <div><p>The axis which the plot of k will be generated in.</p>
 </div></blockquote>
 <p><strong>**kwargs</strong> : Arguments, optional</p>
 <blockquote class="last">
 <div><p>This can be used to pass additional arguments
-to <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot" title="(in Matplotlib v1.4.3)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.pyplot.plot</span></code></a>, which is used by this 
+to <a class="reference external" href="http://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.plot" title="(in Matplotlib v1.5.0)"><code class="xref py py-obj docutils literal"><span class="pre">matplotlib.pyplot.plot</span></code></a>, which is used by this 
 method for its plotting.</p>
 </div></blockquote>
 </td>
@@ -216,14 +208,14 @@ method for its plotting.</p>
     </div>
 <footer class="footer">
   <p class="pull-right">
-    <a href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/docs/api/omnifit.spectrum.CDESpectrum.rst">Edit This Page on Github</a> &nbsp;
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2/docs/api/omnifit.spectrum.CDESpectrum.rst">Edit This Page on Github</a> &nbsp;
     <a href="../_sources/api/omnifit.spectrum.CDESpectrum.txt"
        rel="nofollow">Page Source</a> &nbsp;
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 14 Sep 2015. <br/>
+    Last built 02 Nov 2015. <br/>
   </p>
 </footer>
   </body>

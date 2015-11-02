@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Examples &mdash; omnifit v0.1.2</title>
+    <title>Examples &mdash; omnifit v0.2</title>
     
     <link rel="stylesheet" href="_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1.2',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="shortcut icon" href="_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.1.2" href="index.html" />
+    <link rel="top" title="omnifit v0.2" href="index.html" />
     <link rel="next" title="AbsorptionSpectrum" href="api/omnifit.spectrum.AbsorptionSpectrum.html" />
     <link rel="prev" title="Installation" href="installation.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
@@ -68,7 +68,7 @@
 	 |
       </li>
       <li>
-	<a href="index.html">omnifit v0.1.2</a>
+	<a href="index.html">omnifit v0.2</a>
 	 &raquo;
       </li>
       
@@ -86,9 +86,9 @@
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
 <p>This page lists examples of likely ways to make use of Omnifit.</p>
 <div class="section" id="fitting-from-start-to-finish">
-<h2>Fitting from start to finish<a class="headerlink" href="#fitting-from-start-to-finish" title="Permalink to this headline">¶</a></h2>
+<span id="example-full-fit"></span><h2>Fitting from start to finish<a class="headerlink" href="#fitting-from-start-to-finish" title="Permalink to this headline">¶</a></h2>
 <p>The code snippet below shows how one might go about fitting a target spectrum with an empirically acquired spectrum and a Gaussian function, and the both export the raw fit results and plot them.</p>
-<p>The target spectrum data is assumed to originate from a file which consists of two columns of data. The first column contains the wavelength and the second column contains the optical depth of an observed spectrum. You can download the observational data file used in this example from <a class="reference download internal" href="_downloads/obsdata.csv"><code class="xref download docutils literal"><span class="pre">here</span></code></a>.</p>
+<p>The target spectrum data is assumed to originate from a file which consists of two columns of data. The first column contains the wavelength and the second column contains the optical depth of an observed spectrum. For information on how you can use Omnifit to acquire such a complex refractive index spectrum, see the <a class="reference internal" href="#example-kramers-kronig"><span>example on Kramers-Kronig iteration</span></a>. You can download the observational data file used in this example from <a class="reference download internal" href="_downloads/obsdata.csv"><code class="xref download docutils literal"><span class="pre">here</span></code></a>.</p>
 <p>The empirical spectrum being fitted to this, by contrast, is assumed to be a file containing set of data describing the complex refractive index of an ice. The first column of this file contains the frequency of the spectrum (in reciprocal wavenumbers), and the second and third columns containing the real and imaginary parts of the complex refractive index. You can download the laboratory data file used in this example from <a class="reference download internal" href="_downloads/labdata.csv"><code class="xref download docutils literal"><span class="pre">here</span></code></a>.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
@@ -142,10 +142,10 @@
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 <span class="n">fitter_example</span><span class="o">.</span><span class="n">plot_fitresults</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">3700.</span><span class="p">,</span><span class="mf">2400.</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;example_fitres.pdf&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;example_fitres.png&#39;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table></div>
-<p>In this, line 1-6 import the various components needed for the full fit.
+<p>In this, lines 1-6 import the various components needed for the full fit.
 Lines 7 and 8 read the spectrum data from the two files which contain the target spectrum and the complex refractive index spectrum.</p>
 <p>Line 9 initialises the target spectrum as an absorption spectrum using the data read in line 7, and line 10 initialises the CDE-corrected spectrum using the data read in line 8.</p>
 <p>Line 11 interpolates the data in the CDE-corrected spectrum to match the spectral resolution of the fitting target spectrum, which is also used to initialise the fitter on line 12.</p>
@@ -155,6 +155,64 @@ Lines 7 and 8 read the spectrum data from the two files which contain the target
 <p>Finally, lines 23-27 are used to produce a plot of the fit results in the file example_fitres.pdf.</p>
 <p>The plotted file should look something like this:</p>
 <img alt="_images/example_fitres.png" src="_images/example_fitres.png" />
+</div>
+<div class="section" id="kramers-kronig-relation">
+<span id="example-kramers-kronig"></span><h2>Kramers-Kronig relation<a class="headerlink" href="#kramers-kronig-relation" title="Permalink to this headline">¶</a></h2>
+<p>This snippet of code is an example of how to make use of the Kramers-Kronig iteration method in Omnifit to use transmission data of an ice grown in a laboratory setting to calculate the complex refractive index of said ice. This complex refractive index spectrum can then be used in the initialisation of e.g. a CDE-corrected spectrum, such as the one used in the <a class="reference internal" href="#example-full-fit"><span>example on fitting from start to finish</span></a>.</p>
+<p>The laboratory data is assumed to originate from a file which consists of two columns of data. The first column contains the frequency (in cm^-1) and the second column contains the absorbance of an ice spectrum grown in a laboratory. In this data the absorption of the substrate has been baselined out of the spectrum, leaving the absorption of the ice itself as the only source of absorbance. You can download the laboratory data file used in this example from <a class="reference download internal" href="_downloads/labdata_raw.csv"><code class="xref download docutils literal"><span class="pre">here</span></code></a>.</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">omnifit</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="kn">as</span> <span class="nn">u</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="n">d_ice</span> <span class="o">=</span> <span class="mf">1.5</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">micron</span>
+<span class="n">m0</span> <span class="o">=</span> <span class="mf">1.3</span><span class="o">+</span><span class="mf">0.0j</span>
+<span class="k">with</span> <span class="n">u</span><span class="o">.</span><span class="n">set_enabled_equivalencies</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">equivalencies</span><span class="o">.</span><span class="n">spectral</span><span class="p">()):</span>
+      <span class="n">freq_m0</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">micron</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">kayser</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+<span class="n">m_substrate</span> <span class="o">=</span> <span class="mf">1.4</span><span class="o">+</span><span class="mf">0.0j</span>
+<span class="n">freq</span><span class="p">,</span><span class="n">absorbance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s">&#39;labdata_raw.csv&#39;</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;, &#39;</span><span class="p">,</span><span class="n">skiprows</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">unpack</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">freq</span> <span class="o">*=</span> <span class="n">u</span><span class="o">.</span><span class="n">kayser</span>
+<span class="n">absorbance</span> <span class="o">*=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unit_absorbance</span>
+<span class="n">transmittance</span> <span class="o">=</span> <span class="n">absorbance</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">unit_transmittance</span><span class="p">,</span><span class="n">equivalencies</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">equivalencies_absorption</span><span class="p">)</span>
+<span class="n">cropind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">freq</span><span class="o">.</span><span class="n">value</span><span class="o">&gt;=</span><span class="mf">2500.</span><span class="p">,</span><span class="n">freq</span><span class="o">.</span><span class="n">value</span><span class="o">&lt;=</span><span class="mf">4000.</span><span class="p">)</span>
+<span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="n">cropind</span><span class="p">]</span>
+<span class="n">transmittance</span> <span class="o">=</span> <span class="n">transmittance</span><span class="p">[</span><span class="n">cropind</span><span class="p">]</span>
+<span class="n">m_ice</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">kramers_kronig</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span><span class="n">transmittance</span><span class="p">,</span><span class="n">m_substrate</span><span class="p">,</span><span class="n">d_ice</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">freq_m0</span><span class="p">)</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">ax1</span><span class="p">,</span><span class="n">ax2</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">211</span><span class="p">),</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">212</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span><span class="n">m_ice</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span><span class="n">m_ice</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s">&#39;example_kk.png&#39;</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+<p>In this, lines 1-4 import the various components needed for the iteration.</p>
+<p>Lines 5-9 are used for defining the additional variables used in the iteration. Specifically, the thickness of the ice is assumed to be 1.5 microns, and its complex refractive index is assumed to be 1.3+0j at a wavelength of 0.5 microns (which is at a high frequency compared to the 3-micron water ice feature being looked at). The complex refractive index of the substrate is assumed to be 1.3+0j throughout the frequency range.</p>
+<p>Line 10 reads the file containing the absorbance data, with lines 11 and 12 converting the read data to astropy-compatible quantities. Then line 13 is used to convert the absorbance into transmittance using the absorption equivalencies of Omnifit.</p>
+<p>Lines 14-16 crop the raw data to contain only the 3-micron feature which is the main feature of interest in this iteration. Cropping the data in this way also cuts down on the computational time requirements of the KK iteration.</p>
+<p>Line 17 calls the Kramers-Kronig iteration function of Omnifit, using the data and variables described above. After about a little while of calculation the function returns the converged complex refractive index of the ice, and stores it in the variable m_ice.</p>
+<p>Finally, lines 18-22 are used to plot the complex refractive index in two subplots (one for n, another for k) as a function of frequency.</p>
+<p>The plotted file should look something like this:</p>
+<img alt="_images/example_kk.png" src="_images/example_kk.png" />
 </div>
 </div>
 
@@ -167,6 +225,7 @@ Lines 7 and 8 read the spectrum data from the two files which contain the target
 <ul>
 <li><a class="reference internal" href="#">Examples</a><ul>
 <li><a class="reference internal" href="#fitting-from-start-to-finish">Fitting from start to finish</a></li>
+<li><a class="reference internal" href="#kramers-kronig-relation">Kramers-Kronig relation</a></li>
 </ul>
 </li>
 </ul>
@@ -178,14 +237,14 @@ Lines 7 and 8 read the spectrum data from the two files which contain the target
     </div>
 <footer class="footer">
   <p class="pull-right">
-    <a href="http://github.com/RiceMunk/omnifit/tree/v0.1.2/docs/examples.rst">Edit This Page on Github</a> &nbsp;
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2/docs/examples.rst">Edit This Page on Github</a> &nbsp;
     <a href="_sources/examples.txt"
        rel="nofollow">Page Source</a> &nbsp;
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 14 Sep 2015. <br/>
+    Last built 02 Nov 2015. <br/>
   </p>
 </footer>
   </body>
