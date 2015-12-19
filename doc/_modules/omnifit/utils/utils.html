@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>omnifit.utils.utils &mdash; omnifit v0.2</title>
+    <title>omnifit.utils.utils &mdash; omnifit v0.2.1</title>
     
     <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,14 +25,14 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.2" href="../../../index.html" />
+    <link rel="top" title="omnifit v0.2.1" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
 <script type="text/javascript" src="../../../_static/copybutton.js"></script>
 
 
   </head>
-  <body role="document">
+  <body>
 <div class="topbar">
   <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
   <ul>
@@ -56,7 +56,7 @@
     <h3>Navigation</h3>
     <ul>
       <li>
-	<a href="../../../index.html">omnifit v0.2</a>
+	<a href="../../../index.html">omnifit v0.2.1</a>
 	 &raquo;
       </li>
       <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
@@ -69,12 +69,17 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body">
             
   <h1>Source code for omnifit.utils.utils</h1><div class="highlight"><pre>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 <span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">import</span> <span class="nn">scipy.integrate</span>
+<span class="kn">from</span> <span class="nn">sys</span> <span class="kn">import</span> <span class="n">float_info</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+
 
 <div class="viewcode-block" id="Baseliner"><a class="viewcode-back" href="../../../api/omnifit.utils.Baseliner.html#omnifit.utils.Baseliner">[docs]</a><span class="k">class</span> <span class="nc">Baseliner</span><span class="p">:</span>
   <span class="sd">&quot;&quot;&quot;</span>
@@ -188,29 +193,41 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">__ax</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">mpl_disconnect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__keyListener</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__ax</span><span class="o">.</span><span class="n">figure</span><span class="p">)</span>
 
-<span class="c">#Units definitions</span></div>
-<span class="n">unit_od</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">def_unit</span><span class="p">(</span><span class="s">&#39;optical depth&#39;</span><span class="p">,</span><span class="n">doc</span><span class="o">=</span><span class="s">&#39;Optical depth of radiation&#39;</span><span class="p">)</span>
+<span class="c">#---------------------</span>
+<span class="c">#New units definitions</span>
+<span class="c">#---------------------</span>
+<span class="c">#the units themselves</span></div>
+<span class="n">unit_t</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">def_unit</span><span class="p">(</span><span class="s">&#39;transmittance units&#39;</span><span class="p">,</span><span class="n">doc</span><span class="o">=</span><span class="s">&#39;Transmittance of radiation&#39;</span><span class="p">)</span>
+<span class="n">unit_transmittance</span> <span class="o">=</span> <span class="n">unit_t</span>
+<span class="n">unit_abs</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">def_unit</span><span class="p">(</span><span class="s">&#39;absorbance units&#39;</span><span class="p">,</span><span class="n">doc</span><span class="o">=</span><span class="s">&#39;Absorbance of radiation&#39;</span><span class="p">)</span>
+<span class="n">unit_absorbance</span> <span class="o">=</span> <span class="n">unit_abs</span>
+<span class="n">unit_od</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">def_unit</span><span class="p">(</span><span class="s">&#39;optical depth units&#39;</span><span class="p">,</span><span class="n">doc</span><span class="o">=</span><span class="s">&#39;Optical depth of radiation&#39;</span><span class="p">)</span>
 <span class="n">unit_opticaldepth</span> <span class="o">=</span> <span class="n">unit_od</span>
 
-<span class="c">#--------------------------</span>
-<span class="c">#Misc. function definitions</span>
-<span class="c">#--------------------------</span>
-<div class="viewcode-block" id="cde_correct"><a class="viewcode-back" href="../../../api/omnifit.utils.cde_correct.html#omnifit.utils.cde_correct">[docs]</a><span class="k">def</span> <span class="nf">cde_correct</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">):</span>
+<span class="c">#the equivalencies between the units</span>
+<span class="n">equivalencies_absorption</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">unit_t</span><span class="p">,</span><span class="n">unit_abs</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="mi">10</span><span class="o">**-</span><span class="n">x</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">unit_od</span><span class="p">,</span><span class="n">unit_abs</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span>
+    <span class="p">(</span><span class="n">unit_od</span><span class="p">,</span><span class="n">unit_t</span><span class="p">,</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)),</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+    <span class="p">]</span>
+
+<span class="c">#------------------------------------------------------</span>
+<span class="c">#Functions related to light scattering and transmission</span>
+<span class="c">#------------------------------------------------------</span>
+<div class="viewcode-block" id="cde_correct"><a class="viewcode-back" href="../../../api/omnifit.utils.cde_correct.html#omnifit.utils.cde_correct">[docs]</a><span class="k">def</span> <span class="nf">cde_correct</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span><span class="n">m</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">  cde_correct(wn,n,k)</span>
+<span class="sd">  cde_correct(freq,m)</span>
 
 <span class="sd">  Generate a CDE-corrected spectrum from a complex refractive index</span>
 <span class="sd">  spectrum.</span>
 
 <span class="sd">  Parameters</span>
 <span class="sd">  ----------</span>
-<span class="sd">  wn : `numpy.ndarray`</span>
+<span class="sd">  freq : `numpy.ndarray`</span>
 <span class="sd">    The frequency data of the input spectrum, in reciprocal</span>
 <span class="sd">    wavenumbers (cm^-1).</span>
-<span class="sd">  n : `numpy.ndarray`</span>
-<span class="sd">    The real component of the complex refractive index spectrum.</span>
-<span class="sd">  k : `numpy.ndarray`</span>
-<span class="sd">    The imaginary component of the complex refractive index spectrum.</span>
+<span class="sd">  m : `numpy.ndarray`</span>
+<span class="sd">    The complex refractive index spectrum.</span>
 
 <span class="sd">  Returns</span>
 <span class="sd">  -------</span>
@@ -223,26 +240,253 @@
 <span class="sd">      normalized by the volume distribution of the grain.</span>
 <span class="sd">    * The spectrum of the total cross section of the simulated grain.    </span>
 <span class="sd">  &quot;&quot;&quot;</span>
-  <span class="n">wl</span><span class="o">=</span><span class="mf">1.e4</span><span class="o">/</span><span class="n">wn</span>
-  <span class="n">m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="nb">complex</span><span class="p">)(</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">)</span>
-  <span class="n">cabs_vol</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-  <span class="n">cabs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-  <span class="n">cscat_vol</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-  <span class="k">for</span> <span class="n">c_wn</span><span class="p">,</span><span class="n">c_wl</span><span class="p">,</span><span class="n">c_m</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">wn</span><span class="p">,</span><span class="n">wl</span><span class="p">,</span><span class="n">m</span><span class="p">):</span>
-    <span class="n">m2</span><span class="o">=</span><span class="n">c_m</span><span class="o">**</span><span class="mf">2.0</span>
-    <span class="n">im_part</span><span class="o">=</span><span class="p">((</span><span class="n">m2</span><span class="o">/</span><span class="p">(</span><span class="n">m2</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">m2</span><span class="p">))</span><span class="o">.</span><span class="n">imag</span>
-    <span class="n">cabs_vol</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">cabs_vol</span><span class="p">,</span><span class="mf">2.</span><span class="o">*</span><span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">c_wl</span><span class="p">)</span><span class="o">*</span><span class="n">im_part</span><span class="p">])</span>
-    <span class="n">t_cabs</span><span class="o">=</span><span class="n">c_wn</span><span class="o">*</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">c_m</span><span class="o">.</span><span class="n">imag</span><span class="o">/</span><span class="p">(</span><span class="n">c_m</span><span class="o">.</span><span class="n">imag</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">c_m</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
-    <span class="n">cabs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">cabs</span><span class="p">,</span><span class="n">t_cabs</span><span class="p">])</span>
-    <span class="n">cscat_vol</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">cscat_vol</span><span class="p">,(</span><span class="n">c_wn</span><span class="o">**</span><span class="mf">3.0</span><span class="o">/</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="n">t_cabs</span><span class="p">])</span>
+  <span class="n">wl</span><span class="o">=</span><span class="mf">1.e4</span><span class="o">/</span><span class="n">freq</span>
+  <span class="n">m2</span><span class="o">=</span><span class="n">m</span><span class="o">**</span><span class="mf">2.0</span>
+  <span class="n">im_part</span><span class="o">=</span><span class="p">((</span><span class="n">m2</span><span class="o">/</span><span class="p">(</span><span class="n">m2</span><span class="o">-</span><span class="mf">1.0</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">m2</span><span class="p">))</span><span class="o">.</span><span class="n">imag</span>
+  <span class="n">cabs_vol</span><span class="o">=</span><span class="p">(</span><span class="mf">4.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">wl</span><span class="p">)</span><span class="o">*</span><span class="n">im_part</span>
+  <span class="n">cabs</span><span class="o">=</span><span class="n">freq</span><span class="o">*</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">m</span><span class="o">.</span><span class="n">imag</span><span class="o">/</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">imag</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">imag</span><span class="p">)</span>
+  <span class="n">cscat_vol</span><span class="o">=</span><span class="p">(</span><span class="n">freq</span><span class="o">**</span><span class="mf">3.0</span><span class="o">/</span><span class="p">(</span><span class="mf">6.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">*</span><span class="n">cabs</span>
   <span class="n">ctot</span><span class="o">=</span><span class="n">cabs</span><span class="o">+</span><span class="n">cscat_vol</span>
-  <span class="k">return</span> <span class="n">cabs</span><span class="p">,</span><span class="n">cabs_vol</span><span class="p">,</span><span class="n">cscat_vol</span><span class="p">,</span><span class="n">ctot</span></div>
+  <span class="k">return</span> <span class="n">cabs</span><span class="p">,</span><span class="n">cabs_vol</span><span class="p">,</span><span class="n">cscat_vol</span><span class="p">,</span><span class="n">ctot</span>
+</div>
+<div class="viewcode-block" id="complex_transmission_reflection"><a class="viewcode-back" href="../../../api/omnifit.utils.complex_transmission_reflection.html#omnifit.utils.complex_transmission_reflection">[docs]</a><span class="k">def</span> <span class="nf">complex_transmission_reflection</span><span class="p">(</span><span class="n">in_m0</span><span class="p">,</span><span class="n">in_m1</span><span class="p">,</span><span class="n">in_m2</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  complex_transmission_reflection(in_m0,in_m1,in_m2)</span>
+
+<span class="sd">  Calculate the complex transmission and reflection coefficients between</span>
+<span class="sd">  media 0, 1, and 2 given their complex refractive indices.</span>
+<span class="sd">  In the Kramers-Kronig implementation (in which this is most likely used</span>
+<span class="sd">  in the context of Omnifit) media 0, 1, and 2 correspond</span>
+<span class="sd">  respectively to the vacuum, ice, and substrate.</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  in_m0 : `complex` or `numpy.ndarray`</span>
+<span class="sd">    The complex refractive index of medium 0.</span>
+<span class="sd">  in_m1 : `complex` or `numpy.ndarray`</span>
+<span class="sd">    The complex refractive index of medium 1.</span>
+<span class="sd">  in_m2 : `complex` or `numpy.ndarray`</span>
+<span class="sd">    The complex refractive index of medium 2.</span>
+
+<span class="sd">  Returns</span>
+<span class="sd">  -------</span>
+<span class="sd">  A tuple containing the following elements:</span>
+<span class="sd">    * The complex transmission coefficient between media 0 and 1</span>
+<span class="sd">    * The complex transmission coefficient between media 0 and 2</span>
+<span class="sd">    * The complex transmission coefficient between media 1 and 2</span>
+<span class="sd">    * The complex reflection coefficient between media 0 and 1</span>
+<span class="sd">    * The complex reflection coefficient between media 0 and 2</span>
+<span class="sd">    * The complex reflection coefficient between media 1 and 2</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">complex_transmission</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m1</span><span class="p">,</span><span class="n">m2</span><span class="p">:</span> <span class="p">(</span><span class="mf">2.</span><span class="o">*</span><span class="n">m1</span><span class="o">.</span><span class="n">real</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">m1</span><span class="o">+</span><span class="n">m2</span><span class="p">)</span>
+  <span class="n">complex_reflection</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m1</span><span class="p">,</span><span class="n">m2</span><span class="p">:</span> <span class="p">(</span><span class="n">m1</span><span class="o">-</span><span class="n">m2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">m1</span><span class="o">+</span><span class="n">m2</span><span class="p">)</span>
+  <span class="k">return</span> <span class="p">(</span>
+          <span class="n">complex_transmission</span><span class="p">(</span><span class="n">in_m0</span><span class="p">,</span><span class="n">in_m1</span><span class="p">),</span>
+          <span class="n">complex_transmission</span><span class="p">(</span><span class="n">in_m0</span><span class="p">,</span><span class="n">in_m2</span><span class="p">),</span>
+          <span class="n">complex_transmission</span><span class="p">(</span><span class="n">in_m1</span><span class="p">,</span><span class="n">in_m2</span><span class="p">),</span>
+          <span class="n">complex_reflection</span><span class="p">(</span><span class="n">in_m0</span><span class="p">,</span><span class="n">in_m1</span><span class="p">),</span>
+          <span class="n">complex_reflection</span><span class="p">(</span><span class="n">in_m0</span><span class="p">,</span><span class="n">in_m2</span><span class="p">),</span>
+          <span class="n">complex_reflection</span><span class="p">(</span><span class="n">in_m1</span><span class="p">,</span><span class="n">in_m2</span><span class="p">)</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="kramers_kronig"><a class="viewcode-back" href="../../../api/omnifit.utils.kramers_kronig.html#omnifit.utils.kramers_kronig">[docs]</a><span class="k">def</span> <span class="nf">kramers_kronig</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span><span class="n">transmittance</span><span class="p">,</span><span class="n">m_substrate</span><span class="p">,</span><span class="n">d_ice</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">freq_m0</span><span class="p">,</span><span class="n">m_guess</span><span class="o">=</span><span class="mf">1.0</span><span class="o">+</span><span class="mf">0.0j</span><span class="p">,</span><span class="n">tol</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span><span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">ignore_fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="n">force_kkint_unity</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">precalc</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,</span>
+<span class="sd">                 m_guess=1.0+0.0j,tol=0.001,maxiter=100,ignore_fraction=0.1,</span>
+<span class="sd">                 force_kkint_unity=False,precalc=False)</span>
+
+<span class="sd">  Kramers-Kronig relation.</span>
+<span class="sd">  This is an implementation of the Kramers-Kronig relation calculation</span>
+<span class="sd">  presented in Hudgins et al 1993 (1993ApJS...86..713H), with an improved</span>
+<span class="sd">  integration method adapted from Trotta et al 1996 </span>
+<span class="sd">  (The Cosmic Dust Connection, 1996 169-184)</span>
+
+<span class="sd">  Parameters</span>
+<span class="sd">  ----------</span>
+<span class="sd">  wn : `astropy.units.Quantity` or `numpy.ndarray`</span>
+<span class="sd">    The frequency data of the input spectrum. If no units are given, this</span>
+<span class="sd">    is assumed to be in reciprocal wavenumbers (cm^-1).</span>
+<span class="sd">  transmittance : `astropy.units.Quantity` or `numpy.ndarray`</span>
+<span class="sd">    The transmittance data of the input spectrum. This can be given in</span>
+<span class="sd">    units other than transmittance, as long as they can be converted to </span>
+<span class="sd">    transmittance by making use of the `utils.equivalencies_absorption`</span>
+<span class="sd">    equivalency information. If no units are given, transmittance is</span>
+<span class="sd">    assumed.</span>
+<span class="sd">  m_substrate : `complex`</span>
+<span class="sd">    The complex refractive index of the substrate on which the ice being</span>
+<span class="sd">    studied was grown.</span>
+<span class="sd">  d_ice : `astropy.units.Quantity` or `float`</span>
+<span class="sd">    The thickness of the ice which is being studied. If no units are given,</span>
+<span class="sd">    centimeters are assumed.</span>
+<span class="sd">  m0 : `complex`</span>
+<span class="sd">    The complex refractive index of the ice at the reference frequency</span>
+<span class="sd">    defined by `freq_m0` (see below).</span>
+<span class="sd">  freq_m0 : `astropy.units.Quantity` or `float`</span>
+<span class="sd">    The frequency at which the reference complex refractive index `m0`</span>
+<span class="sd">    (see above) is defined. Best results are usually achieved if this</span>
+<span class="sd">    frequency is high compared to the frequency range being probed by</span>
+<span class="sd">    the spectrum.</span>
+<span class="sd">    If this is not defined as `astropy.units.Quantity` in spectroscopic</span>
+<span class="sd">    units, it is assumed to be in reciprocal wavenumbers (cm^-1).</span>
+<span class="sd">  m_guess : `complex` or `numpy.ndarray`</span>
+<span class="sd">    The starting guess of the complex refractive index of the ice. This</span>
+<span class="sd">    can either be a single number (in which case it is assumed to be this</span>
+<span class="sd">    number throughout the entire spectrum) or an array</span>
+<span class="sd">  tol : `float`</span>
+<span class="sd">    The square-sum of the residual between the original transmittance and</span>
+<span class="sd">    the transmittance modeled with the iterated complex refractive index</span>
+<span class="sd">    of the ice must be below this value for the iteration to converge. In</span>
+<span class="sd">    other words, the smaller this number is, the better the final result</span>
+<span class="sd">    will be at the expense of extra iterations.</span>
+<span class="sd">  maxiter : `int`</span>
+<span class="sd">    The maximum number of iterations allowed. If this number is reached,</span>
+<span class="sd">    the iteration is considered to not have converged, and an exception is</span>
+<span class="sd">    raised.</span>
+<span class="sd">  ignore_fraction : `float` between 0 and 0.5</span>
+<span class="sd">    The edges of the spectrum are blanked out (and replaced with the</span>
+<span class="sd">    non-blanked value closest to the edge) during iteration to avoid edge</span>
+<span class="sd">    effects arising from the usage of a non-infinite integration range.</span>
+<span class="sd">    This parameter controls how large of a fraction of the edges is blanked</span>
+<span class="sd">    out.</span>
+<span class="sd">  force_kkint_unity : `bool`</span>
+<span class="sd">    The results of the Kramers-Kronig integration are responsible for</span>
+<span class="sd">    determining the real part of the complex refractive index i.e. the</span>
+<span class="sd">    one which represents refraction. Normally this number should not drop</span>
+<span class="sd">    below unity, and unexpected behaviour can arise if it does.</span>
+<span class="sd">    Usually this means that there is something wrong with the input</span>
+<span class="sd">    parameters, but sometimes forcing the result to always be greater or</span>
+<span class="sd">    equal to unity can help. It should be noted, however, that the</span>
+<span class="sd">    accuracy of the results of an integration forced in this way are</span>
+<span class="sd">    suspect at best.</span>
+<span class="sd">  precalc : `bool`</span>
+<span class="sd">    The Kramers-Kronig iteration can be a very computationally intensive</span>
+<span class="sd">    operation. In some situations it may result in a faster iteration to</span>
+<span class="sd">    pre-calculate the large denominator which is part of the</span>
+<span class="sd">    Kramers-Kronig integration instead of computing new values of it in a</span>
+<span class="sd">    for loop. This denominator can be, however, a very</span>
+<span class="sd">    large variable as it contains a number of elements equal to the size</span>
+<span class="sd">    of the spectrum squared. Pre-calculating this can outright fail on</span>
+<span class="sd">    lower-end computers as Python runs out of available memory.</span>
+<span class="sd">    High-end systems may benefit from such pre-calculation, though.</span>
+
+<span class="sd">  Returns</span>
+<span class="sd">  -------</span>
+<span class="sd">  A `numpy.ndarray` which contains the complex refractive index of the</span>
+<span class="sd">  ice, in order of increasing frequency.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c">#set up constants</span>
+  <span class="n">m_vacuum</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">+</span><span class="mf">0.0j</span>
+  <span class="c">#make sure the input array units are correct; convert if necessary</span>
+  <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span> <span class="o">!=</span> <span class="n">u</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;No units detected in input freq. Assuming kayser.&#39;</span><span class="p">,</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+    <span class="n">freq</span> <span class="o">*=</span> <span class="n">u</span><span class="o">.</span><span class="n">kayser</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">u</span><span class="o">.</span><span class="n">set_enabled_equivalencies</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">equivalencies</span><span class="o">.</span><span class="n">spectral</span><span class="p">()):</span>
+      <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">kayser</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">transmittance</span><span class="p">)</span> <span class="o">!=</span> <span class="n">u</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;No units detected in input transmittance. Assuming transmittance units.&#39;</span><span class="p">,</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+    <span class="n">transmittance</span> <span class="o">*=</span> <span class="n">unit_t</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">u</span><span class="o">.</span><span class="n">set_enabled_equivalencies</span><span class="p">(</span><span class="n">equivalencies_absorption</span><span class="p">):</span>
+      <span class="n">transmittance</span> <span class="o">=</span> <span class="n">transmittance</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit_t</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">d_ice</span><span class="p">)</span> <span class="o">!=</span> <span class="n">u</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;No units detected in input d_ice. Assuming centimeters.&#39;</span><span class="p">,</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+    <span class="n">d_ice</span> <span class="o">*=</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">d_ice</span> <span class="o">=</span> <span class="n">d_ice</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+  <span class="c">#sort the arrays and get rid of units; won&#39;t need them after this</span>
+  <span class="n">initial_sorter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span>
+  <span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="n">initial_sorter</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+  <span class="n">transmittance</span> <span class="o">=</span> <span class="n">transmittance</span><span class="p">[</span><span class="n">initial_sorter</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+  <span class="n">d_ice</span> <span class="o">=</span> <span class="n">d_ice</span><span class="o">.</span><span class="n">value</span>
+  <span class="c">#initialise complex refractive index and alpha arrays</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="mi">1j</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+  <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="mi">1j</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+  <span class="c">#initial guess at m at first index</span>
+  <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">m_guess</span><span class="p">)</span><span class="o">==</span><span class="nb">complex</span><span class="p">:</span>
+    <span class="n">m_ice</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span><span class="n">m_guess</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">m_ice</span> <span class="o">=</span> <span class="n">m_guess</span>
+  <span class="c">#find top and bottom fraction indices. These will be replaced with dummy values after each integration to get rid of edge effects</span>
+  <span class="k">if</span> <span class="n">ignore_fraction</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="ow">or</span> <span class="n">ignore_fraction</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;ignore_fraction must be between 0.0 and 0.5&#39;</span><span class="p">)</span>
+  <span class="n">bot_fraction</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">ignore_fraction</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span>
+  <span class="n">top_fraction</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span><span class="o">-</span><span class="n">bot_fraction</span>
+  <span class="c">#pre-calculate the large denominator component of the KK integration, if desired</span>
+  <span class="k">if</span> <span class="n">precalc</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">sfreq</span><span class="o">=</span><span class="p">(</span><span class="n">freq</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">freq</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+      <span class="n">kkint_deno1</span> <span class="o">=</span> <span class="n">freq</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">sfreq</span><span class="o">**</span><span class="mi">2</span>
+      <span class="n">kkint_deno1</span><span class="p">[</span><span class="n">kkint_deno1</span><span class="o">!=</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">kkint_deno1</span><span class="p">[</span><span class="n">kkint_deno1</span><span class="o">!=</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">precalc</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="c">#or at least try to do so; if run out of memory, switch to the slower no-precalc mode</span>
+    <span class="k">except</span> <span class="ne">MemoryError</span><span class="p">:</span>
+      <span class="n">precalc</span> <span class="o">=</span> <span class="bp">False</span>
+  <span class="c">#some other parts can always be precalced</span>
+  <span class="n">kkint_mul</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+  <span class="n">kkint_deno2</span> <span class="o">=</span> <span class="n">freq</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">freq_m0</span><span class="o">**</span><span class="mi">2</span>
+  <span class="n">kkint_deno2</span><span class="p">[</span><span class="n">kkint_deno2</span><span class="o">!=</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">kkint_deno2</span><span class="p">[</span><span class="n">kkint_deno2</span><span class="o">!=</span><span class="mi">0</span><span class="p">]</span>
+  <span class="c">#calculate alpha at freq0</span>
+  <span class="n">alpha0</span> <span class="o">=</span> <span class="n">m0</span><span class="o">.</span><span class="n">imag</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">freq</span><span class="p">)</span>
+  <span class="c">#iteration begin!</span>
+  <span class="n">niter</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">squaresum_diff</span> <span class="o">=</span> <span class="n">tol</span><span class="o">+</span><span class="mi">1</span>
+  <span class="k">while</span> <span class="n">squaresum_diff</span> <span class="o">&gt;</span> <span class="n">tol</span> <span class="ow">and</span> <span class="n">niter</span> <span class="o">&lt;</span> <span class="n">maxiter</span><span class="p">:</span>
+    <span class="c">#calculate transmission and relfection coefficients</span>
+    <span class="c">#in these 0 means vacuum, 1 means ice, 2 means substrate</span>
+    <span class="n">t01</span><span class="p">,</span><span class="n">t02</span><span class="p">,</span><span class="n">t12</span><span class="p">,</span><span class="n">r01</span><span class="p">,</span><span class="n">r02</span><span class="p">,</span><span class="n">r12</span> <span class="o">=</span> <span class="n">complex_transmission_reflection</span><span class="p">(</span><span class="n">m_vacuum</span><span class="p">,</span><span class="n">m_ice</span><span class="p">,</span><span class="n">m_substrate</span><span class="p">)</span>
+    <span class="c">#the reflection component</span>
+    <span class="c"># reflection_component = np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_ice*m_ice*freq)))**2.)</span>
+    <span class="c">#this is an evil equation. do NOT touch it</span>
+    <span class="c">#it calculates the lambert absorption coefficient using the current best guess at m_ice</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">d_ice</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">transmittance</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">t01</span><span class="o">*</span><span class="n">t12</span><span class="o">/</span><span class="n">t02</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">r01</span><span class="o">*</span><span class="n">r12</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">4.j</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">d_ice</span><span class="o">*</span><span class="n">m_ice</span><span class="o">*</span><span class="n">freq</span><span class="p">)))</span><span class="o">**</span><span class="mf">2.</span><span class="p">))</span>
+    <span class="c">#using the new alpha, calculate a new n (and thus m) for the ice</span>
+    <span class="c">#this is done in a parallel for loop, to avoid killing the computer when dealing with large amounts of data</span>
+    <span class="n">kkint_nomi</span> <span class="o">=</span> <span class="n">alpha</span><span class="o">-</span><span class="n">alpha0</span>
+    <span class="n">kkint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span><span class="n">m0</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">numcols</span> <span class="o">=</span> <span class="n">kkint_nomi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">current_col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numcols</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">precalc</span><span class="p">:</span>
+        <span class="n">kkint</span><span class="p">[</span><span class="n">current_col</span><span class="p">]</span><span class="o">+=</span><span class="n">kkint_mul</span><span class="o">*</span><span class="n">scipy</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">simps</span><span class="p">((</span><span class="n">alpha</span><span class="o">-</span><span class="n">alpha</span><span class="p">[</span><span class="n">current_col</span><span class="p">])</span><span class="o">*</span><span class="n">kkint_deno1</span><span class="p">[</span><span class="n">current_col</span><span class="p">,:]</span><span class="o">-</span><span class="n">kkint_nomi</span><span class="o">*</span><span class="n">kkint_deno2</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">kkint_deno1</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="n">current_col</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">freq</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">kkint_deno1</span><span class="p">[</span><span class="n">kkint_deno1</span><span class="o">!=</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">kkint_deno1</span><span class="p">[</span><span class="n">kkint_deno1</span><span class="o">!=</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">kkint</span><span class="p">[</span><span class="n">current_col</span><span class="p">]</span><span class="o">+=</span><span class="n">kkint_mul</span><span class="o">*</span><span class="n">scipy</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">simps</span><span class="p">((</span><span class="n">alpha</span><span class="o">-</span><span class="n">alpha</span><span class="p">[</span><span class="n">current_col</span><span class="p">])</span><span class="o">*</span><span class="n">kkint_deno1</span><span class="o">-</span><span class="n">kkint_nomi</span><span class="o">/</span><span class="p">(</span><span class="n">freq</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">freq_m0</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">kkint</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">kkint</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;KK integration is producing negative refractive indices! This will most likely produce nonsensical results.&#39;</span><span class="p">,</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;KK integration is producing refractive indices below unity! This may result in unexpected behaviour.&#39;</span><span class="p">,</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">force_kkint_unity</span><span class="p">:</span>
+        <span class="n">kkint</span><span class="p">[</span><span class="n">kkint</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="mf">1.</span>
+    <span class="n">m_ice</span> <span class="o">=</span> <span class="n">kkint</span><span class="o">+</span><span class="mi">1j</span><span class="o">*</span><span class="n">alpha</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">freq</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">m_ice</span><span class="o">.</span><span class="n">real</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">m_ice</span><span class="o">.</span><span class="n">imag</span><span class="p">)):</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;Produced complex refractive index contains NaNs. Check your input parameters.&#39;</span><span class="p">)</span>
+    <span class="c">#replace top and bottom fractions of m_ice with the value closest to that edge</span>
+    <span class="c">#this is done to combat edge effects arising from integrating over a non-infinite range</span>
+    <span class="n">m_ice</span><span class="p">[:</span><span class="n">bot_fraction</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_ice</span><span class="p">[</span><span class="n">bot_fraction</span><span class="p">]</span>
+    <span class="n">m_ice</span><span class="p">[</span><span class="n">top_fraction</span><span class="p">:]</span> <span class="o">=</span> <span class="n">m_ice</span><span class="p">[</span><span class="n">top_fraction</span><span class="p">]</span>
+    <span class="c">#calculate transmission and relfection coefficients (again)</span>
+    <span class="c">#in these 0 means vacuum, 1 means ice, 2 means substrate</span>
+    <span class="n">t01</span><span class="p">,</span><span class="n">t02</span><span class="p">,</span><span class="n">t12</span><span class="p">,</span><span class="n">r01</span><span class="p">,</span><span class="n">r02</span><span class="p">,</span><span class="n">r12</span> <span class="o">=</span> <span class="n">complex_transmission_reflection</span><span class="p">(</span><span class="n">m_vacuum</span><span class="p">,</span><span class="n">m_ice</span><span class="p">,</span><span class="n">m_substrate</span><span class="p">)</span>
+    <span class="c">#model a transmittance using given m_ice and alpha</span>
+    <span class="c">#yes, this is another evil equation</span>
+    <span class="n">transmittance_model</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="o">*</span><span class="n">d_ice</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">t01</span><span class="o">*</span><span class="n">t12</span><span class="o">/</span><span class="n">t02</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1.</span><span class="o">+</span><span class="n">r01</span><span class="o">*</span><span class="n">r12</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">4.j</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">d_ice</span><span class="o">*</span><span class="n">m_ice</span><span class="o">*</span><span class="n">freq</span><span class="p">)))</span><span class="o">**</span><span class="mf">2.</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">transmittance</span> <span class="o">-</span> <span class="n">transmittance_model</span>
+    <span class="n">diff</span><span class="p">[:</span><span class="n">bot_fraction</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span> <span class="c">#ignore top...</span>
+    <span class="n">diff</span><span class="p">[</span><span class="n">top_fraction</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">0.</span> <span class="c">#...and bottom fraction differences</span>
+    <span class="n">squaresum_diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">diff</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c">#square sum of difference</span>
+    <span class="n">niter</span> <span class="o">+=</span> <span class="mi">1</span>
+  <span class="c">#at this point we are done</span>
+  <span class="k">if</span> <span class="n">niter</span><span class="o">&gt;=</span><span class="n">maxiter</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;Maximum number of iterations reached before convergence criterion was met.&#39;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">m_ice</span></div>
 </pre></div>
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
 
 
@@ -255,8 +499,8 @@
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
-    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 02 Nov 2015. <br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 19 Dec 2015. <br/>
   </p>
 </footer>
   </body>

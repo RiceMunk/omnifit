@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Omnifit Package Documentation &mdash; omnifit v0.2</title>
+    <title>Omnifit Package Documentation &mdash; omnifit v0.2.1</title>
     
     <link rel="stylesheet" href="_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,14 +25,14 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="shortcut icon" href="_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.2" href="#" />
+    <link rel="top" title="omnifit v0.2.1" href="#" />
     <link rel="next" title="Overview" href="overview.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
 <script type="text/javascript" src="_static/copybutton.js"></script>
 
 
   </head>
-  <body role="document">
+  <body>
 <div class="topbar">
   <a class="brand" title="Documentation Home" href="#"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
   <ul>
@@ -61,7 +61,7 @@
 	</a>
       </li>
       <li>
-	<a href="#">omnifit v0.2</a>
+	<a href="#">omnifit v0.2.1</a>
 	 &raquo;
       </li>
       
@@ -73,7 +73,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body">
             
   <style media="screen" type="text/css">
   h1 { display:none; }
@@ -108,13 +108,13 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.spectrum.AbsorptionSpectrum.html#omnifit.spectrum.AbsorptionSpectrum" title="omnifit.spectrum.AbsorptionSpectrum"><code class="xref py py-obj docutils literal"><span class="pre">AbsorptionSpectrum</span></code></a>(wn,od,**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.spectrum.AbsorptionSpectrum.html#omnifit.spectrum.AbsorptionSpectrum" title="omnifit.spectrum.AbsorptionSpectrum"><tt class="xref py py-obj docutils literal"><span class="pre">AbsorptionSpectrum</span></tt></a>(wn,&nbsp;od,&nbsp;**kwargs)</td>
 <td>A class specialized in representing absorption spectra of the type often used in ice spectroscopy.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/omnifit.spectrum.BaseSpectrum.html#omnifit.spectrum.BaseSpectrum" title="omnifit.spectrum.BaseSpectrum"><code class="xref py py-obj docutils literal"><span class="pre">BaseSpectrum</span></code></a>(x,y,dy=None,specname=,nondata=[])</td>
+<tr class="row-even"><td><a class="reference internal" href="api/omnifit.spectrum.BaseSpectrum.html#omnifit.spectrum.BaseSpectrum" title="omnifit.spectrum.BaseSpectrum"><tt class="xref py py-obj docutils literal"><span class="pre">BaseSpectrum</span></tt></a>(x,&nbsp;y[,&nbsp;dy,&nbsp;specname,&nbsp;nondata])</td>
 <td>A class to represent spectroscopic data.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.spectrum.CDESpectrum.html#omnifit.spectrum.CDESpectrum" title="omnifit.spectrum.CDESpectrum"><code class="xref py py-obj docutils literal"><span class="pre">CDESpectrum</span></code></a>(wn,m,**kwargs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.spectrum.CDESpectrum.html#omnifit.spectrum.CDESpectrum" title="omnifit.spectrum.CDESpectrum"><tt class="xref py py-obj docutils literal"><span class="pre">CDESpectrum</span></tt></a>(wn,&nbsp;m,&nbsp;**kwargs)</td>
 <td>A class specialized in representing CDE-corrected absorption spectra.</td>
 </tr>
 </tbody>
@@ -137,7 +137,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.fitter.Fitter.html#omnifit.fitter.Fitter" title="omnifit.fitter.Fitter"><code class="xref py py-obj docutils literal"><span class="pre">Fitter</span></code></a>(...)</td>
+<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.fitter.Fitter.html#omnifit.fitter.Fitter" title="omnifit.fitter.Fitter"><tt class="xref py py-obj docutils literal"><span class="pre">Fitter</span></tt></a>(x,&nbsp;y[,&nbsp;dy,&nbsp;modelname,&nbsp;psf,&nbsp;fitrange,&nbsp;...])</td>
 <td>A class for multi-component fitting to spectroscopic data of ices.</td>
 </tr>
 </tbody>
@@ -160,13 +160,13 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.utils.cde_correct.html#omnifit.utils.cde_correct" title="omnifit.utils.cde_correct"><code class="xref py py-obj docutils literal"><span class="pre">cde_correct</span></code></a>(freq,m)</td>
+<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.utils.cde_correct.html#omnifit.utils.cde_correct" title="omnifit.utils.cde_correct"><tt class="xref py py-obj docutils literal"><span class="pre">cde_correct</span></tt></a>(freq,m)</td>
 <td>Generate a CDE-corrected spectrum from a complex refractive index spectrum.</td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="api/omnifit.utils.complex_transmission_reflection.html#omnifit.utils.complex_transmission_reflection" title="omnifit.utils.complex_transmission_reflection"><code class="xref py py-obj docutils literal"><span class="pre">complex_transmission_reflection</span></code></a>(...)</td>
+<tr class="row-even"><td><a class="reference internal" href="api/omnifit.utils.complex_transmission_reflection.html#omnifit.utils.complex_transmission_reflection" title="omnifit.utils.complex_transmission_reflection"><tt class="xref py py-obj docutils literal"><span class="pre">complex_transmission_reflection</span></tt></a>(...)</td>
 <td>Calculate the complex transmission and reflection coefficients between media 0, 1, and 2 given their complex refractive indices.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.utils.kramers_kronig.html#omnifit.utils.kramers_kronig" title="omnifit.utils.kramers_kronig"><code class="xref py py-obj docutils literal"><span class="pre">kramers_kronig</span></code></a>(...[,&nbsp;m_guess,&nbsp;force_kkint_unity])</td>
+<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.utils.kramers_kronig.html#omnifit.utils.kramers_kronig" title="omnifit.utils.kramers_kronig"><tt class="xref py py-obj docutils literal"><span class="pre">kramers_kronig</span></tt></a>(...[,&nbsp;m_guess,&nbsp;force_kkint_unity])</td>
 <td>Kramers-Kronig relation.</td>
 </tr>
 </tbody>
@@ -180,7 +180,7 @@
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.utils.Baseliner.html#omnifit.utils.Baseliner" title="omnifit.utils.Baseliner"><code class="xref py py-obj docutils literal"><span class="pre">Baseliner</span></code></a>(ax,spec,order=1)</td>
+<tr class="row-odd"><td><a class="reference internal" href="api/omnifit.utils.Baseliner.html#omnifit.utils.Baseliner" title="omnifit.utils.Baseliner"><tt class="xref py py-obj docutils literal"><span class="pre">Baseliner</span></tt></a>(ax,&nbsp;spec)</td>
 <td>A class for interactive baseliner of spectroscopic data.</td>
 </tr>
 </tbody>
@@ -200,7 +200,7 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">Omnifit Package Documentation</a><ul>
@@ -217,14 +217,14 @@
     </div>
 <footer class="footer">
   <p class="pull-right">
-    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2/docs/index.rst">Edit This Page on Github</a> &nbsp;
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2.1/docs/index.rst">Edit This Page on Github</a> &nbsp;
     <a href="_sources/index.txt"
        rel="nofollow">Page Source</a> &nbsp;
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
-    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 02 Nov 2015. <br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 19 Dec 2015. <br/>
   </p>
 </footer>
   </body>

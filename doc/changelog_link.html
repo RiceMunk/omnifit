@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Changelog &mdash; omnifit v0.2</title>
+    <title>Changelog &mdash; omnifit v0.2.1</title>
     
     <link rel="stylesheet" href="_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,13 +25,13 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="shortcut icon" href="_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.2" href="index.html" />
+    <link rel="top" title="omnifit v0.2.1" href="index.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
 <script type="text/javascript" src="_static/copybutton.js"></script>
 
 
   </head>
-  <body role="document">
+  <body>
 <div class="topbar">
   <a class="brand" title="Documentation Home" href="index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
   <ul>
@@ -55,7 +55,7 @@
     <h3>Navigation</h3>
     <ul>
       <li>
-	<a href="index.html">omnifit v0.2</a>
+	<a href="index.html">omnifit v0.2.1</a>
 	 &raquo;
       </li>
       
@@ -67,10 +67,22 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body">
             
   <div class="section" id="changelog">
 <h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="changes-in-0-2-1">
+<h2>Changes in 0.2.1<a class="headerlink" href="#changes-in-0-2-1" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Properly parsing requirements on installation now (issue #15)</li>
+<li>Made fitting compatible with lmfit versions higher than 0.9 (issue #22)</li>
+<li>Consequently this made omnifit incompatible with lmfit versions lower than 0.9, so dropped support for those</li>
+<li>Made spectrum convolution work properly with astropy 1.1</li>
+<li>Updated full fitting example in documentation to reflect the new format being used for complex refractive indices</li>
+</ul>
+</div></blockquote>
+</div>
 <div class="section" id="changes-in-0-2-0">
 <h2>Changes in 0.2.0<a class="headerlink" href="#changes-in-0-2-0" title="Permalink to this headline">¶</a></h2>
 <blockquote>
@@ -122,10 +134,11 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">Changelog</a><ul>
+<li><a class="reference internal" href="#changes-in-0-2-1">Changes in 0.2.1</a></li>
 <li><a class="reference internal" href="#changes-in-0-2-0">Changes in 0.2.0</a></li>
 <li><a class="reference internal" href="#changes-in-0-1-2">Changes in 0.1.2</a></li>
 <li><a class="reference internal" href="#changes-in-0-1-1">Changes in 0.1.1</a></li>
@@ -141,14 +154,14 @@
     </div>
 <footer class="footer">
   <p class="pull-right">
-    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2/docs/changelog_link.rst">Edit This Page on Github</a> &nbsp;
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2.1/docs/changelog_link.rst">Edit This Page on Github</a> &nbsp;
     <a href="_sources/changelog_link.txt"
        rel="nofollow">Page Source</a> &nbsp;
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
-    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 02 Nov 2015. <br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 19 Dec 2015. <br/>
   </p>
 </footer>
   </body>

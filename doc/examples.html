@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Examples &mdash; omnifit v0.2</title>
+    <title>Examples &mdash; omnifit v0.2.1</title>
     
     <link rel="stylesheet" href="_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.2',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/sidebar.js"></script>
     <link rel="shortcut icon" href="_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.2" href="index.html" />
+    <link rel="top" title="omnifit v0.2.1" href="index.html" />
     <link rel="next" title="AbsorptionSpectrum" href="api/omnifit.spectrum.AbsorptionSpectrum.html" />
     <link rel="prev" title="Installation" href="installation.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
@@ -33,7 +33,7 @@
 
 
   </head>
-  <body role="document">
+  <body>
 <div class="topbar">
   <a class="brand" title="Documentation Home" href="index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
   <ul>
@@ -68,7 +68,7 @@
 	 |
       </li>
       <li>
-	<a href="index.html">omnifit v0.2</a>
+	<a href="index.html">omnifit v0.2.1</a>
 	 &raquo;
       </li>
       
@@ -80,7 +80,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body">
             
   <div class="section" id="examples">
 <h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
@@ -88,8 +88,8 @@
 <div class="section" id="fitting-from-start-to-finish">
 <span id="example-full-fit"></span><h2>Fitting from start to finish<a class="headerlink" href="#fitting-from-start-to-finish" title="Permalink to this headline">¶</a></h2>
 <p>The code snippet below shows how one might go about fitting a target spectrum with an empirically acquired spectrum and a Gaussian function, and the both export the raw fit results and plot them.</p>
-<p>The target spectrum data is assumed to originate from a file which consists of two columns of data. The first column contains the wavelength and the second column contains the optical depth of an observed spectrum. For information on how you can use Omnifit to acquire such a complex refractive index spectrum, see the <a class="reference internal" href="#example-kramers-kronig"><span>example on Kramers-Kronig iteration</span></a>. You can download the observational data file used in this example from <a class="reference download internal" href="_downloads/obsdata.csv"><code class="xref download docutils literal"><span class="pre">here</span></code></a>.</p>
-<p>The empirical spectrum being fitted to this, by contrast, is assumed to be a file containing set of data describing the complex refractive index of an ice. The first column of this file contains the frequency of the spectrum (in reciprocal wavenumbers), and the second and third columns containing the real and imaginary parts of the complex refractive index. You can download the laboratory data file used in this example from <a class="reference download internal" href="_downloads/labdata.csv"><code class="xref download docutils literal"><span class="pre">here</span></code></a>.</p>
+<p>The target spectrum data is assumed to originate from a file which consists of two columns of data. The first column contains the wavelength and the second column contains the optical depth of an observed spectrum. For information on how you can use Omnifit to acquire such a complex refractive index spectrum, see the <a class="reference internal" href="#example-kramers-kronig"><em>example on Kramers-Kronig iteration</em></a>. You can download the observational data file used in this example from <a class="reference download internal" href="_downloads/obsdata.csv"><tt class="xref download docutils literal"><span class="pre">here</span></tt></a>.</p>
+<p>The empirical spectrum being fitted to this, by contrast, is assumed to be a file containing set of data describing the complex refractive index of an ice. The first column of this file contains the frequency of the spectrum (in reciprocal wavenumbers), and the second and third columns containing the real and imaginary parts of the complex refractive index. You can download the laboratory data file used in this example from <a class="reference download internal" href="_downloads/labdata.csv"><tt class="xref download docutils literal"><span class="pre">here</span></tt></a>.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -125,7 +125,7 @@
 <span class="n">obs_wl</span><span class="p">,</span><span class="n">obs_od</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s">&#39;./obsdata.csv&#39;</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
 <span class="n">lab_wn</span><span class="p">,</span><span class="n">lab_n</span><span class="p">,</span><span class="n">lab_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s">&#39;./labdata.csv&#39;</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span><span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;,&#39;</span><span class="p">,</span><span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
 <span class="n">obs_spec</span> <span class="o">=</span> <span class="n">AbsorptionSpectrum</span><span class="p">(</span><span class="n">obs_wl</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">micron</span><span class="p">,</span><span class="n">obs_od</span><span class="o">*</span><span class="n">unit_od</span><span class="p">,</span><span class="n">specname</span><span class="o">=</span><span class="s">&#39;Observed data&#39;</span><span class="p">)</span>
-<span class="n">lab_spec</span> <span class="o">=</span> <span class="n">CDESpectrum</span><span class="p">(</span><span class="n">lab_wn</span><span class="p">,</span><span class="n">lab_n</span><span class="p">,</span><span class="n">lab_k</span><span class="p">,</span><span class="n">specname</span><span class="o">=</span><span class="s">&#39;Laboratory data&#39;</span><span class="p">)</span>
+<span class="n">lab_spec</span> <span class="o">=</span> <span class="n">CDESpectrum</span><span class="p">(</span><span class="n">lab_wn</span><span class="p">,</span><span class="n">lab_n</span><span class="o">+</span><span class="n">lab_k</span><span class="o">*</span><span class="mi">1j</span><span class="p">,</span><span class="n">specname</span><span class="o">=</span><span class="s">&#39;Laboratory data&#39;</span><span class="p">)</span>
 <span class="n">interp_lab</span> <span class="o">=</span> <span class="n">lab_spec</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">obs_spec</span><span class="p">,</span><span class="n">clone</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="n">fitter_example</span> <span class="o">=</span> <span class="n">Fitter</span><span class="o">.</span><span class="n">fromspectrum</span><span class="p">(</span><span class="n">obs_spec</span><span class="p">,</span><span class="n">modelname</span><span class="o">=</span><span class="s">&#39;Example fit&#39;</span><span class="p">)</span>
 <span class="n">lab_par</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">()</span>
@@ -151,15 +151,15 @@ Lines 7 and 8 read the spectrum data from the two files which contain the target
 <p>Line 11 interpolates the data in the CDE-corrected spectrum to match the spectral resolution of the fitting target spectrum, which is also used to initialise the fitter on line 12.</p>
 <p>Lines 13 and 14 prepare the fitting parameters for an empirical data, containing only an initial guess (0.5) for the best-fit multiplier. These parameters and the data to be fitted are then given to the fitter on line 15.</p>
 <p>Similarly lines 16-19 involve setting up the initial guess and constrains on the parameters for a Gaussian fit, which are then given to the fitter (with instruction to try and fit a Gaussian) on line 20.</p>
-<p>Line 21 is used to make the fitting itself happen. After it is done, the command on line 22 can be called to produce two files, example_fitres.csv and example_fitres.xml, which contain all the information on the fit results, as documented in <a class="reference internal" href="api/omnifit.fitter.Fitter.html#omnifit.fitter.Fitter.fitresults_tofile" title="omnifit.fitter.Fitter.fitresults_tofile"><code class="xref py py-obj docutils literal"><span class="pre">omnifit.fitter.Fitter.fitresults_tofile</span></code></a>.</p>
+<p>Line 21 is used to make the fitting itself happen. After it is done, the command on line 22 can be called to produce two files, example_fitres.csv and example_fitres.xml, which contain all the information on the fit results, as documented in <a class="reference internal" href="api/omnifit.fitter.Fitter.html#omnifit.fitter.Fitter.fitresults_tofile" title="omnifit.fitter.Fitter.fitresults_tofile"><tt class="xref py py-obj docutils literal"><span class="pre">omnifit.fitter.Fitter.fitresults_tofile</span></tt></a>.</p>
 <p>Finally, lines 23-27 are used to produce a plot of the fit results in the file example_fitres.pdf.</p>
 <p>The plotted file should look something like this:</p>
 <img alt="_images/example_fitres.png" src="_images/example_fitres.png" />
 </div>
 <div class="section" id="kramers-kronig-relation">
 <span id="example-kramers-kronig"></span><h2>Kramers-Kronig relation<a class="headerlink" href="#kramers-kronig-relation" title="Permalink to this headline">¶</a></h2>
-<p>This snippet of code is an example of how to make use of the Kramers-Kronig iteration method in Omnifit to use transmission data of an ice grown in a laboratory setting to calculate the complex refractive index of said ice. This complex refractive index spectrum can then be used in the initialisation of e.g. a CDE-corrected spectrum, such as the one used in the <a class="reference internal" href="#example-full-fit"><span>example on fitting from start to finish</span></a>.</p>
-<p>The laboratory data is assumed to originate from a file which consists of two columns of data. The first column contains the frequency (in cm^-1) and the second column contains the absorbance of an ice spectrum grown in a laboratory. In this data the absorption of the substrate has been baselined out of the spectrum, leaving the absorption of the ice itself as the only source of absorbance. You can download the laboratory data file used in this example from <a class="reference download internal" href="_downloads/labdata_raw.csv"><code class="xref download docutils literal"><span class="pre">here</span></code></a>.</p>
+<p>This snippet of code is an example of how to make use of the Kramers-Kronig iteration method in Omnifit to use transmission data of an ice grown in a laboratory setting to calculate the complex refractive index of said ice. This complex refractive index spectrum can then be used in the initialisation of e.g. a CDE-corrected spectrum, such as the one used in the <a class="reference internal" href="#example-full-fit"><em>example on fitting from start to finish</em></a>.</p>
+<p>The laboratory data is assumed to originate from a file which consists of two columns of data. The first column contains the frequency (in cm^-1) and the second column contains the absorbance of an ice spectrum grown in a laboratory. In this data the absorption of the substrate has been baselined out of the spectrum, leaving the absorption of the ice itself as the only source of absorbance. You can download the laboratory data file used in this example from <a class="reference download internal" href="_downloads/labdata_raw.csv"><tt class="xref download docutils literal"><span class="pre">here</span></tt></a>.</p>
 <div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
@@ -220,7 +220,7 @@ Lines 7 and 8 read the spectrum data from the two files which contain the target
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">Examples</a><ul>
@@ -237,14 +237,14 @@ Lines 7 and 8 read the spectrum data from the two files which contain the target
     </div>
 <footer class="footer">
   <p class="pull-right">
-    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2/docs/examples.rst">Edit This Page on Github</a> &nbsp;
+    <a href="http://github.com/RiceMunk/omnifit/tree/v0.2.1/docs/examples.rst">Edit This Page on Github</a> &nbsp;
     <a href="_sources/examples.txt"
        rel="nofollow">Page Source</a> &nbsp;
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
-    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 02 Nov 2015. <br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 19 Dec 2015. <br/>
   </p>
 </footer>
   </body>

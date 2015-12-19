@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>omnifit.spectrum.spectrum &mdash; omnifit v0.2</title>
+    <title>omnifit.spectrum.spectrum &mdash; omnifit v0.2.1</title>
     
     <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2',
+        VERSION:     '0.2.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,14 +25,14 @@
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <script type="text/javascript" src="../../../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
-    <link rel="top" title="omnifit v0.2" href="../../../index.html" />
+    <link rel="top" title="omnifit v0.2.1" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'/>
 <script type="text/javascript" src="../../../_static/copybutton.js"></script>
 
 
   </head>
-  <body role="document">
+  <body>
 <div class="topbar">
   <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
   <ul>
@@ -56,7 +56,7 @@
     <h3>Navigation</h3>
     <ul>
       <li>
-	<a href="../../../index.html">omnifit v0.2</a>
+	<a href="../../../index.html">omnifit v0.2.1</a>
 	 &raquo;
       </li>
       <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
@@ -69,7 +69,7 @@
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body" role="main">
+          <div class="body">
             
   <h1>Source code for omnifit.spectrum.spectrum</h1><div class="highlight"><pre>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -440,7 +440,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">convolved</span><span class="p">:</span>
       <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;Spectrum &#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="o">+</span><span class="s">&#39; has already been convolved once!&#39;</span><span class="p">,</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+    <span class="n">yunit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">unit</span> <span class="c">#stored temporarily to preserve units through convolution</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="n">convolution</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="n">kernel</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">yunit</span> <span class="c">#restore y units</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">convolved</span><span class="o">=</span><span class="bp">True</span>
 </div>
   <span class="nd">@clonable</span>
@@ -548,11 +550,8 @@
       <span class="n">cManager</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">wm_geometry</span><span class="p">(</span><span class="s">&quot;+100+50&quot;</span><span class="p">)</span>
       <span class="n">cAx</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="s">&#39;k-&#39;</span><span class="p">,</span><span class="n">drawstyle</span><span class="o">=</span><span class="s">&#39;steps-mid&#39;</span><span class="p">)</span>
       <span class="n">cBaseliner</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">Baseliner</span><span class="p">(</span><span class="n">cAx</span><span class="p">,</span><span class="bp">self</span><span class="p">)</span>
-      <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span><span class="s">&#39;_called_from_test&#39;</span><span class="p">):</span> <span class="c">#only show the plot if not testing</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">cFig</span><span class="p">)</span>
-        <span class="n">windows</span><span class="o">=</span><span class="n">cBaseliner</span><span class="o">.</span><span class="n">windows</span>
-      <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">cFig</span><span class="p">,</span><span class="n">cBaseliner</span> <span class="c">#send the relevant stuff back for testing</span>
+      <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">cFig</span><span class="p">)</span>
+      <span class="n">windows</span><span class="o">=</span><span class="n">cBaseliner</span><span class="o">.</span><span class="n">windows</span>
       <span class="k">if</span> <span class="n">usefile</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">usefile</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cFile</span><span class="p">:</span>
           <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">windows</span><span class="p">,</span><span class="n">cFile</span><span class="p">)</span>
@@ -775,11 +774,8 @@
 <span class="sd">  Attributes</span>
 <span class="sd">  -----------</span>
 <span class="sd">  All the attributes stored in `AbsorptionSpectrum`, plus the following:</span>
-<span class="sd">  n : `numpy.ndarray`</span>
-<span class="sd">    The real part of the complex refractive index spectrum of the data.</span>
-<span class="sd">  k : `numpy.ndarray`</span>
-<span class="sd">    The imaginary part of the complex refractive index spectrum of the</span>
-<span class="sd">    data.</span>
+<span class="sd">  m : `numpy.ndarray`</span>
+<span class="sd">    The complex refractive index spectrum of the data.</span>
 <span class="sd">  cabs : `numpy.ndarray`</span>
 <span class="sd">    The spectrum of the absorption cross section of the simulated grain.</span>
 <span class="sd">  cabs_vol : `numpy.ndarray`</span>
@@ -792,9 +788,9 @@
 <span class="sd">  ctot : `numpy.ndarray`</span>
 <span class="sd">    The spectrum of the total cross section of the simulated grain.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wn</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wn</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    CDESpectrum(wn,n,k,**kwargs)</span>
+<span class="sd">    CDESpectrum(wn,m,**kwargs)</span>
 
 <span class="sd">    Constructor for the `CDESpectrum` class.</span>
 
@@ -805,27 +801,24 @@
 <span class="sd">      `astropy.units.Quantity`, they must either be in kayser (reciprocal</span>
 <span class="sd">      wavenumbers) or convertable to kayser. If given as `numpy.ndarray`,</span>
 <span class="sd">      they are assumed to be in kayser.</span>
-<span class="sd">    n : `numpy.ndarray`</span>
-<span class="sd">      The real part of the complex refractive index spectrum of the data.</span>
-<span class="sd">    k : `numpy.ndarray`</span>
-<span class="sd">      The imaginary part of the complex refractive index spectrum of the</span>
-<span class="sd">      data.</span>
+<span class="sd">    m : `numpy.ndarray`</span>
+<span class="sd">      The complex refractive index spectrum of the data.</span>
 <span class="sd">    **kwargs : Arguments, optional</span>
 <span class="sd">      Additional initialisation arguments can be passed to</span>
 <span class="sd">      `AbsorptionSpectrum` using this. Note that x and y are defined using</span>
 <span class="sd">      the other initialisation parameters of `CDESpectrum`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;Input arrays have different sizes.&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">wn</span><span class="p">)</span> <span class="o">!=</span> <span class="n">u</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
       <span class="n">wn</span> <span class="o">=</span> <span class="n">wn</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">kayser</span>
     <span class="k">if</span> <span class="n">wn</span><span class="o">.</span><span class="n">unit</span> <span class="o">!=</span> <span class="n">u</span><span class="o">.</span><span class="n">kayser</span><span class="p">:</span>
       <span class="k">with</span> <span class="n">u</span><span class="o">.</span><span class="n">set_enabled_equivalencies</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">equivalencies</span><span class="o">.</span><span class="n">spectral</span><span class="p">()):</span>
         <span class="n">wn</span><span class="o">=</span><span class="n">wn</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">kayser</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">cabs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cabs_vol</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cscat_vol</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ctot</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">cde_correct</span><span class="p">(</span><span class="n">wn</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s">&#39;float64&#39;</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s">&#39;float64&#39;</span><span class="p">)</span>
-    <span class="n">AbsorptionSpectrum</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wn</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cabs_vol</span><span class="o">*</span><span class="n">utils</span><span class="o">.</span><span class="n">unit_od</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cabs</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cabs_vol</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cscat_vol</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ctot</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">cde_correct</span><span class="p">(</span><span class="n">wn</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="n">m</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="s">&#39;float64&#39;</span><span class="p">)</span>
+    <span class="n">od</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cabs_vol</span><span class="o">*</span><span class="n">utils</span><span class="o">.</span><span class="n">unit_od</span><span class="c">#utils.unit_absorbance).to(utils.unit_od,equivalencies=utils.equivalencies_absorption)</span>
+    <span class="n">AbsorptionSpectrum</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wn</span><span class="p">,</span><span class="n">od</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 <div class="viewcode-block" id="CDESpectrum.plotnk"><a class="viewcode-back" href="../../../api/omnifit.spectrum.CDESpectrum.html#omnifit.spectrum.CDESpectrum.plotnk">[docs]</a>  <span class="k">def</span> <span class="nf">plotnk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ax_n</span><span class="p">,</span><span class="n">ax_k</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    plotnk(ax_n,ax_k,**kwargs)</span>
@@ -844,14 +837,14 @@
 <span class="sd">      to `matplotlib.pyplot.plot`, which is used by this </span>
 <span class="sd">      method for its plotting.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ax_n</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wn</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="n">ax_k</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wn</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+    <span class="n">ax_n</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wn</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">real</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ax_k</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wn</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+      <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
 
 
@@ -864,8 +857,8 @@
     <a href="#">Back to Top</a></p>
   <p>
     &copy; Copyright 2015, Aleksi Suutarinen.<br/>
-    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.3.1. &nbsp;
-    Last built 02 Nov 2015. <br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 19 Dec 2015. <br/>
   </p>
 </footer>
   </body>
