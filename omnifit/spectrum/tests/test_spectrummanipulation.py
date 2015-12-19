@@ -121,27 +121,3 @@ class TestSpectrumManipulation_misc:
     testspec.baseline()
     testspec = generate_cdespectrum()
     testspec.baseline(windows=[[testspec.x[0].value+500,testspec.x[-1].value-500]],exclusive=True)
-  def test_baseline_manual(self):
-    """
-    Test manual baseline functionality
-    as far as the interactive mode allows non-interactively
-    """
-    testspec = generate_cdespectrum()
-    cFig,cBaseliner = testspec.baseline(windows='manual')
-    from matplotlib.backend_bases import MouseEvent, KeyEvent
-    leftclick = MouseEvent('button_press_event',cFig.canvas,2000.,0.,button=1)
-    midclick = MouseEvent('button_press_event',cFig.canvas,1000.,0.,button=2)
-    rightclick = MouseEvent('button_press_event',cFig.canvas,1000.,0.,button=3)
-    keypress_a = KeyEvent('key_press_event',cFig.canvas,'a')
-    keypress_q = KeyEvent('key_press_event',cFig.canvas,'q')
-    keypress_other = KeyEvent('key_press_event',cFig.canvas,'@')
-    cBaseliner._Baseliner__mouse_press(leftclick)
-    cBaseliner._Baseliner__mouse_press(midclick)
-    cBaseliner._Baseliner__mouse_press(rightclick)
-    cBaseliner._Baseliner__setlim(2000.)
-    cBaseliner._Baseliner__setlim(2500.)
-    cBaseliner._Baseliner__key_press(keypress_a)
-    cBaseliner._Baseliner__key_press(keypress_other)
-    cBaseliner._Baseliner__setlim(2800.)
-    cBaseliner._Baseliner__setlim(2600.)
-    cBaseliner._Baseliner__setlim(0.)
