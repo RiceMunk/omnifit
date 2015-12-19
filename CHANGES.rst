@@ -1,5 +1,13 @@
 Changelog
 =========
+Changes in 0.2.1
+----------------
+ * Properly parsing requirements on installation now (issue #15)
+ * Made fitting compatible with lmfit versions higher than 0.9 (issue #22)
+ * Consequently this made omnifit incompatible with lmfit versions lower than 0.9, so dropped support for those
+ * Made spectrum convolution work properly with astropy 1.1
+ * Updated full fitting example in documentation to reflect the new format being used for complex refractive indices
+
 Changes in 0.2.0
 ----------------
  * Kramer-Kronig relation implementation added to utils
