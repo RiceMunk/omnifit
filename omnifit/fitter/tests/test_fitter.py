@@ -37,30 +37,23 @@ class TestFitterFitting:
     Test the fitting of the available analytical functions
     """
     testspec = generate_cdespectrum()
+    testspec = testspec.subspectrum(2500.,3700.,clone=True)
     testfitter = Fitter.fromspectrum(testspec)
-    testpars = Parameters()
-    #                 (Name,    Value,  Vary,  Min,    Max, Expr)
-    testpars.add_many(('lor1',   1.67, False,  None,   None,   None),
-                      ('lor2',   195., False,   None,   None,   None),
-                      ('lor3',    1.5, False,   None,   None,   None),
-                      ('peak', 0.05,  True,   0.0,    0.1,    None),
-                      ('pos',  2139.9,  True,   2129.9, 2149.9, None))
-    testfitter.add_analytical('cde_lorentzian',testpars,funcname='test lorentzian')
     testpars=Parameters()
     #                (Name,    Value,  Vary,   Min,    Max,     Expr)
     testpars.add_many(
-                     ('H',      1.0,    True,   0.0,        None, None),
-                     ('xR',     3000.,  True,   3000.-50.,  3000.+50., None),
-                     ('w',      50.0,  True,    0.0,        None, None),
-                     ('tau',    50.0,  True,    0.0,        None, None)
+                     ('H',      0.1,    True,   0.0,        None, None, None),
+                     ('xR',     3000.,  True,   3000.-50.,  3000.+50., None, None),
+                     ('w',      50.0,  True,    0.0,        None, None, None),
+                     ('tau',    50.0,  True,    0.0,        None, None, None)
                      )
     testfitter.add_analytical('flipped_egh',testpars,funcname='test fEGH')
     testpars=Parameters()
     #                (Name,    Value,  Vary,   Min,    Max,     Expr)
     testpars.add_many(
-                     ('peak',   1.0,     True,   0.0,        None, None),
-                     ('pos',    3000., True,   3000.-200.,  3000.+200., None),
-                     ('fwhm',   50.0,  True,    0.0,        None, None),
+                     ('peak',   1.0,     True,   0.0,        None, None, None),
+                     ('pos',    3300., True,   3300.-300.,  3300.+300., None, None),
+                     ('fwhm',   500.0,  True,    0.0,        None, None, None),
                      )
     testfitter.add_analytical('gaussian',testpars,funcname='test gaussian')
     testfitter.perform_fit()
@@ -71,7 +64,6 @@ class TestFitterFitting:
     testspec = generate_cdespectrum()
     testspec1 = testspec.subspectrum(2000.,2300.,clone=True)
     testpsf1 = convolution.Gaussian1DKernel(5)
-    print(testspec1)
     testfitter1 = Fitter.fromspectrum(testspec1,psf=testpsf1)
     testpars = Parameters()
     #                 (Name,    Value,  Vary,  Min,    Max, Expr)
