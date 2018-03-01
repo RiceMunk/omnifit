@@ -415,14 +415,15 @@ class BaseSpectrum:
       raise ValueError, "Input vector needs to be bigger than window size."
     if window_len<3:
       self.y = self.x
-    if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-      raise ValueError, "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
-    s=np.r_[2*self.x[0]-self.x[window_len-1::-1],self.x,2*self.x[-1]-self.x[-1:-window_len:-1]]
-    if window == 'flat': #moving average
-      w=np.ones(window_len,'d')
-    else:  
-      w=eval('np.'+window+'(window_len)')
-    self.y=np.convolve(w/w.sum(),s,mode='same')
+    else:
+      if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
+        raise ValueError, "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
+      s=np.r_[2*self.x[0]-self.x[window_len-1::-1],self.x,2*self.x[-1]-self.x[-1:-window_len:-1]]
+      if window == 'flat': #moving average
+        w=np.ones(window_len,'d')
+      else:  
+        w=eval('np.'+window+'(window_len)')
+      self.y=np.convolve(w/w.sum(),s,mode='same')
 
   def baseline(self,degree=1,windows=[[0.0,1.0e6]],exclusive=False,usefile=None):
     """
