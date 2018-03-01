@@ -155,7 +155,7 @@ class BaseSpectrum:
     sorter=np.argsort(self.x)
     nondatavars = self.__nondata
     ownvarnames = self.__dict__.keys()
-    ownvarnames = filter (lambda a: not a in nondatavars, ownvarnames)
+    ownvarnames = [i for i in filter (lambda a: not a in nondatavars, ownvarnames)]
     varlength = len(self.__dict__[ownvarnames[0]])
     iGoodones = np.isfinite(np.ones(varlength))
     for cVarname in ownvarnames:
@@ -173,7 +173,7 @@ class BaseSpectrum:
     """
     ignorevars = self.__nondata
     ownvarnames = self.__dict__.keys()
-    ownvarnames = filter (lambda a: a not in ignorevars, ownvarnames)
+    ownvarnames = [i for i in filter (lambda a: a not in ignorevars, ownvarnames)]
     varlength = len(self.__dict__[ownvarnames[0]])
     iGoodones = np.isfinite(np.ones(varlength))
     for cVarname in ownvarnames:
