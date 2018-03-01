@@ -215,6 +215,9 @@ def complex_transmission_reflection(in_m0,in_m1,in_m2):
           complex_reflection(in_m1,in_m2)
         )
 
+class KKError(Exception):
+    pass
+
 def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0.0j,tol=0.001,maxiter=100,ignore_fraction=0.1,force_kkint_unity=False,precalc=False):
   """
   kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,
@@ -335,7 +338,7 @@ def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0
     m_ice = m_guess
   #find top and bottom fraction indices. These will be replaced with dummy values after each integration to get rid of edge effects
   if ignore_fraction > 0.5 or ignore_fraction < 0:
-    raise RuntimeError('ignore_fraction must be between 0.0 and 0.5')
+    raise KKError('ignore_fraction must be between 0.0 and 0.5')
   bot_fraction = int(round(ignore_fraction*len(freq)))
   top_fraction = int(len(freq)-bot_fraction)
   #pre-calculate the large denominator component of the KK integration, if desired
@@ -366,9 +369,12 @@ def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0
     #this is an evil equation. do NOT touch it
     #it calculates the lambert absorption coefficient using the current best guess at m_ice
     alpha = (1./d_ice)*(-np.log(transmittance)+np.log(np.abs((t01*t12/t02)/(1.+r01*r12*np.exp(4.j*np.pi*d_ice*m_ice*freq)))**2.))
+    if np.any(np.logical_or(np.isnan(alpha),np.logical_not(np.isfinite(alpha)))):
+      raise KKError('Incoming transmittance data produced impossible lambert absorption coefficients. Check your input parameters.')
     #using the new alpha, calculate a new n (and thus m) for the ice
     #this is done in a parallel for loop, to avoid killing the computer when dealing with large amounts of data
     kkint_nomi = alpha-alpha0
+    kkint_nomi[np.isnan(kkint_nomi)] = 0.
     kkint = np.full_like(alpha,m0.real)
     numcols = kkint_nomi.shape[0]
     for current_col in range(numcols):
@@ -378,7 +384,7 @@ def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0
         kkint_deno1 = freq[current_col]**2-freq**2
         kkint_deno1[kkint_deno1!=0] = 1./kkint_deno1[kkint_deno1!=0]
         kkint[current_col]+=kkint_mul*scipy.integrate.simps((alpha-alpha[current_col])*kkint_deno1-kkint_nomi/(freq**2-freq_m0**2))
-    print(kkint)
+    kkint_notna_ix = np.logical_not(np.isnan(kkint))
     if np.any(kkint<1):
       if np.any(kkint<0):
         warnings.warn('KK integration is producing negative refractive indices! This will most likely produce nonsensical results.',RuntimeWarning)
@@ -388,7 +394,7 @@ def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0
         kkint[kkint<1]=1.
     m_ice = kkint+1j*alpha/(4*np.pi*freq)
     if np.any(np.isnan(m_ice.real)) or np.any(np.isnan(m_ice.imag)):
-      raise RuntimeError('Produced complex refractive index contains NaNs. Check your input parameters.')
+      raise KKError('Produced complex refractive index contains NaNs. Check your input parameters.')
     #replace top and bottom fractions of m_ice with the value closest to that edge
     #this is done to combat edge effects arising from integrating over a non-infinite range
     m_ice[:bot_fraction] = m_ice[bot_fraction]
@@ -406,5 +412,5 @@ def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0
     niter += 1
   #at this point we are done
   if niter>=maxiter:
-    raise RuntimeError('Maximum number of iterations reached before convergence criterion was met.')
+    raise KKError('Maximum number of iterations reached before convergence criterion was met.')
   return m_ice
