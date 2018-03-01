@@ -368,7 +368,7 @@ class BaseSpectrum:
       warnings.warn('Spectrum '+self.name+' has already been convolved once!',RuntimeWarning)
     yunit = self.y.unit #stored temporarily to preserve units through convolution
     self.y=convolution.convolve(self.y,kernel,**kwargs)
-    self.y *= yunit #restore y units
+    self.y = self.y * yunit #restore y units
     self.convolved=True
 
   @clonable
