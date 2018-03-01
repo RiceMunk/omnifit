@@ -469,7 +469,7 @@ class BaseSpectrum:
       with open(usefile,'r') as cFile:
         windows = pickle.load(cFile) 
     elif windows=='manual':
-      print 'Determining manual baseline'
+      print('Determining manual baseline')
       cFig=plt.figure()
       cAx = cFig.add_subplot(111)
       cManager = plt.get_current_fig_manager()
@@ -481,7 +481,7 @@ class BaseSpectrum:
       if usefile != None:
         with open(usefile,'w') as cFile:
           pickle.dump(windows,cFile)
-        print 'Wrote window data to '+usefile
+        print('Wrote window data to '+usefile)
     for cWindow in windows:
       if exclusive:
         iBaseline=np.logical_and(iBaseline,np.logical_or(np.less(self.x.value,cWindow[0]),np.greater(self.x.value,cWindow[1])))
@@ -585,17 +585,17 @@ class BaseSpectrum:
     -------
     Nothing, but prints out a summary of the spectrum.
     """
-    print '---'
-    print 'Summary for spectrum '+self.name
-    print 'x unit: '+str(self.x.unit)
-    print 'min(x): '+str(np.nanmin(self.x.value))
-    print 'max(x): '+str(np.nanmax(self.x.value))
-    print 'y unit: '+str(self.y.unit)
-    print 'min(y): '+str(np.nanmin(self.y.value))
-    print 'max(y): '+str(np.nanmax(self.y.value))
-    print 'baselined: '+str(self.baselined)
-    print 'convolved: '+str(self.convolved)
-    print '---'
+    print('---')
+    print('Summary for spectrum '+self.name)
+    print('x unit: '+str(self.x.unit))
+    print('min(x): '+str(np.nanmin(self.x.value)))
+    print('max(x): '+str(np.nanmax(self.x.value)))
+    print('y unit: '+str(self.y.unit))
+    print('min(y): '+str(np.nanmin(self.y.value)))
+    print('max(y): '+str(np.nanmax(self.y.value)))
+    print('baselined: '+str(self.baselined))
+    print('convolved: '+str(self.convolved))
+    print('---')
 
 class AbsorptionSpectrum(BaseSpectrum):
   """
