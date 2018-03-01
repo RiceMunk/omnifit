@@ -71,7 +71,7 @@ class TestFitterFitting:
     testspec = generate_cdespectrum()
     testspec1 = testspec.subspectrum(2000.,2300.,clone=True)
     testpsf1 = convolution.Gaussian1DKernel(5)
-    print testspec1
+    print(testspec1)
     testfitter1 = Fitter.fromspectrum(testspec1,psf=testpsf1)
     testpars = Parameters()
     #                 (Name,    Value,  Vary,  Min,    Max, Expr)

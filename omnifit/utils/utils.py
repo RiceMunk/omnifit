@@ -74,7 +74,7 @@ class Baseliner:
       self.__ax.plot([self.__limhi,self.__limhi],[self.__miny,self.__maxy],'g-')
       self.__remlim()
       self.__remlim()
-      print 'Window added. Ready to receive another one.'
+      print('Window added. Ready to receive another one.')
     else:
       return
   def __mouse_press(self, event):
@@ -95,7 +95,7 @@ class Baseliner:
       self.__limhi=i_x
       self.__limhiplot,=self.__ax.plot([i_x,i_x],[self.__miny,self.__maxy],'b-')
       self.__ax.figure.canvas.draw()
-      print 'Ready for finalising. Press once more to do so, or press a to add another window.'
+      print('Ready for finalising. Press once more to do so, or press a to add another window.')
     else:
       self.__finalise()
   def __remlim(self):
@@ -108,7 +108,7 @@ class Baseliner:
       self.__limloplot.set_ydata([self.__miny,self.__miny])
       self.__ax.figure.canvas.draw()
     else:
-      print 'No limits to cancel.'
+      print('No limits to cancel.')
   def __addwindow(self,limlo,limhi):
     if limhi < limlo:
       limlo,limhi = limhi,limlo
@@ -336,8 +336,8 @@ def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0
   #find top and bottom fraction indices. These will be replaced with dummy values after each integration to get rid of edge effects
   if ignore_fraction > 0.5 or ignore_fraction < 0:
     raise RuntimeError('ignore_fraction must be between 0.0 and 0.5')
-  bot_fraction = round(ignore_fraction*len(freq))
-  top_fraction = len(freq)-bot_fraction
+  bot_fraction = int(round(ignore_fraction*len(freq)))
+  top_fraction = int(len(freq)-bot_fraction)
   #pre-calculate the large denominator component of the KK integration, if desired
   if precalc:
     try:
@@ -378,6 +378,7 @@ def kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0,m_guess=1.0+0
         kkint_deno1 = freq[current_col]**2-freq**2
         kkint_deno1[kkint_deno1!=0] = 1./kkint_deno1[kkint_deno1!=0]
         kkint[current_col]+=kkint_mul*scipy.integrate.simps((alpha-alpha[current_col])*kkint_deno1-kkint_nomi/(freq**2-freq_m0**2))
+    print(kkint)
     if np.any(kkint<1):
       if np.any(kkint<0):
         warnings.warn('KK integration is producing negative refractive indices! This will most likely produce nonsensical results.',RuntimeWarning)
