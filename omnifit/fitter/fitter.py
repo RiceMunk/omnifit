@@ -2,7 +2,7 @@ import numpy as np
 from lmfit import minimize, Parameters, Parameter
 from astropy import units as u
 from .. import spectrum
-from functions import *
+from .functions import *
 
 class Fitter():
   """

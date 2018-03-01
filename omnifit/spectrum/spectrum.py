@@ -410,14 +410,14 @@ class BaseSpectrum:
       of operating on the existing spectrum.
     """
     if self.x.ndim != 1:
-      raise ValueError, "smooth only accepts 1 dimension arrays."
+      raise ValueError("smooth only accepts 1 dimension arrays.")
     if self.x.size < window_len:
-      raise ValueError, "Input vector needs to be bigger than window size."
+      raise ValueError("Input vector needs to be bigger than window size.")
     if window_len<3:
       self.y = self.x
     else:
       if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-        raise ValueError, "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
+        raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
       s=np.r_[2*self.x[0]-self.x[window_len-1::-1],self.x,2*self.x[-1]-self.x[-1:-window_len:-1]]
       if window == 'flat': #moving average
         w=np.ones(window_len,'d')
