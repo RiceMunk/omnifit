@@ -48,11 +48,7 @@ import sys
 from distutils import log
 from distutils.debug import DEBUG
 
-
-try:
-    from ConfigParser import ConfigParser, RawConfigParser
-except ImportError:
-    from configparser import ConfigParser, RawConfigParser
+from configparser import ConfigParser, RawConfigParser
 
 import pkg_resources
 
@@ -60,16 +56,90 @@ from setuptools import Distribution
 from setuptools.package_index import PackageIndex
 
 # This is the minimum Python version required for astropy-helpers
-__minimum_python_version__ = (2, 7)
+__minimum_python_version__ = (3, 5)
 
-if sys.version_info[0] < 3:
-    _str_types = (str, unicode)
-    _text_type = unicode
-    PY3 = False
+# TODO: Maybe enable checking for a specific version of astropy_helpers?
+DIST_NAME = 'astropy-helpers'
+PACKAGE_NAME = 'astropy_helpers'
+UPPER_VERSION_EXCLUSIVE = None
+
+# Defaults for other options
+DOWNLOAD_IF_NEEDED = True
+INDEX_URL = 'https://pypi.python.org/simple'
+USE_GIT = True
+OFFLINE = False
+AUTO_UPGRADE = True
+
+# A list of all the configuration options and their required types
+CFG_OPTIONS = [
+    ('auto_use', bool), ('path', str), ('download_if_needed', bool),
+    ('index_url', str), ('use_git', bool), ('offline', bool),
+    ('auto_upgrade', bool)
+]
+
+# Start off by parsing the setup.cfg file
+
+SETUP_CFG = ConfigParser()
+
+if os.path.exists('setup.cfg'):
+
+    try:
+        SETUP_CFG.read('setup.cfg')
+    except Exception as e:
+        if DEBUG:
+            raise
+
+        log.error(
+            "Error reading setup.cfg: {0!r}\n{1} will not be "
+            "automatically bootstrapped and package installation may fail."
+            "\n{2}".format(e, PACKAGE_NAME, _err_help_msg))
+
+# We used package_name in the package template for a while instead of name
+if SETUP_CFG.has_option('metadata', 'name'):
+    parent_package = SETUP_CFG.get('metadata', 'name')
+elif SETUP_CFG.has_option('metadata', 'package_name'):
+    parent_package = SETUP_CFG.get('metadata', 'package_name')
 else:
-    _str_types = (str, bytes)
-    _text_type = str
-    PY3 = True
+    parent_package = None
+
+if SETUP_CFG.has_option('options', 'python_requires'):
+
+    python_requires = SETUP_CFG.get('options', 'python_requires')
+
+    # The python_requires key has a syntax that can be parsed by SpecifierSet
+    # in the packaging package. However, we don't want to have to depend on that
+    # package, so instead we can use setuptools (which bundles packaging). We
+    # have to add 'python' to parse it with Requirement.
+
+    from pkg_resources import Requirement
+    req = Requirement.parse('python' + python_requires)
+
+    # We want the Python version as a string, which we can get from the platform module
+    import platform
+    # strip off trailing '+' incase this is a dev install of python
+    python_version = platform.python_version().strip('+')
+    # allow pre-releases to count as 'new enough'
+    if not req.specifier.contains(python_version, True):
+        if parent_package is None:
+            message = "ERROR: Python {} is required by this package\n".format(req.specifier)
+        else:
+            message = "ERROR: Python {} is required by {}\n".format(req.specifier, parent_package)
+        sys.stderr.write(message)
+        sys.exit(1)
+
+if sys.version_info < __minimum_python_version__:
+
+    if parent_package is None:
+        message = "ERROR: Python {} or later is required by astropy-helpers\n".format(
+            __minimum_python_version__)
+    else:
+        message = "ERROR: Python {} or later is required by astropy-helpers for {}\n".format(
+            __minimum_python_version__, parent_package)
+
+    sys.stderr.write(message)
+    sys.exit(1)
+
+_str_types = (str, bytes)
 
 # TODO: Maybe enable checking for a specific version of astropy_helpers?
 DIST_NAME = 'astropy-helpers'
@@ -159,26 +229,15 @@ if sys.version_info < __minimum_python_version__:
 # issues with either missing or misbehaving pacakges (including making sure
 # setuptools itself is installed):
 
-# Check that setuptools 1.0 or later is present
+# Check that setuptools 30.3 or later is present
 from distutils.version import LooseVersion
 
 try:
     import setuptools
-    assert LooseVersion(setuptools.__version__) >= LooseVersion('1.0')
+    assert LooseVersion(setuptools.__version__) >= LooseVersion('30.3')
 except (ImportError, AssertionError):
-    print("ERROR: setuptools 1.0 or later is required by astropy-helpers")
+    sys.stderr.write("ERROR: setuptools 30.3 or later is required by astropy-helpers\n")
     sys.exit(1)
-
-# typing as a dependency for 1.6.1+ Sphinx causes issues when imported after
-# initializing submodule with ah_boostrap.py
-# See discussion and references in
-# https://github.com/astropy/astropy-helpers/issues/302
-
-try:
-    import typing   # noqa
-except ImportError:
-    pass
-
 
 # typing as a dependency for 1.6.1+ Sphinx causes issues when imported after
 # initializing submodule with ah_boostrap.py
@@ -236,7 +295,7 @@ class _Bootstrapper(object):
         if not (isinstance(path, _str_types) or path is False):
             raise TypeError('path must be a string or False')
 
-        if PY3 and not isinstance(path, _text_type):
+        if not isinstance(path, str):
             fs_encoding = sys.getfilesystemencoding()
             path = path.decode(fs_encoding)  # path to unicode
 
@@ -863,9 +922,9 @@ def run_cmd(cmd):
         stdio_encoding = 'latin1'
 
     # Unlikely to fail at this point but even then let's be flexible
-    if not isinstance(stdout, _text_type):
+    if not isinstance(stdout, str):
         stdout = stdout.decode(stdio_encoding, 'replace')
-    if not isinstance(stderr, _text_type):
+    if not isinstance(stderr, str):
         stderr = stderr.decode(stdio_encoding, 'replace')
 
     return (p.returncode, stdout, stderr)
