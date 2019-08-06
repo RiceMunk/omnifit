@@ -1,6 +1,6 @@
 import numpy as np
 from lmfit import minimize, Parameters
-from .functions import muldata
+from .functions import *  # noqa: F403
 
 
 class Fitter():
@@ -611,7 +611,7 @@ class Fitter():
         The result of the given function with given parameters.
         """
         if function['type'] == 'empirical':
-            funcres = muldata(function['shape'], params['mul'].value)
+            funcres = muldata(function['shape'], params['mul'].value)  # noqa
         elif function['type'] == 'analytical':
             funcres = globals()[function['shape']](
                 self.target_x,
