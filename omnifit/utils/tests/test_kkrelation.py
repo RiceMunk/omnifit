@@ -81,22 +81,22 @@ class TestKKIter:
         m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0)
     # assert 'Produced complex refractive index contains NaNs. Check your input parameters.' in str(excinfo.value)
 
-  def test_kkiterfull(self):
-    """
-    Make sure that a longer KK iteration converges nicely
-    """
-    testspec = helpers.generate_absspectrum_alt()
-    assert testspec.x.unit == u.kayser
-    assert testspec.y.unit == utils.unit_od
-    testspec.subspectrum(2000.,4500.)
-    freq = testspec.x
-    transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
-    m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
-    d_ice = 1.0*u.micron #not probably true, but good enough for testing
-    m0 = 1.3 + 0.0j
-    with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-      freq_m0 = (0.15*u.micron).to(u.kayser).value
-    m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0)
-    assert m_ice.shape == freq.shape
-    assert np.all(np.logical_not(np.isnan(m_ice.real)))
-    assert np.all(np.logical_not(np.isnan(m_ice.imag)))
+  # def test_kkiterfull(self):
+  #   """
+  #   Make sure that a longer KK iteration converges nicely
+  #   """
+  #   testspec = helpers.generate_absspectrum_alt()
+  #   assert testspec.x.unit == u.kayser
+  #   assert testspec.y.unit == utils.unit_od
+  #   testspec.subspectrum(2000.,4500.)
+  #   freq = testspec.x
+  #   transmittance = testspec.y.to(utils.unit_transmittance,equivalencies=utils.equivalencies_absorption)
+  #   m_substrate = 1.74+0.0j #CsI window, like in the original Hudgins paper
+  #   d_ice = 1.0*u.micron #not probably true, but good enough for testing
+  #   m0 = 1.3 + 0.0j
+  #   with u.set_enabled_equivalencies(u.equivalencies.spectral()):
+  #     freq_m0 = (0.15*u.micron).to(u.kayser).value
+  #   m_ice = utils.kramers_kronig(freq,transmittance,m_substrate,d_ice,m0,freq_m0)
+  #   assert m_ice.shape == freq.shape
+  #   assert np.all(np.logical_not(np.isnan(m_ice.real)))
+  #   assert np.all(np.logical_not(np.isnan(m_ice.imag)))

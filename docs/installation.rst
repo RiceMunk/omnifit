@@ -5,8 +5,8 @@ Requirements
 Omnifit has the following requirements:
   * `Python <http://www.python.org>`_ 2.7 (support for 3.x is planned)
   * `Numpy <http://www.numpy.org>`_ (tested to work with 1.9.2)
-  * `lmfit <http://lmfit.github.io/lmfit-py/>`_ 0.8.3 or later (tested to work with 0.8.3)
-  * `Astropy <http://astropy.org>`_ 1.0 or later (tested to work with 1.0.3)
+  * `lmfit <http://lmfit.github.io/lmfit-py/>`_ 0.9.2 or later
+  * `Astropy <http://astropy.org>`_ 1.0 or later
 
 Installing Omnifit
 ******************

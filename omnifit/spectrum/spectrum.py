@@ -477,11 +477,8 @@ class BaseSpectrum:
       cManager.window.wm_geometry("+100+50")
       cAx.plot(self.x,self.y,'k-',drawstyle='steps-mid')
       cBaseliner = utils.Baseliner(cAx,self)
-      if not hasattr(sys,'_called_from_test'): #only show the plot if not testing
-        plt.show(cFig)
-        windows=cBaseliner.windows
-      else:
-        return cFig,cBaseliner #send the relevant stuff back for testing
+      plt.show(cFig)
+      windows=cBaseliner.windows
       if usefile != None:
         with open(usefile,'w') as cFile:
           pickle.dump(windows,cFile)

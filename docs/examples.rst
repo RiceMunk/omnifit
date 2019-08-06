@@ -24,7 +24,7 @@ The empirical spectrum being fitted to this, by contrast, is assumed to be a fil
   obs_wl,obs_od = np.loadtxt('./obsdata.csv',dtype=float,delimiter=',',usecols=(0,1)).T
   lab_wn,lab_n,lab_k = np.loadtxt('./labdata.csv',dtype=float,delimiter=',',usecols=(0,1,2)).T
   obs_spec = AbsorptionSpectrum(obs_wl*u.micron,obs_od*unit_od,specname='Observed data')
-  lab_spec = CDESpectrum(lab_wn,lab_n,lab_k,specname='Laboratory data')
+  lab_spec = CDESpectrum(lab_wn,lab_n+lab_k*1j,specname='Laboratory data')
   interp_lab = lab_spec.interpolate(obs_spec,clone=True)
   fitter_example = Fitter.fromspectrum(obs_spec,modelname='Example fit')
   lab_par = Parameters()

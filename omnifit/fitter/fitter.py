@@ -190,6 +190,8 @@ class Fitter():
     self.fitres=minimize(self.__fit_residual,self.fitpars,**kwargs)
     if not(self.fitres.success):
       raise RuntimeError('Fitting failed!')
+    else:
+      self.fitpars = self.fitres.params
   def __fit_residual(self,params,custrange=None):
     """
     __fit_residual(params,custrange=None)
