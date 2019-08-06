@@ -4,151 +4,132 @@
 language: c
 
 os:
+    - osx
     - linux
 
 # Setting sudo to false opts in to Travis-CI container-based builds.
 sudo: false
 
-# The apt packages below are needed for sphinx builds. A full list of packages
-# that can be included can be found here:
-#
-# https://github.com/travis-ci/apt-package-whitelist/blob/master/ubuntu-precise
-
-addons:
-    apt:
-        packages:
-            - graphviz
-            - texlive-latex-extra
-            - dvipng
-
 env:
-    global:
+  matrix:
+    - PYTHON_VERSION=3.5
+    - PYTHON_VERSION=3.6
+    - PYTHON_VERSION=3.7 SETUPTOOLS_VERSION=dev DEBUG=True
+      CONDA_DEPENDENCIES="cython numpy pytest-cov sphinx-astropy'
+      EVENT_TYPE='push pull_request cron'
 
-        # The following versions are the 'default' for tests, unless
-        # overridden underneath. They are defined here in order to save having
-        # to repeat them for all configurations.
-        - PYTHON_VERSION=3.6
-        - NUMPY_VERSION=stable
-        - ASTROPY_VERSION=stable
-        - MAIN_CMD='python setup.py'
-        - SETUP_CMD='test'
-        - PIP_DEPENDENCIES=''
-        - EVENT_TYPE='pull_request push'
-
-        
-        # For this package-template, we include examples of Cython modules,
-        # so Cython is required for testing. If your package does not include
-        # Cython code, you can set CONDA_DEPENDENCIES=''
-        - CONDA_DEPENDENCIES='Cython'
-        
-        # List other runtime dependencies for the package that are available as
-        # pip packages here.
-        # - PIP_DEPENDENCIES=''
-
-        # Conda packages for affiliated packages are hosted in channel
-        # "astropy" while builds for astropy LTS with recent numpy versions
-        # are in astropy-ci-extras. If your package uses either of these,
-        # add the channels to CONDA_CHANNELS along with any other channels
-        # you want to use.
-        - CONDA_CHANNELS='astropy-ci-extras astropy'
-
-        # If there are matplotlib or other GUI tests, uncomment the following
-        # line to use the X virtual framebuffer.
-        # - SETUP_XVFB=True
-
-    matrix:
-        # Make sure that egg_info works without dependencies
-        - PYTHON_VERSION=2.7 SETUP_CMD='egg_info'
-        - PYTHON_VERSION=3.4 SETUP_CMD='egg_info'
-        - PYTHON_VERSION=3.5 SETUP_CMD='egg_info'
-        - PYTHON_VERSION=3.6 SETUP_CMD='egg_info'
+  global:
+    - CONDA_DEPENDENCIES="setuptools sphinx-astropy cython numpy pytest-cov"
+    - PIP_DEPENDENCIES="codecov"
+    - EVENT_TYPE='push pull_request'
+    - DEBUG=True
 
 matrix:
+  include:
+    # Do one build with sphinx-astropy as one of the tests bypasses the auto-
+    # installation but we want to make sure that test runs for coverage.
+    - os: linux
+      env: PYTHON_VERSION=3.6 PIP_DEPENDENCIES='codecov'
+    - os: linux
+      env: PYTHON_VERSION=3.6 SPHINX_VERSION='1.5' SETUPTOOLS_VERSION=30
+    - os: linux
+      env: PYTHON_VERSION=3.5 SPHINX_VERSION='1.5' SETUPTOOLS_VERSION=30
+           CONDA_DEPENDENCIES=`echo $CONDA_DEPENDENCIES 'numpydoc<0.9'`"
+    - os: linux
+      env: PYTHON_VERSION=3.6 PIP_DEPENDENCIES='git+https://github.com/sphinx-doc/sphinx.git#egg=sphinx codecov'
+           CONDA_DEPENDENCIES="setuptools cython numpy pytest-cov sphinx-astropy"
+           EVENT_TYPE='push pull_request cron'
+    # Test without installing numpy beforehand to make sure everything works
+    # without assuming numpy is already installed
+    - os: linux
+      env: PYTHON_VERSION=3.6 CONDA_DEPENDENCIES='sphinx-astropy cython pytest-cov'
 
-    # Don't wait for allowed failures
-    fast_finish: true
+    # Test conda's clang
+    - os: osx
+      env:
+        - PYTHON_VERSION=3.5
+        - CONDA_DEPENDENCIES="setuptools sphinx-astropy cython numpy pytest-cov clang llvm-openmp matplotlib"
+        - OPENMP_EXPECTED=True
+        - CCOMPILER=clang
 
-    include:
-        # Try MacOS X
-        - os: osx
-          env: SETUP_CMD='test'
+    # Test gcc on OSX
+    - os: osx
+      env:
+        - PYTHON_VERSION=3.5
+        - CONDA_DEPENDENCIES="setuptools sphinx-astropy cython numpy pytest-cov gcc"
+        - OPENMP_EXPECTED=True
+        - CCOMPILER=gcc
 
-        # Do a coverage test.
-        - os: linux
-          env: SETUP_CMD='test --coverage'
+  # Uncomment the following if there are issues in setuptools that we
+  # can't work around quickly - otherwise leave uncommented so that
+  # we notice when things go wrong.
+  #
+  # allow_failures:
+  #   - env: PYTHON_VERSION=3.6 SETUPTOOLS_VERSION=dev DEBUG=True
+  #          CONDA_DEPENDENCIES='sphinx-astropy cython numpy pytest-cov'
+  #          EVENT_TYPE='push pull_request cron'
 
-        # Check for sphinx doc build warnings - we do this first because it
-        # may run for a long time
-        - os: linux
-          env: SETUP_CMD='build_docs -w'
+before_install:
 
-        # Now try Astropy dev with the latest Python and LTS with Python 2.7 and 3.x.
-        - os: linux
-          env: ASTROPY_VERSION=development
-               EVENT_TYPE='pull_request push cron'
-        - os: linux
-          env: PYTHON_VERSION=2.7 ASTROPY_VERSION=lts
-        - os: linux
-          env: ASTROPY_VERSION=lts
+      # Test OSX without OpenMP support
+      # Since the matrix OSX tests use the OS shipped version of clang, they double up
+      # as exploratory tests for when the shipped version has automatic OpenMP support.
+      # These tests will then fail and at such a time a new one should be added
+      # to explicitly remove OpenMP support.
+    - if [ -z $OPENMP_EXPECTED ]; then
+        if [[ $TRAVIS_OS_NAME == osx ]]; then
+          export OPENMP_EXPECTED=False;
+        else
+          export OPENMP_EXPECTED=True;
+        fi
+      fi
 
-        # Try all python versions and Numpy versions. Since we can assume that
-        # the Numpy developers have taken care of testing Numpy with different
-        # versions of Python, we can vary Python and Numpy versions at the same
-        # time.
+    # We need to use CCOMPILER otherwise Travis overwrites CC if we define it
+    # in env: above.
+    - if [ ! -z $CCOMPILER ]; then
+        export CC=$CCOMPILER;
+      fi
 
-        - os: linux
-          env: PYTHON_VERSION=2.7 NUMPY_VERSION=1.9
-        - os: linux
-          env: PYTHON_VERSION=3.4 NUMPY_VERSION=1.10
-        - os: linux
-          env: PYTHON_VERSION=3.5 NUMPY_VERSION=1.11
-        - os: linux
-          env: NUMPY_VERSION=1.12
-
-        # Try numpy pre-release
-        - os: linux
-          env: NUMPY_VERSION=prerelease
-               EVENT_TYPE='pull_request push cron'
-
-        # Do a PEP8 test with pycodestyle
-        - os: linux
-          env: MAIN_CMD='pycodestyle packagename --count' SETUP_CMD=''
-
-    allow_failures:
-        # Do a PEP8 test with pycodestyle
-        # (allow to fail unless your code completely compliant)
-        - os: linux
-          env: MAIN_CMD='pycodestyle packagename --count' SETUP_CMD=''
+    # Check CC variable
+    - echo $CC
 
 install:
 
-    # We now use the ci-helpers package to set up our testing environment.
-    # This is done by using Miniconda and then using conda and pip to install
-    # dependencies. Which dependencies are installed using conda and pip is
-    # determined by the CONDA_DEPENDENCIES and PIP_DEPENDENCIES variables,
-    # which should be space-delimited lists of package names. See the README
-    # in https://github.com/astropy/ci-helpers for information about the full
-    # list of environment variables that can be used to customize your
-    # environment. In some cases, ci-helpers may not offer enough flexibility
-    # in how to install a package, in which case you can have additional
-    # commands in the install: section below.
-
-    - git clone --depth 1 git://github.com/astropy/ci-helpers.git
+    - git clone git://github.com/astropy/ci-helpers.git
     - source ci-helpers/travis/setup_conda.sh
 
-    # As described above, using ci-helpers, you should be able to set up an
-    # environment with dependencies installed using conda and pip, but in some
-    # cases this may not provide enough flexibility in how to install a
-    # specific dependency (and it will not be able to install non-Python
-    # dependencies). Therefore, you can also include commands below (as
-    # well as at the start of the install section or in the before_install
-    # section if they are needed before setting up conda) to install any
-    # other dependencies.
+    # We cannot install the developer version of setuptools using pip because
+    # pip tries to remove the previous version of setuptools before the
+    # installation is complete, which causes issues. Instead, we just install
+    # setuptools manually.
+    - if [[ $SETUPTOOLS_VERSION == dev ]]; then git clone http://github.com/pypa/setuptools.git; cd setuptools; python bootstrap.py; python setup.py install; cd ..; fi
+
+before_script:
+    # Some of the tests use git commands that require a user to be configured
+    - git config --global user.name "A U Thor"
+    - git config --global user.email "author@example.com"
 
 script:
-   - $MAIN_CMD $SETUP_CMD
+
+    # First run tests in the repository
+    - pytest --cov astropy_helpers astropy_helpers
+
+    # In conftest.py we produce a .coverage.subprocess that contains coverage
+    # statistics for sub-processes, so we combine it with the main one here.
+    - mv .coverage .coverage.main
+    - coverage combine .coverage.main .coverage.subprocess
+    - coverage report
+
+    # Now we need to make sure that things work correctly in the tar file.
+    # However by default we remove the tests from the tar file, so we need to
+    # copy those in.
+    - python setup.py sdist
+    - cd dist
+    - tar xvzf *.tar.gz
+    - rm *.tar.gz
+    - cd astropy-helpers*
+    - cp -RP ../../astropy_helpers/tests astropy_helpers/tests
+    - pytest astropy_helpers
 
 after_success:
-    # If coveralls.io is set up for this package, uncomment the line below.
-    # The coveragerc file may be customized as needed for your package.
-    # - if [[ $SETUP_CMD == *coverage* ]]; then coveralls --rcfile='packagename/tests/coveragerc'; fi
+    - codecov
