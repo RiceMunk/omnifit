@@ -348,7 +348,7 @@ class BaseSpectrum:
         if self.y.unit != target_spectrum.y.unit:
             raise u.UnitsError('Spectrums have different units on y axis!')
         newX=target_spectrum.x
-        newY=np.interp(newX self.x, self.y)*self.y.unit
+        newY=np.interp(newX, self.x, self.y)*self.y.unit
         self.x = newX
         self.y = newY
         self.name = '{0}(interpolated: {1})',format(
