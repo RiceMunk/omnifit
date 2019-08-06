@@ -30,10 +30,11 @@ def clonable(func):
                 return retdata
     return wrapper
 
+
 class BaseSpectrum:
     """
     A class to represent spectroscopic data.
-    
+
     This class is designed to work for spectroscopic data of ices, but 
     may work for other types of spectroscopic data as well.
     This is the most basic version of the class, concerned solely with
@@ -55,9 +56,15 @@ class BaseSpectrum:
     baselined : `bool`
         Indicates whether the spectrum has been baselined or not
     convolved : `bool`
-        Indicates whether the spectrum has been put through convolution
-    """
-    def __init__(self,x,y,dy=None,specname='Unknown spectrum',nondata=[]):
+        Indicates whether the spectrum has been put through convolution"""
+    def __init__(
+        self,
+        x,
+        y,
+        dy=None,
+        specname='Unknown spectrum',
+        nondata=[]
+        ):
         """
         BaseSpectrum(x,y,dy=None,specname='Unknown spectrum',nondata=[])
 
@@ -104,9 +111,7 @@ class BaseSpectrum:
             variables.
             It is not usually necessary for the user to use this input
             during initialisation; it is most often used by children of
-            the BaseSpectrum class.
-
-        """
+            the BaseSpectrum class."""
         if len(x) != len(y):                                  #Check that input is sane
             raise RuntimeError('Input arrays have different sizes.')
         if type(x) != u.quantity.Quantity:
