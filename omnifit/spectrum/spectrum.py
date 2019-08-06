@@ -396,7 +396,7 @@ class BaseSpectrum:
             warnings.warn(
                 'Spectrum '+self.name+' has already been convolved once!',
                 RuntimeWarning)
-        yunit = self.y.unit  # stored temporarily to preserve units through convolution
+        yunit = self.y.unit  # to preserve units through convolution
         self.y = convolution.convolve(self.y, kernel, **kwargs)
         self.y = self.y * yunit  # restore y units
         self.convolved = True
@@ -464,14 +464,14 @@ class BaseSpectrum:
                 ]
             if window == 'flat':  # moving average
                 w = np.ones(window_len, 'd')
-            else:  
+            else:
                 w = eval('np.'+window+'(window_len)')
-            self.y=np.convolve(w/w.sum(), s, mode='same')
+            self.y = np.convolve(w/w.sum(), s, mode='same')
 
     def baseline(
             self,
             degree=1,
-            windows=[[0.0,1.0e6]],
+            windows=[[0.0, 1.0e6]],
             exclusive=False,
             usefile=None):
         """
@@ -493,7 +493,7 @@ class BaseSpectrum:
         windows : `list` or `string`, optional
             The windows can be designated in two different ways:
 
-            * as a list of x axis coordinates, e.g. 
+            * as a list of x axis coordinates, e.g.
                 [[200,250],[300,350]] for two windows
                 of 200 to 250, and 300 to 350.
             * in an interactive matplotlib plotting window, by
@@ -505,7 +505,7 @@ class BaseSpectrum:
         exclusive : `bool`, optional
             This parameter indicates whether the windows are exclusive
             or inclusive, i.e. whether the polynomial baseline fitting
-            is done inside (exclusive=False) the range indicated by 
+            is done inside (exclusive=False) the range indicated by
             the windows or outside (exclusive=True) of said range.
         usefile : `NoneType` or `string`
             This parameter indicates whether an interactively designated
@@ -520,7 +520,7 @@ class BaseSpectrum:
         iBaseline = np.logical_or(np.isinf(self.x), exclusive)
         if usefile is not None and os.path.exists(usefile):
             with open(usefile, 'r') as cFile:
-                windows = pickle.load(cFile) 
+                windows = pickle.load(cFile)
         elif windows == 'manual':
             print('Determining manual baseline')
             cFig = plt.figure()
@@ -578,7 +578,7 @@ class BaseSpectrum:
         """
         self.x += amount
 
-    def max(self,checkrange=None):
+    def max(self, checkrange=None):
         """
         max(checkrange=None)
 
@@ -597,18 +597,18 @@ class BaseSpectrum:
         Maximum y of either the entire spectrum or, if checkrange is set,
         the maximum y inside of the specified range.
         """
-        iCheckrange=np.ones_like(self.y.value, dtype=bool)
+        iCheckrange = np.ones_like(self.y.value, dtype=bool)
         if checkrange is not None:
-            minX=checkrange[0]
-            maxX=checkrange[1]     
-            iCheckrange=np.logical_and(
+            minX = checkrange[0]
+            maxX = checkrange[1]
+            iCheckrange = np.logical_and(
                 iCheckrange,
                 np.logical_and(
                     np.less_equal(minX, self.x.value),
                     np.greater_equal(maxX, self.x.value)))
         return np.nanmax(self.y[iCheckrange])
 
-    def min(self,checkrange=None):
+    def min(self, checkrange=None):
         """
         min(checkrange=None)
 
@@ -627,11 +627,11 @@ class BaseSpectrum:
         Minimum y of either the entire spectrum or, if checkrange is set,
         the minimum y inside of the specified range.
         """
-        iCheckrange=np.ones_like(self.y.value, dtype=bool)
+        iCheckrange = np.ones_like(self.y.value, dtype=bool)
         if checkrange is not None:
-            minX=checkrange[0]
-            maxX=checkrange[1]     
-            iCheckrange=np.logical_and(
+            minX = checkrange[0]
+            maxX = checkrange[1]
+            iCheckrange = np.logical_and(
                 iCheckrange,
                 np.logical_and(
                     np.less_equal(minX, self.x.value),
@@ -666,6 +666,7 @@ class BaseSpectrum:
         print('baselined: '+str(self.baselined))
         print('convolved: '+str(self.convolved))
         print('---')
+
 
 class AbsorptionSpectrum(BaseSpectrum):
     """
@@ -717,10 +718,11 @@ class AbsorptionSpectrum(BaseSpectrum):
         if type(wn) != u.quantity.Quantity:
             raise u.UnitsError('Input wn is not an astropy quantity.')
         if wn.unit != u.kayser:
-            warnings.warn('Input wn is not in kayser units. Converting...',
+            warnings.warn(
+                'Input wn is not in kayser units. Converting...',
                 RuntimeWarning)
             with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-                wn=wn.to(u.kayser)
+                wn = wn.to(u.kayser)
         if type(od) != u.quantity.Quantity:
             raise u.UnitsError('Input od is not an astropy quantity.')
         if od.unit != utils.unit_od:
@@ -729,9 +731,10 @@ class AbsorptionSpectrum(BaseSpectrum):
             raise RuntimeError('Input arrays have different sizes.')
         self.wn = wn
         with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-            self.wl=self.wn.to(u.micron)
+            self.wl = self.wn.to(u.micron)
         self.od = od
         BaseSpectrum.__init__(self, self.wn, self.od, **kwargs)
+
     def plotod(self, ax, in_wl=False, **kwargs):
         """
         plotod(ax, in_wl=False, **kwargs)
@@ -752,7 +755,7 @@ class AbsorptionSpectrum(BaseSpectrum):
             method for its plotting.
         """
         if in_wl:
-            self.plot(ax, x='wl', y='od', **kwargs)      
+            self.plot(ax, x='wl', y='od', **kwargs)
         else:
             self.plot(ax, x='wn', y='od', **kwargs)
 
@@ -802,8 +805,8 @@ class CDESpectrum(AbsorptionSpectrum):
             The complex refractive index spectrum of the data.
         **kwargs : Arguments, optional
             Additional initialisation arguments can be passed to
-            `AbsorptionSpectrum` using this. Note that x and y are defined using
-            the other initialisation parameters of `CDESpectrum`.
+            `AbsorptionSpectrum` using this. Note that x and y are defined
+            using the other initialisation parameters of `CDESpectrum`.
         """
         if len(wn) != len(m):
             raise RuntimeError('Input arrays have different sizes.')
@@ -811,16 +814,17 @@ class CDESpectrum(AbsorptionSpectrum):
             wn = wn * u.kayser
         if wn.unit != u.kayser:
             with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-                wn=wn.to(u.kayser)
+                wn = wn.to(u.kayser)
         self.cabs, self.cabs_vol, self.cscat_vol, self.ctot = \
-            utils.cde_correct(wn.value,m)
+            utils.cde_correct(wn.value, m)
         self.m = np.array(m, dtype=complex)
         od = self.cabs_vol*utils.unit_od
         AbsorptionSpectrum.__init__(self, wn, od, **kwargs)
+
     def plotnk(self, ax_n, ax_k, **kwargs):
         """
         plotnk(ax_n, ax_k, **kwargs)
-        
+
         Plot the complex refractive indices as function of wavenumber to
         the two given matplotlib axes.
 
