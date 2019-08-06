@@ -155,7 +155,7 @@ class BaseSpectrum:
     sorter=np.argsort(self.x)
     nondatavars = self.__nondata
     ownvarnames = self.__dict__.keys()
-    ownvarnames = filter (lambda a: not a in nondatavars, ownvarnames)
+    ownvarnames = [i for i in filter (lambda a: not a in nondatavars, ownvarnames)]
     varlength = len(self.__dict__[ownvarnames[0]])
     iGoodones = np.isfinite(np.ones(varlength))
     for cVarname in ownvarnames:
@@ -173,7 +173,7 @@ class BaseSpectrum:
     """
     ignorevars = self.__nondata
     ownvarnames = self.__dict__.keys()
-    ownvarnames = filter (lambda a: a not in ignorevars, ownvarnames)
+    ownvarnames = [i for i in filter (lambda a: a not in ignorevars, ownvarnames)]
     varlength = len(self.__dict__[ownvarnames[0]])
     iGoodones = np.isfinite(np.ones(varlength))
     for cVarname in ownvarnames:
@@ -368,7 +368,7 @@ class BaseSpectrum:
       warnings.warn('Spectrum '+self.name+' has already been convolved once!',RuntimeWarning)
     yunit = self.y.unit #stored temporarily to preserve units through convolution
     self.y=convolution.convolve(self.y,kernel,**kwargs)
-    self.y *= yunit #restore y units
+    self.y = self.y * yunit #restore y units
     self.convolved=True
 
   @clonable
@@ -410,19 +410,20 @@ class BaseSpectrum:
       of operating on the existing spectrum.
     """
     if self.x.ndim != 1:
-      raise ValueError, "smooth only accepts 1 dimension arrays."
+      raise ValueError("smooth only accepts 1 dimension arrays.")
     if self.x.size < window_len:
-      raise ValueError, "Input vector needs to be bigger than window size."
+      raise ValueError("Input vector needs to be bigger than window size.")
     if window_len<3:
       self.y = self.x
-    if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-      raise ValueError, "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
-    s=np.r_[2*self.x[0]-self.x[window_len-1::-1],self.x,2*self.x[-1]-self.x[-1:-window_len:-1]]
-    if window == 'flat': #moving average
-      w=np.ones(window_len,'d')
-    else:  
-      w=eval('np.'+window+'(window_len)')
-    self.y=np.convolve(w/w.sum(),s,mode='same')
+    else:
+      if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
+        raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
+      s=np.r_[2*self.x[0]-self.x[window_len-1::-1],self.x,2*self.x[-1]-self.x[-1:-window_len:-1]]
+      if window == 'flat': #moving average
+        w=np.ones(window_len,'d')
+      else:  
+        w=eval('np.'+window+'(window_len)')
+      self.y=np.convolve(w/w.sum(),s,mode='same')
 
   def baseline(self,degree=1,windows=[[0.0,1.0e6]],exclusive=False,usefile=None):
     """
@@ -469,7 +470,7 @@ class BaseSpectrum:
       with open(usefile,'r') as cFile:
         windows = pickle.load(cFile) 
     elif windows=='manual':
-      print 'Determining manual baseline'
+      print('Determining manual baseline')
       cFig=plt.figure()
       cAx = cFig.add_subplot(111)
       cManager = plt.get_current_fig_manager()
@@ -484,7 +485,7 @@ class BaseSpectrum:
       if usefile != None:
         with open(usefile,'w') as cFile:
           pickle.dump(windows,cFile)
-        print 'Wrote window data to '+usefile
+        print('Wrote window data to '+usefile)
     for cWindow in windows:
       if exclusive:
         iBaseline=np.logical_and(iBaseline,np.logical_or(np.less(self.x.value,cWindow[0]),np.greater(self.x.value,cWindow[1])))
@@ -588,17 +589,17 @@ class BaseSpectrum:
     -------
     Nothing, but prints out a summary of the spectrum.
     """
-    print '---'
-    print 'Summary for spectrum '+self.name
-    print 'x unit: '+str(self.x.unit)
-    print 'min(x): '+str(np.nanmin(self.x.value))
-    print 'max(x): '+str(np.nanmax(self.x.value))
-    print 'y unit: '+str(self.y.unit)
-    print 'min(y): '+str(np.nanmin(self.y.value))
-    print 'max(y): '+str(np.nanmax(self.y.value))
-    print 'baselined: '+str(self.baselined)
-    print 'convolved: '+str(self.convolved)
-    print '---'
+    print('---')
+    print('Summary for spectrum '+self.name)
+    print('x unit: '+str(self.x.unit))
+    print('min(x): '+str(np.nanmin(self.x.value)))
+    print('max(x): '+str(np.nanmax(self.x.value)))
+    print('y unit: '+str(self.y.unit))
+    print('min(y): '+str(np.nanmin(self.y.value)))
+    print('max(y): '+str(np.nanmax(self.y.value)))
+    print('baselined: '+str(self.baselined))
+    print('convolved: '+str(self.convolved))
+    print('---')
 
 class AbsorptionSpectrum(BaseSpectrum):
   """
@@ -745,7 +746,7 @@ class CDESpectrum(AbsorptionSpectrum):
       with u.set_enabled_equivalencies(u.equivalencies.spectral()):
         wn=wn.to(u.kayser)
     self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=utils.cde_correct(wn.value,m)
-    self.m=np.array(m,dtype='float64')
+    self.m=np.array(m,dtype=complex)
     od = self.cabs_vol*utils.unit_od#utils.unit_absorbance).to(utils.unit_od,equivalencies=utils.equivalencies_absorption)
     AbsorptionSpectrum.__init__(self,wn,od,**kwargs)
   def plotnk(self,ax_n,ax_k,**kwargs):
