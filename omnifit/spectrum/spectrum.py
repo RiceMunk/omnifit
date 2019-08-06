@@ -59,12 +59,12 @@ class BaseSpectrum:
         Indicates whether the spectrum has been put through convolution
     """
     def __init__(
-        self,
-        x,
-        y,
-        dy=None,
-        specname='Unknown spectrum',
-        nondata=[]):
+            self,
+            x,
+            y,
+            dy=None,
+            specname='Unknown spectrum',
+            nondata=[]):
         """
         BaseSpectrum(x,y,dy=None,specname='Unknown spectrum',nondata=[])
 
@@ -155,7 +155,7 @@ class BaseSpectrum:
             'dy']
         for cnondata in nondata: # Extra non-array variable names into nondata
             if not cnondata in self.__nondata:
-                self.__nondata.append(cnondata)                       
+                self.__nondata.append(cnondata)
         self.__fixbad() # Drop bad data
         self.__sort()
     def __sort(self):
@@ -172,7 +172,10 @@ class BaseSpectrum:
         sorter=np.argsort(self.x)
         nondatavars = self.__nondata
         ownvarnames = self.__dict__.keys()
-        ownvarnames = [i for i in filter (lambda a: not a in nondatavars, ownvarnames)]
+        ownvarnames = [
+            i for i in 
+            filter (lambda a: not a in nondatavars, ownvarnames)
+            ]
         varlength = len(self.__dict__[ownvarnames[0]])
         iGoodones = np.isfinite(np.ones(varlength))
         for cVarname in ownvarnames:
@@ -181,7 +184,7 @@ class BaseSpectrum:
         """
         __fixbad()
 
-        An internal method which replaces all non-number data (e.g. 
+        An internal method which replaces all non-number data (e.g.
         infinities) in the data arrays with `numpy.nan`.
 
         Parameters
@@ -190,20 +193,24 @@ class BaseSpectrum:
         """
         ignorevars = self.__nondata
         ownvarnames = self.__dict__.keys()
-        ownvarnames = [i for i in filter (lambda a: a not in ignorevars, ownvarnames)]
+        ownvarnames = [
+            i for i in 
+            filter (lambda a: a not in ignorevars, ownvarnames)
+            ]
         varlength = len(self.__dict__[ownvarnames[0]])
         iGoodones = np.isfinite(np.ones(varlength))
         for cVarname in ownvarnames:
             cVar = self.__dict__[cVarname]
             if len(cVar) != varlength:
-                raise RuntimeError('Anomalous variable length detected in spectrum!')
-            iGoodones = np.logical_and(iGoodones,np.isfinite(cVar))
+                raise RuntimeError(
+                    'Anomalous variable length detected in spectrum!')
+            iGoodones = np.logical_and(iGoodones, np.isfinite(cVar))
         iBadones = np.logical_not(iGoodones)
         for cVarname in ownvarnames:
             if cVarname != 'x':
                 self.__dict__[cVarname][iBadones]=np.nan
 
-    def plot(self,axis,x='x',y='y',**kwargs):
+    def plot(self, axis, x='x', y='y', **kwargs):
         """
         plot(axis,x='x',y='y',**kwargs)
 
@@ -221,7 +228,7 @@ class BaseSpectrum:
             The name of the variable to be plotted on the x axis.
         **kwargs : Arguments, optional
             This can be used to pass additional arguments
-            to `matplotlib.pyplot.plot`, which is used by this 
+            to `matplotlib.pyplot.plot`, which is used by this
             method for its plotting.
         """
         try: #assume it's with astropy units
@@ -232,7 +239,7 @@ class BaseSpectrum:
             ploty = self.__dict__[y].value
         except ValueError:
             ploty = self.__dict__[y]
-        axis.plot(plotx,ploty,**kwargs)
+        axis.plot(plotx, ploty, **kwargs)
 
     @clonable
     def convert2wn(self):
@@ -267,9 +274,9 @@ class BaseSpectrum:
         self.convert2(u.micron)
 
     @clonable
-    def convert2(self,newunit):
+    def convert2(self, newunit):
         """
-        convert2(newunit,clone=False)
+        convert2(newunit, clone=False)
 
         Convert the x axis data to given spectral units.
         Re-sort the data afterwards.
@@ -288,9 +295,9 @@ class BaseSpectrum:
         self.__sort()
 
     @clonable
-    def subspectrum(self,limit_lower,limit_upper):
+    def subspectrum(self, limit_lower, limit_upper):
         """
-        subspectrum(limit_lower,limit_upper,clone=False)
+        subspectrum(limit_lower, limit_upper, clone=False)
 
         Cropped the spectrum along along the x axis using the given
         inclusive limits.
@@ -307,14 +314,16 @@ class BaseSpectrum:
             If set to True, returns a modified copy of the spectrum instead
             of operating on the existing spectrum.
         """
-        iSub = np.logical_and(np.greater_equal(self.x.value,limit_lower),np.less_equal(self.x.value,limit_upper))
+        iSub = np.logical_and(
+            np.greater_equal(self.x.value, limit_lower),
+            np.less_equal(self.x.value, limit_upper))
         newX = self.x[iSub]
         newY = self.y[iSub]
         self.x = newX
         self.y = newY
 
     @clonable
-    def interpolate(self,target_spectrum):
+    def interpolate(self, target_spectrum):
         """
         interpolate(target_spectrum,clone=False)
 
@@ -339,12 +348,14 @@ class BaseSpectrum:
         if self.y.unit != target_spectrum.y.unit:
             raise u.UnitsError('Spectrums have different units on y axis!')
         newX=target_spectrum.x
-        newY=np.interp(newX,self.x,self.y)*self.y.unit
+        newY=np.interp(newX self.x, self.y)*self.y.unit
         self.x = newX
         self.y = newY
-        self.name = self.name+'(interpolated: '+target_spectrum.name+')'
+        self.name = '{0}(interpolated: {1})',format(
+            self.name,
+            target_spectrum.name)
 
-    def yat(self,x):
+    def yat(self, x):
         """
         yat(x)
 
@@ -360,12 +371,12 @@ class BaseSpectrum:
         The interpolated value of y at the requested x coordinate.
 
         """
-        return np.interp(x,self.x.value,self.y.value)
+        return np.interp(x, self.x.value, self.y.value)
 
     @clonable
-    def convolve(self,kernel,**kwargs):
+    def convolve(self, kernel, **kwargs):
         """
-        convolve(kernel,clone=False,**kwargs)
+        convolve(kernel, clone=False, **kwargs)
 
         Use `astropy.convolution.convolve` to convolve the y axis data of the
         spectrum with the given kernel.
@@ -382,14 +393,16 @@ class BaseSpectrum:
             to `astropy.convolution.convolve`.
         """
         if self.convolved:
-            warnings.warn('Spectrum '+self.name+' has already been convolved once!',RuntimeWarning)
+            warnings.warn(
+                'Spectrum '+self.name+' has already been convolved once!',
+                RuntimeWarning)
         yunit = self.y.unit #stored temporarily to preserve units through convolution
-        self.y=convolution.convolve(self.y,kernel,**kwargs)
+        self.y=convolution.convolve(self.y, kernel, **kwargs)
         self.y = self.y * yunit #restore y units
         self.convolved=True
 
     @clonable
-    def gconvolve(self,fwhm,**kwargs):
+    def gconvolve(self, fwhm, **kwargs):
         """
         gconvolve(fwhm,**kwargs)
 
@@ -404,12 +417,12 @@ class BaseSpectrum:
             to `convolve`.
         """
         gkernel=convolution.Gaussian1DKernel(fwhm)
-        self.convolve(gkernel,**kwargs)
+        self.convolve(gkernel, **kwargs)
 
     @clonable
-    def smooth(self,window_len=11,window='hanning'):
+    def smooth(self, window_len=11, window='hanning'):
         """
-        smooth(window_len=11,window='hanning',clone=False)
+        smooth(window_len=11, window='hanning', clone=False)
 
         Smooth the spectrum using the given window of requested type and size.
         The supported smoothing functions are: Bartlett, Blackman, Hanning,
@@ -426,25 +439,43 @@ class BaseSpectrum:
             If set to True, returns a modified copy of the spectrum instead
             of operating on the existing spectrum.
         """
+        VALID_WINDOWS = [
+            'flat',
+            'hanning',
+            'hamming',
+            'bartlett',
+            'blackman']
         if self.x.ndim != 1:
             raise ValueError("smooth only accepts 1 dimension arrays.")
         if self.x.size < window_len:
-            raise ValueError("Input vector needs to be bigger than window size.")
+            raise ValueError(
+                "Input vector needs to be bigger than window size.")
         if window_len<3:
             self.y = self.x
         else:
-            if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-                raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
-            s=np.r_[2*self.x[0]-self.x[window_len-1::-1],self.x,2*self.x[-1]-self.x[-1:-window_len:-1]]
+            if not window in VALID_WINDOWS:
+                raise ValueError(
+                    "Window must be one of the following: {}".format(
+                        ','.join(VALID_WINDOWS)))
+            s=np.r_[
+                2*self.x[0]-self.x[window_len-1::-1],
+                self.x,
+                2*self.x[-1]-self.x[-1:-window_len:-1]
+                ]
             if window == 'flat': #moving average
                 w=np.ones(window_len,'d')
             else:  
                 w=eval('np.'+window+'(window_len)')
             self.y=np.convolve(w/w.sum(),s,mode='same')
 
-    def baseline(self,degree=1,windows=[[0.0,1.0e6]],exclusive=False,usefile=None):
+    def baseline(
+            self, 
+            degree=1, 
+            windows=[[0.0,1.0e6]], 
+            exclusive=False, 
+            usefile=None):
         """
-        baseline(degree=1,windows=[[0.0,1.0e6]],exclusive=False,usefile=None)
+        baseline(degree=1, windows=[[0.0,1.0e6]], exclusive=False, usefile=None)
 
         Fit and subtract a polynomial baseline from the spectrum, within
         the specified windows. The fitting windows can either be designated
@@ -482,9 +513,9 @@ class BaseSpectrum:
             To create a new baseline file, set windows to 'manual' and
             set usefile to point to the desired path of the new file.
         """
-        iBaseline=np.logical_or(np.isinf(self.x),exclusive)
+        iBaseline=np.logical_or(np.isinf(self.x), exclusive)
         if usefile != None and os.path.exists(usefile):
-            with open(usefile,'r') as cFile:
+            with open(usefile, 'r') as cFile:
                 windows = pickle.load(cFile) 
         elif windows=='manual':
             print('Determining manual baseline')
@@ -492,31 +523,42 @@ class BaseSpectrum:
             cAx = cFig.add_subplot(111)
             cManager = plt.get_current_fig_manager()
             cManager.window.wm_geometry("+100+50")
-            cAx.plot(self.x,self.y,'k-',drawstyle='steps-mid')
-            cBaseliner = utils.Baseliner(cAx,self)
+            cAx.plot(self.x, self.y, 'k-', drawstyle='steps-mid')
+            cBaseliner = utils.Baseliner(cAx, self)
             plt.show(cFig)
             windows=cBaseliner.windows
-            if usefile != None:
-                with open(usefile,'w') as cFile:
-                    pickle.dump(windows,cFile)
+            if usefile is not None:
+                with open(usefile, 'w') as cFile:
+                    pickle.dump(windows, cFile)
                 print('Wrote window data to '+usefile)
         for cWindow in windows:
             if exclusive:
-                iBaseline=np.logical_and(iBaseline,np.logical_or(np.less(self.x.value,cWindow[0]),np.greater(self.x.value,cWindow[1])))
+                iBaseline = np.logical_and(
+                    iBaseline,
+                    np.logical_or(
+                        np.less(self.x.value, cWindow[0]),
+                        np.greater(self.x.value, cWindow[1])))
             else:
-                iBaseline=np.logical_or(iBaseline,np.logical_and(np.greater(self.x.value,cWindow[0]),np.less(self.x.value,cWindow[1])))
-        baseline = np.polyfit(self.x.value[iBaseline],self.y.value[iBaseline],degree)
+                iBaseline = np.logical_or(
+                    iBaseline,
+                    np.logical_and(
+                        np.greater(self.x.value, cWindow[0]),
+                        np.less(self.x.value, cWindow[1])))
+        baseline = np.polyfit(
+            self.x.value[iBaseline],
+            self.y.value[iBaseline],
+            degree)
         if not(np.all(np.isfinite(baseline))):
             raise RuntimeError('Baseline is non-finite!')
         fixedY = self.y.value
         for cDegree in range(degree+1):
-            fixedY=fixedY-baseline[degree-cDegree]*self.x.value**cDegree
-        self.y=fixedY*self.y.unit
+            fixedY = fixedY-baseline[degree-cDegree]*self.x.value**cDegree
+        self.y = fixedY*self.y.unit
         if self.dy is None:
-            self.dy=np.abs(np.std(fixedY[iBaseline]))
-        self.baselined=True
+            self.dy = np.abs(np.std(fixedY[iBaseline]))
+        self.baselined = True
 
-    def shift(self,amount):
+    def shift(self, amount):
         """
         shift(amount)
 
@@ -551,12 +593,15 @@ class BaseSpectrum:
         Maximum y of either the entire spectrum or, if checkrange is set,
         the maximum y inside of the specified range.
         """
-        iCheckrange=np.ones_like(self.y.value,dtype=bool)
-        if np.any(checkrange):
+        iCheckrange=np.ones_like(self.y.value, dtype=bool)
+        if checkrange is not None:
             minX=checkrange[0]
             maxX=checkrange[1]     
-            iCheckrange=np.logical_and(iCheckrange,np.logical_and(
-                                                np.less_equal(minX,self.x.value),np.greater_equal(maxX,self.x.value)))
+            iCheckrange=np.logical_and(
+                iCheckrange,
+                np.logical_and(
+                    np.less_equal(minX, self.x.value),
+                    np.greater_equal(maxX, self.x.value)))
         return np.nanmax(self.y[iCheckrange])
 
     def min(self,checkrange=None):
@@ -578,12 +623,15 @@ class BaseSpectrum:
         Minimum y of either the entire spectrum or, if checkrange is set,
         the minimum y inside of the specified range.
         """
-        iCheckrange=np.ones_like(self.y.value,dtype=bool)
-        if np.any(checkrange):
+        iCheckrange=np.ones_like(self.y.value, dtype=bool)
+        if checkrange is not None:
             minX=checkrange[0]
             maxX=checkrange[1]     
-            iCheckrange=np.logical_and(iCheckrange,np.logical_and(
-                                                np.less_equal(minX,self.x.value),np.greater_equal(maxX,self.x.value)))
+            iCheckrange=np.logical_and(
+                iCheckrange,
+                np.logical_and(
+                    np.less_equal(minX, self.x.value),
+                    np.greater_equal(maxX, self.x.value)))
         return np.nanmin(self.y[iCheckrange])
 
     def info(self):
@@ -638,7 +686,7 @@ class AbsorptionSpectrum(BaseSpectrum):
         The data on the y-axis spectrum, expressed as optical depth
         units (using omnifit.utils.unit_od).
     """
-    def __init__(self,wn,od,**kwargs):
+    def __init__(self, wn, od, **kwargs):
         """
         AbsorptionSpectrum(wn,od,**kwargs)
 
@@ -665,7 +713,8 @@ class AbsorptionSpectrum(BaseSpectrum):
         if type(wn) != u.quantity.Quantity:
             raise u.UnitsError('Input wn is not an astropy quantity.')
         if wn.unit != u.kayser:
-            warnings.warn('Input wn is not in kayser units. Converting...',RuntimeWarning)
+            warnings.warn('Input wn is not in kayser units. Converting...',
+                RuntimeWarning)
             with u.set_enabled_equivalencies(u.equivalencies.spectral()):
                 wn=wn.to(u.kayser)
         if type(od) != u.quantity.Quantity:
@@ -678,10 +727,10 @@ class AbsorptionSpectrum(BaseSpectrum):
         with u.set_enabled_equivalencies(u.equivalencies.spectral()):
             self.wl=self.wn.to(u.micron)
         self.od = od
-        BaseSpectrum.__init__(self,self.wn,self.od,**kwargs)
-    def plotod(self,ax,in_wl=False,**kwargs):
+        BaseSpectrum.__init__(self, self.wn, self.od, **kwargs)
+    def plotod(self, ax, in_wl=False, **kwargs):
         """
-        plotod(ax,in_wl=False,**kwargs)
+        plotod(ax, in_wl=False, **kwargs)
 
         Plot the optical depth spectrum as either a function of reciprocal
         wavenumber or wavelength to the given axis.
@@ -695,13 +744,13 @@ class AbsorptionSpectrum(BaseSpectrum):
             wavelength; otherwise it will be in reciprocal wavenumbers.
         **kwargs : Arguments, optional
             This can be used to pass additional arguments
-            to `matplotlib.pyplot.plot`, which is used by this 
+            to `matplotlib.pyplot.plot`, which is used by this
             method for its plotting.
         """
         if in_wl:
-            self.plot(ax,x='wl',y='od',**kwargs)      
+            self.plot(ax, x='wl', y='od', **kwargs)      
         else:
-            self.plot(ax,x='wn',y='od',**kwargs)
+            self.plot(ax, x='wn', y='od', **kwargs)
 
 
 class CDESpectrum(AbsorptionSpectrum):
@@ -732,9 +781,9 @@ class CDESpectrum(AbsorptionSpectrum):
     ctot : `numpy.ndarray`
         The spectrum of the total cross section of the simulated grain.
     """
-    def __init__(self,wn,m,**kwargs):
+    def __init__(self, wn, m, **kwargs):
         """
-        CDESpectrum(wn,m,**kwargs)
+        CDESpectrum(wn, m, **kwargs)
 
         Constructor for the `CDESpectrum` class.
 
@@ -759,13 +808,14 @@ class CDESpectrum(AbsorptionSpectrum):
         if wn.unit != u.kayser:
             with u.set_enabled_equivalencies(u.equivalencies.spectral()):
                 wn=wn.to(u.kayser)
-        self.cabs,self.cabs_vol,self.cscat_vol,self.ctot=utils.cde_correct(wn.value,m)
-        self.m=np.array(m,dtype=complex)
-        od = self.cabs_vol*utils.unit_od#utils.unit_absorbance).to(utils.unit_od,equivalencies=utils.equivalencies_absorption)
-        AbsorptionSpectrum.__init__(self,wn,od,**kwargs)
-    def plotnk(self,ax_n,ax_k,**kwargs):
+        self.cabs, self.cabs_vol, self.cscat_vol, self.ctot = 
+            utils.cde_correct(wn.value,m)
+        self.m = np.array(m, dtype=complex)
+        od = self.cabs_vol*utils.unit_od
+        AbsorptionSpectrum.__init__(self, wn, od, **kwargs)
+    def plotnk(self, ax_n, ax_k, **kwargs):
         """
-        plotnk(ax_n,ax_k,**kwargs)
+        plotnk(ax_n, ax_k, **kwargs)
         
         Plot the complex refractive indices as function of wavenumber to
         the two given matplotlib axes.
@@ -778,8 +828,8 @@ class CDESpectrum(AbsorptionSpectrum):
             The axis which the plot of k will be generated in.
         **kwargs : Arguments, optional
             This can be used to pass additional arguments
-            to `matplotlib.pyplot.plot`, which is used by this 
+            to `matplotlib.pyplot.plot`, which is used by this
             method for its plotting.
         """
-        ax_n.plot(self.wn,self.m.real,**kwargs)
-        ax_k.plot(self.wn,self.m.imag,**kwargs)
+        ax_n.plot(self.wn, self.m.real, **kwargs)
+        ax_k.plot(self.wn, self.m.imag, **kwargs)
