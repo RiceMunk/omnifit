@@ -177,7 +177,6 @@ class BaseSpectrum:
             i for i in
             filter(lambda a: a not in nondatavars, ownvarnames)
             ]
-        varlength = len(self.__dict__[ownvarnames[0]])
         for cVarname in ownvarnames:
             self.__dict__[cVarname] = self.__dict__[cVarname][sorter]
 
@@ -209,7 +208,7 @@ class BaseSpectrum:
         iBadones = np.logical_not(iGoodones)
         for cVarname in ownvarnames:
             if cVarname != 'x':
-                self.__dict__[cVarname][iBadones]=np.nan
+                self.__dict__[cVarname][iBadones] = np.nan
 
     def plot(self, axis, x='x', y='y', **kwargs):
         """
@@ -232,11 +231,11 @@ class BaseSpectrum:
             to `matplotlib.pyplot.plot`, which is used by this
             method for its plotting.
         """
-        try: #assume it's with astropy units
+        try:  # assume it's with astropy units
             plotx = self.__dict__[x].value
         except ValueError:
             plotx = self.__dict__[x]
-        try: #assume it's with astropy units
+        try:  # assume it's with astropy units
             ploty = self.__dict__[y].value
         except ValueError:
             ploty = self.__dict__[y]
@@ -292,7 +291,7 @@ class BaseSpectrum:
             of operating on the existing spectrum.
         """
         with u.set_enabled_equivalencies(u.equivalencies.spectral()):
-            self.x=self.x.to(newunit)
+            self.x = self.x.to(newunit)
         self.__sort()
 
     @clonable
@@ -348,8 +347,8 @@ class BaseSpectrum:
             raise u.UnitsError('Spectrums have different units on x axis!')
         if self.y.unit != target_spectrum.y.unit:
             raise u.UnitsError('Spectrums have different units on y axis!')
-        newX=target_spectrum.x
-        newY=np.interp(newX, self.x, self.y)*self.y.unit
+        newX = target_spectrum.x
+        newY = np.interp(newX, self.x, self.y)*self.y.unit
         self.x = newX
         self.y = newY
         self.name = '{0}(interpolated: {1})'.format(
@@ -397,10 +396,10 @@ class BaseSpectrum:
             warnings.warn(
                 'Spectrum '+self.name+' has already been convolved once!',
                 RuntimeWarning)
-        yunit = self.y.unit #stored temporarily to preserve units through convolution
-        self.y=convolution.convolve(self.y, kernel, **kwargs)
-        self.y = self.y * yunit #restore y units
-        self.convolved=True
+        yunit = self.y.unit  # stored temporarily to preserve units through convolution
+        self.y = convolution.convolve(self.y, kernel, **kwargs)
+        self.y = self.y * yunit  # restore y units
+        self.convolved = True
 
     @clonable
     def gconvolve(self, fwhm, **kwargs):
@@ -417,7 +416,7 @@ class BaseSpectrum:
             This can be used to pass additional arguments
             to `convolve`.
         """
-        gkernel=convolution.Gaussian1DKernel(fwhm)
+        gkernel = convolution.Gaussian1DKernel(fwhm)
         self.convolve(gkernel, **kwargs)
 
     @clonable
@@ -451,32 +450,36 @@ class BaseSpectrum:
         if self.x.size < window_len:
             raise ValueError(
                 "Input vector needs to be bigger than window size.")
-        if window_len<3:
+        if window_len < 3:
             self.y = self.x
         else:
-            if not window in VALID_WINDOWS:
+            if window not in VALID_WINDOWS:
                 raise ValueError(
                     "Window must be one of the following: {}".format(
                         ','.join(VALID_WINDOWS)))
-            s=np.r_[
+            s = np.r_[
                 2*self.x[0]-self.x[window_len-1::-1],
                 self.x,
                 2*self.x[-1]-self.x[-1:-window_len:-1]
                 ]
-            if window == 'flat': #moving average
-                w=np.ones(window_len,'d')
+            if window == 'flat':  # moving average
+                w = np.ones(window_len, 'd')
             else:  
-                w=eval('np.'+window+'(window_len)')
-            self.y=np.convolve(w/w.sum(),s,mode='same')
+                w = eval('np.'+window+'(window_len)')
+            self.y=np.convolve(w/w.sum(), s, mode='same')
 
     def baseline(
-            self, 
-            degree=1, 
-            windows=[[0.0,1.0e6]], 
-            exclusive=False, 
+            self,
+            degree=1,
+            windows=[[0.0,1.0e6]],
+            exclusive=False,
             usefile=None):
         """
-        baseline(degree=1, windows=[[0.0,1.0e6]], exclusive=False, usefile=None)
+        baseline(
+            degree=1,
+            windows=[[0.0,1.0e6]],
+            exclusive=False,
+            usefile=None)
 
         Fit and subtract a polynomial baseline from the spectrum, within
         the specified windows. The fitting windows can either be designated
@@ -514,20 +517,20 @@ class BaseSpectrum:
             To create a new baseline file, set windows to 'manual' and
             set usefile to point to the desired path of the new file.
         """
-        iBaseline=np.logical_or(np.isinf(self.x), exclusive)
-        if usefile != None and os.path.exists(usefile):
+        iBaseline = np.logical_or(np.isinf(self.x), exclusive)
+        if usefile is not None and os.path.exists(usefile):
             with open(usefile, 'r') as cFile:
                 windows = pickle.load(cFile) 
-        elif windows=='manual':
+        elif windows == 'manual':
             print('Determining manual baseline')
-            cFig=plt.figure()
+            cFig = plt.figure()
             cAx = cFig.add_subplot(111)
             cManager = plt.get_current_fig_manager()
             cManager.window.wm_geometry("+100+50")
             cAx.plot(self.x, self.y, 'k-', drawstyle='steps-mid')
             cBaseliner = utils.Baseliner(cAx, self)
             plt.show(cFig)
-            windows=cBaseliner.windows
+            windows = cBaseliner.windows
             if usefile is not None:
                 with open(usefile, 'w') as cFile:
                     pickle.dump(windows, cFile)
@@ -573,7 +576,7 @@ class BaseSpectrum:
             The x axis of the entire spectrum has this number
             added to it, effectively shifting it.
         """
-        self.x+=amount
+        self.x += amount
 
     def max(self,checkrange=None):
         """
