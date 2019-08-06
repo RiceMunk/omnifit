@@ -1,3 +1,6 @@
+flake:
+	flake8 omnifit --count --show-source --statistics
+
 update-submodules:
 	git submodule foreach git pull origin master
 
