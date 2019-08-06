@@ -87,11 +87,11 @@ class Baseliner:
   def __skip(self):
     plt.close()
   def __setlim(self,i_x):
-    if self.__limlo==None:
+    if self.__limlo is None:
       self.__limlo=i_x
       self.__limloplot,=self.__ax.plot([i_x,i_x],[self.__miny,self.__maxy],'b-')
       self.__ax.figure.canvas.draw()
-    elif self.__limhi==None:
+    elif self.__limhi is None:
       self.__limhi=i_x
       self.__limhiplot,=self.__ax.plot([i_x,i_x],[self.__miny,self.__maxy],'b-')
       self.__ax.figure.canvas.draw()
@@ -99,11 +99,11 @@ class Baseliner:
     else:
       self.__finalise()
   def __remlim(self):
-    if self.__limhi!=None:
+    if self.__limhi is not None:
       self.__limhi=None
       self.__limhiplot.set_ydata([self.__miny,self.__miny])
       self.__ax.figure.canvas.draw()
-    elif self.__limlo!=None:
+    elif self.__limlo is not None:
       self.__limlo=None
       self.__limloplot.set_ydata([self.__miny,self.__miny])
       self.__ax.figure.canvas.draw()

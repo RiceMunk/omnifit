@@ -53,7 +53,7 @@ def flipped_egh(x,par,kernel=None):
   tau=par['tau'].value
   expFactor = np.exp((-1.0*(xR-x)**2.0)/(2.0*w*w+tau*(xR-x)))
   out_y = np.where(2.0*w*w+tau*(xR-x)>0,H*expFactor,0.0)
-  if not(np.any(kernel)):
+  if kernel is None:
     return out_y
   else:
     return convolution.convolve(out_y,kernel)
@@ -86,7 +86,7 @@ def gaussian(x,par,kernel=None):
   fwhm=par['fwhm'].value
   pos=par['pos'].value
   out_y=peak*np.exp(-2.35*(x-pos)**2./fwhm**2.)
-  if not(np.any(kernel)):
+  if kernel is None:
     return out_y
   else:
     return convolution.convolve(out_y,kernel)
@@ -129,7 +129,7 @@ def cde_lorentzian(x,par,kernel=None):
   pos=par['pos'].value
   lorentz_oscillator=lor1+lor2**2./(pos**2.-x**2.-lor3*x*1.j)
   out_y=peak*x*np.imag(2.*lorentz_oscillator*np.log10(lorentz_oscillator)/(lorentz_oscillator-1.))
-  if not(np.any(kernel)):
+  if kernel is None:
     return out_y
   else:
     return convolution.convolve(out_y,kernel)

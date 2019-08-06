@@ -215,7 +215,7 @@ class Fitter():
     The residual function within the fitting range with the given
     lmfit parameters.
     """
-    if custrange==None:
+    if custrange is None:
       fitrange=self.fitrange
     else:
       fitrange=custrange
