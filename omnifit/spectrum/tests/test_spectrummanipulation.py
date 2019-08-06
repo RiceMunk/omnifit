@@ -5,6 +5,7 @@ from ...tests.helpers import generate_cdespectrum
 from ...tests.helpers import generate_absspectrum
 from astropy import units as u
 
+
 class TestSpectrumManipulation_conversion:
     def test_wl2wn2wl(self):
         """
@@ -26,7 +27,8 @@ class TestSpectrumManipulation_conversion:
         testspec.convert2(u.meter)
         assert testspec.x.unit == u.meter
         with pytest.raises(u.UnitsError):
-                testspec.convert2(u.kg)
+            testspec.convert2(u.kg)
+
 
 class TestSpectrumManipulation_convolution:
     def test_gaussianconvolution(self):
@@ -40,7 +42,7 @@ class TestSpectrumManipulation_convolution:
         assert testspec.x.unit == oldunit_x
         assert testspec.y.unit == oldunit_y
 
-    def test_repeatedconvolution(self,recwarn):
+    def test_repeatedconvolution(self, recwarn):
         """
         Make sure that a warning is raised if convolution is repeated
         """
@@ -87,11 +89,11 @@ class TestSpectrumManipulation_misc:
         """
         Test interpolation between two different spectra
         """
-        #normal function
+        # normal function
         testspec1 = generate_cdespectrum()
         testspec2 = generate_absspectrum()
         testspec1.interpolate(testspec2)
-        #trying to break it
+        # trying to break it
         testspec1 = generate_cdespectrum()
         testspec2 = generate_absspectrum()
         testspec2.x = testspec2.x.value * u.kg
@@ -102,7 +104,7 @@ class TestSpectrumManipulation_misc:
         testspec2.y = testspec2.y.value * u.kg
         with pytest.raises(Exception):
             testspec1.interpolate(testspec2)
-        #test that units are retained on interpolation
+        # test that units are retained on interpolation
         testspec1 = generate_cdespectrum()
         testspec2 = generate_absspectrum()
         oldunit_y = testspec1.y.unit
@@ -116,7 +118,9 @@ class TestSpectrumManipulation_misc:
         Test the extraction of a subspectrum from a spectrum
         """
         testspec = generate_cdespectrum()
-        testspec.subspectrum(testspec.x[0].value+500,testspec.x[-1].value-500)
+        testspec.subspectrum(
+            testspec.x[0].value+500,
+            testspec.x[-1].value-500)
 
     def test_baseline_basic(self):
         """
@@ -125,4 +129,6 @@ class TestSpectrumManipulation_misc:
         testspec = generate_cdespectrum()
         testspec.baseline()
         testspec = generate_cdespectrum()
-        testspec.baseline(windows=[[testspec.x[0].value+500,testspec.x[-1].value-500]],exclusive=True)
+        testspec.baseline(
+            windows=[[testspec.x[0].value+500, testspec.x[-1].value-500]],
+            exclusive=True)
