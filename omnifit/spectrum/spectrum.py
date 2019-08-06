@@ -351,9 +351,9 @@ class BaseSpectrum:
         newY=np.interp(newX, self.x, self.y)*self.y.unit
         self.x = newX
         self.y = newY
-        self.name = '{0}(interpolated: {1})',format(
-            self.name,
-            target_spectrum.name)
+        self.name = '{old}(interpolated: {new})',format(
+            old = self.name,
+            new = target_spectrum.name)
 
     def yat(self, x):
         """
