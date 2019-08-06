@@ -35,7 +35,7 @@ class BaseSpectrum:
     """
     A class to represent spectroscopic data.
 
-    This class is designed to work for spectroscopic data of ices, but 
+    This class is designed to work for spectroscopic data of ices, but
     may work for other types of spectroscopic data as well.
     This is the most basic version of the class, concerned solely with
     the contents of the x and y attributes.
@@ -56,15 +56,15 @@ class BaseSpectrum:
     baselined : `bool`
         Indicates whether the spectrum has been baselined or not
     convolved : `bool`
-        Indicates whether the spectrum has been put through convolution"""
+        Indicates whether the spectrum has been put through convolution
+    """
     def __init__(
         self,
         x,
         y,
         dy=None,
         specname='Unknown spectrum',
-        nondata=[]
-        ):
+        nondata=[]):
         """
         BaseSpectrum(x,y,dy=None,specname='Unknown spectrum',nondata=[])
 
@@ -91,7 +91,7 @@ class BaseSpectrum:
             recommended that the class constructor is called with
             such an input. However, the constructor also accepts
             a numpy ndarray, in which case it will assume that
-            the units are in optical depth and then convert the 
+            the units are in optical depth and then convert the
             input into this astropy quantity.
         dy : `float`, optional
             The uncertainty of y. If given, this is assumed to be
@@ -106,26 +106,37 @@ class BaseSpectrum:
             If information unrelated to the x and y input data is
             stored in the class instance, the variable names in which
             this information is stored can be given here. This causes
-            various internal functions (related to automatic sorting 
+            various internal functions (related to automatic sorting
             and error-checking) of the class to ignore these
             variables.
             It is not usually necessary for the user to use this input
             during initialisation; it is most often used by children of
-            the BaseSpectrum class."""
-        if len(x) != len(y):                                  #Check that input is sane
+            the BaseSpectrum class.
+        """
+        if len(x) != len(y):  # Check that input is sane
             raise RuntimeError('Input arrays have different sizes.')
         if type(x) != u.quantity.Quantity:
-            #try to guess x units (between micron and kayser; the most common units) if none given
+            # try to guess x units (between micron and kayser; 
+            # the most common units) if none given
             if np.mean(x) > 1000.:
-                warnings.warn('The x data is not in astropy unit format. Autodetection assumes kayser.',RuntimeWarning)
+                warnings.warn(
+                    'The x data is not in astropy unit format. \
+                    Autodetection assumes kayser.',
+                    RuntimeWarning)
                 self.x=x*u.kayser
             else:
-                warnings.warn('The x data is not in astropy unit format. Autodetection assumes micron.',RuntimeWarning)
+                warnings.warn(
+                    'The x data is not in astropy unit format. \
+                    Autodetection assumes micron.',
+                    RuntimeWarning)
                 self.x=x*u.micron
         else:
             self.x=x
         if type(y) != u.quantity.Quantity:
-            warnings.warn('The y data is not in astropy unit format. Assuming optical depth.',RuntimeWarning)
+            warnings.warn(
+                'The y data is not in astropy unit format. \
+                Assuming optical depth.',
+                RuntimeWarning)
             self.y=y*utils.unit_od
         else:
             self.y=y
@@ -133,19 +144,19 @@ class BaseSpectrum:
             self.dy=dy
         else:
             self.dy=None
-        self.name=str(specname)                                 #Spectrum name
-        self.baselined=False                                    #Has the spectrum been baselined?
-        self.convolved=False                                    #Has the spectrum been convolved?
+        self.name=str(specname) # Spectrum name
+        self.baselined=False    # Has the spectrum been baselined?
+        self.convolved=False    # Has the spectrum been convolved?
         self.__nondata = [
-                                            '_BaseSpectrum__nondata',\
-                                            'name',\
-                                            'convolved','baselined',\
-                                            'dy'\
-                                     ]
-        for cnondata in nondata:                                #Add the extra non-array variable names into nondata
+            '_BaseSpectrum__nondata',
+            'name',
+            'convolved',
+            'baselined',
+            'dy']
+        for cnondata in nondata: # Extra non-array variable names into nondata
             if not cnondata in self.__nondata:
                 self.__nondata.append(cnondata)                       
-        self.__fixbad()                                          #Drop bad data.
+        self.__fixbad() # Drop bad data
         self.__sort()
     def __sort(self):
         """
