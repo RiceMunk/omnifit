@@ -116,48 +116,49 @@ class BaseSpectrum:
         if len(x) != len(y):  # Check that input is sane
             raise RuntimeError('Input arrays have different sizes.')
         if type(x) != u.quantity.Quantity:
-            # try to guess x units (between micron and kayser; 
+            # try to guess x units (between micron and kayser;
             # the most common units) if none given
             if np.mean(x) > 1000.:
                 warnings.warn(
                     'The x data is not in astropy unit format. \
                     Autodetection assumes kayser.',
                     RuntimeWarning)
-                self.x=x*u.kayser
+                self.x = x*u.kayser
             else:
                 warnings.warn(
                     'The x data is not in astropy unit format. \
                     Autodetection assumes micron.',
                     RuntimeWarning)
-                self.x=x*u.micron
+                self.x = x*u.micron
         else:
-            self.x=x
+            self.x = x
         if type(y) != u.quantity.Quantity:
             warnings.warn(
                 'The y data is not in astropy unit format. \
                 Assuming optical depth.',
                 RuntimeWarning)
-            self.y=y*utils.unit_od
+            self.y = y*utils.unit_od
         else:
-            self.y=y
+            self.y = y
         if dy is not None:
-            self.dy=dy
+            self.dy = dy
         else:
-            self.dy=None
-        self.name=str(specname) # Spectrum name
-        self.baselined=False    # Has the spectrum been baselined?
-        self.convolved=False    # Has the spectrum been convolved?
+            self.dy = None
+        self.name = str(specname)  # Spectrum name
+        self.baselined = False     # Has the spectrum been baselined?
+        self.convolved = False     # Has the spectrum been convolved?
         self.__nondata = [
             '_BaseSpectrum__nondata',
             'name',
             'convolved',
             'baselined',
             'dy']
-        for cnondata in nondata: # Extra non-array variable names into nondata
-            if not cnondata in self.__nondata:
+        for cnondata in nondata:  # Extra non-array variable names into nondata
+            if cnondata not in self.__nondata:
                 self.__nondata.append(cnondata)
-        self.__fixbad() # Drop bad data
+        self.__fixbad()  # Drop bad data
         self.__sort()
+
     def __sort(self):
         """
         __sort()
@@ -169,17 +170,17 @@ class BaseSpectrum:
         ----------
         None
         """
-        sorter=np.argsort(self.x)
+        sorter = np.argsort(self.x)
         nondatavars = self.__nondata
         ownvarnames = self.__dict__.keys()
         ownvarnames = [
-            i for i in 
-            filter (lambda a: not a in nondatavars, ownvarnames)
+            i for i in
+            filter(lambda a: a not in nondatavars, ownvarnames)
             ]
         varlength = len(self.__dict__[ownvarnames[0]])
-        iGoodones = np.isfinite(np.ones(varlength))
         for cVarname in ownvarnames:
-            self.__dict__[cVarname]=self.__dict__[cVarname][sorter]
+            self.__dict__[cVarname] = self.__dict__[cVarname][sorter]
+
     def __fixbad(self):
         """
         __fixbad()
@@ -194,8 +195,8 @@ class BaseSpectrum:
         ignorevars = self.__nondata
         ownvarnames = self.__dict__.keys()
         ownvarnames = [
-            i for i in 
-            filter (lambda a: a not in ignorevars, ownvarnames)
+            i for i in
+            filter(lambda a: a not in ignorevars, ownvarnames)
             ]
         varlength = len(self.__dict__[ownvarnames[0]])
         iGoodones = np.isfinite(np.ones(varlength))
@@ -212,7 +213,7 @@ class BaseSpectrum:
 
     def plot(self, axis, x='x', y='y', **kwargs):
         """
-        plot(axis,x='x',y='y',**kwargs)
+        plot(axis, x='x', y='y', **kwargs)
 
         Plot the contents of the spectrum into a given matplotlib axis.
         Defaults to the data contained in the x and y attributes, but
