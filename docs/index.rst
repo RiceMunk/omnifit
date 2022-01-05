@@ -1,51 +1,14 @@
-.. Much of what is found below has been shamelessly copied from the astropy documentation layout.
+Documentation
+=============
 
-:tocdepth: 2
-
-.. the "raw" directive below is used to hide the title in favor of just the logo being visible
-.. raw:: html
-
-    <style media="screen" type="text/css">
-      h1 { display:none; }
-    </style>
-
-#############################
-Omnifit Package Documentation
-#############################
-
-.. |logo_svg| image:: _static/omnifit_banner.svg
-
-.. |logo_png| image:: _static/omnifit_banner.png
-
-.. raw:: html
-
-   <img src="_images/omnifit_banner.svg" onerror="this.src='_images/omnifit_banner.png'; this.onerror=null;" width="485"/>
-
-.. only:: latex
-
-    .. image:: _static/omnifit_banner.pdf
-
-Welcome to the Omnifit documentation!
-
-***********
-User manual
-***********
-:doc:`changelog_link`
----------------------
-
-Omnifit basics
---------------
+This is the documentation for omnifit.
 
 .. toctree::
-  :maxdepth: 1
+  :maxdepth: 2
 
-  overview
-  installation
-  examples
+  omnifit/index.rst
 
-*************
-Reference/API
-*************
-  .. automodapi:: omnifit.spectrum
-  .. automodapi:: omnifit.fitter
-  .. automodapi:: omnifit.utils
+.. note:: The layout of this directory is simply a suggestion.  To follow
+          traditional practice, do *not* edit this page, but instead place
+          all documentation for the package inside ``omnifit/``.
+          You can follow this practice or choose your own layout.
