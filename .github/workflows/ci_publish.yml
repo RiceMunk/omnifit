@@ -1,0 +1,43 @@
+# GitHub Actions workflow for publishing
+# Does not run tests (they were run as part of release creation, and are
+# assumed to still succeed) and the trigger is the publication of a 
+# (previously draft) release
+
+name: CI Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    # Publish to PyPi
+    name: Build and publish to PyPI
+    runs-on: ubuntu-18.04
+    needs: ci_tests
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install pypa/build
+      run: >-
+        python -m
+        pip install
+        build
+        --user
+    - name: Build a binary wheel and a source tarball
+      run: >-
+        python -m
+        build
+        --sdist
+        --wheel
+        --outdir dist/
+        .
+    - name: Publish distribution 📦 to PyPI
+      if: startsWith(github.ref, 'refs/tags')
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI }}
