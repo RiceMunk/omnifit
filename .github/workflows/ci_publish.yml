@@ -1,8 +1,7 @@
-# GitHub Actions workflow for publishing to test PyPi
-#
-# This file performs testing using tox and tox.ini to define and configure the test environments.
+# GitHub Actions workflow for publishing
+# Also runs tests on the release (identical to ci_tests.yml) before attempting a publish
 
-name: CI Test Publish
+name: CI Publish
 
 on:
   push:
@@ -80,10 +79,11 @@ jobs:
     #   uses: codecov/codecov-action@v2
     #   with:
     #     file: ./coverage.xml
-  publish-test:
+  publish_test:
     # Publish to test PyPi
     name: Build and publish to TestPyPI
     runs-on: ubuntu-18.04
+    needs: ci_tests
     steps:
     - uses: actions/checkout@master
     - name: Set up Python 3.8
@@ -107,5 +107,6 @@ jobs:
     - name: Publish distribution 📦 to Test PyPI
       uses: pypa/gh-action-pypi-publish@master
       with:
+        user: __token__
         password: ${{ secrets.TEST_PYPI }}
         repository_url: https://test.pypi.org/legacy/
