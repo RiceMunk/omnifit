@@ -344,9 +344,11 @@ class BaseSpectrum:
             If set to True, returns a modified copy of the spectrum instead
             of operating on the existing spectrum.
         """
-        if not self.x.unit.is_equivalent(target_spectrum.x.unit, equivalencies=u.spectral()):
+        if not self.x.unit.is_equivalent(
+                target_spectrum.x.unit, equivalencies=u.spectral()):
             raise u.UnitsError('Spectra have incompatible units on x axis!')
-        if not self.y.unit.is_equivalent(target_spectrum.y.unit, equivalencies=u.spectral_density(self.x)):
+        if not self.y.unit.is_equivalent(
+                target_spectrum.y.unit, equivalencies=u.spectral_density(self.x)):
             raise u.UnitsError('Spectra have incompatible units on y axis!')
         newX = target_spectrum.x.to(self.x.unit, equivalencies=u.spectral())
         newY = np.interp(newX, self.x, self.y)
