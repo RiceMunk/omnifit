@@ -1,4 +1,6 @@
 test:
 	tox -e test
-checkstyle:
+codestyle:
 	tox -e codestyle
+docs:
+	tox -e build_docs
