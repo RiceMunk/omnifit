@@ -10,10 +10,10 @@ name: CI Release
 
 on:
   push:
+    branches:
+    - master
     tags:
-    - v*         # Version tags
-    tags-ignore:
-    - v*.dev*    # IGNORE Development version tags
+    - v[0-9]+.[0-9]+.[0-9]+ # Non-dev semantic version tags
 
 jobs:
   # Github Actions supports ubuntu, windows, and macos virtual environments:
