@@ -328,11 +328,12 @@ class BaseSpectrum:
         interpolate(target_spectrum,clone=False)
 
         Interpolate spectrum to match target spectrum resolution.
-        Does not modify current spectrum, but returns a new one, which is
-        a copy of the current spectrum but with the interpolated data on
-        the x and y fields.
-        The target spectrum has to be using the same units on the x and
-        y axes as the current spectrum, or the interpolation will fail.
+        Does not modify current spectrum, but replaces it with a new one,
+        which is a copy of the current spectrum but with the interpolated
+        data on the x and y fields.
+        The target spectrum has to be using the compatible units on the
+        x and y axes as the current spectrum, or the interpolation will fail
+        (including, e.g., units of wavenumbers/frequency/wavelength).
 
         Parameters
         ----------
@@ -343,12 +344,12 @@ class BaseSpectrum:
             If set to True, returns a modified copy of the spectrum instead
             of operating on the existing spectrum.
         """
-        if self.x.unit != target_spectrum.x.unit:
-            raise u.UnitsError('Spectrums have different units on x axis!')
-        if self.y.unit != target_spectrum.y.unit:
-            raise u.UnitsError('Spectrums have different units on y axis!')
-        newX = target_spectrum.x
-        newY = np.interp(newX, self.x, self.y)*self.y.unit
+        if not self.x.unit.is_equivalent(target_spectrum.x.unit, equivalencies=u.spectral()):
+            raise u.UnitsError('Spectra have incompatible units on x axis!')
+        if not self.y.unit.is_equivalent(target_spectrum.y.unit, equivalencies=u.spectral_density(self.x)):
+            raise u.UnitsError('Spectra have incompatible units on y axis!')
+        newX = target_spectrum.x.to(self.x.unit, equivalencies=u.spectral())
+        newY = np.interp(newX, self.x, self.y)
         self.x = newX
         self.y = newY
         self.name = '{0}(interpolated: {1})'.format(
@@ -396,9 +397,7 @@ class BaseSpectrum:
             warnings.warn(
                 'Spectrum '+self.name+' has already been convolved once!',
                 RuntimeWarning)
-        yunit = self.y.unit  # to preserve units through convolution
         self.y = convolution.convolve(self.y, kernel, **kwargs)
-        self.y = self.y * yunit  # restore y units
         self.convolved = True
 
     @clonable
