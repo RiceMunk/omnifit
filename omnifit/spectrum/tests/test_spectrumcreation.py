@@ -51,8 +51,8 @@ class TestSpectrumCreation_basic:
         """
         Make sure that infinities are converted to nans when creating spectrum
         """
-        xdata = np.arange(1000, 2000, 10, dtype=np.float)*u.micron
-        ydata = np.arange(0, 100, 1, dtype=np.float)*utils.unit_od
+        xdata = np.arange(1000, 2000, 10, dtype=float)*u.micron
+        ydata = np.arange(0, 100, 1, dtype=float)*utils.unit_od
         ydata[3] = np.inf
         testspec = spectrum.BaseSpectrum(xdata, ydata)
         assert np.all(testspec.x == xdata)
@@ -62,8 +62,8 @@ class TestSpectrumCreation_basic:
         """
         Make sure that unsorted data gets appropriately sorted.
         """
-        xdata = np.arange(1000, 2000, 10, dtype=np.float)*u.micron
-        ydata = np.arange(0, 100, 1, dtype=np.float)*utils.unit_od
+        xdata = np.arange(1000, 2000, 10, dtype=float)*u.micron
+        ydata = np.arange(0, 100, 1, dtype=float)*utils.unit_od
         xdata_rev = xdata[::-1]  # reverse xdata
         testspec = spectrum.BaseSpectrum(xdata_rev, ydata)
         assert not np.all(testspec.x == xdata_rev)
@@ -86,8 +86,8 @@ class TestSpectrumCreation_absorption:
         As above, but deliberately mess up the size. This should raise an
         RuntimeError.
         """
-        xdata = np.arange(1000, 2000, 10, dtype=np.float)*u.kayser
-        ydata = np.arange(0, 100, 1, dtype=np.float)[1:]*utils.unit_od
+        xdata = np.arange(1000, 2000, 10, dtype=float)*u.kayser
+        ydata = np.arange(0, 100, 1, dtype=float)[1:]*utils.unit_od
         with pytest.raises(RuntimeError):
             spectrum.AbsorptionSpectrum(
                 xdata,
@@ -106,9 +106,9 @@ class TestSpectrumCreation_absorption:
         As above, but deliberately mess up the size.
         This should raise an RuntimeError.
         """
-        xdata = np.arange(1000, 2000, 10, dtype=np.float)*u.micron
-        ndata = np.arange(0, 100, 1, dtype=np.float)[1:]
-        kdata = np.arange(0, 100, 1, dtype=np.float)[1:]
+        xdata = np.arange(1000, 2000, 10, dtype=float)*u.micron
+        ndata = np.arange(0, 100, 1, dtype=float)[1:]
+        kdata = np.arange(0, 100, 1, dtype=float)[1:]
         with pytest.raises(RuntimeError):
             spectrum.CDESpectrum(
                 xdata[2:],
