@@ -1,7 +1,7 @@
 # GitHub Actions workflow for publishing
-# Unlike test publishes, does not run tests (they were run as part of 
-# release creation, and are assumed to still succeed) and the trigger is
-# the publication of a (previously draft) release, instead of a 
+# Does not run tests (they were run as part of release creation, and are
+# assumed to still succeed) and the trigger is the publication of a 
+# (previously draft) release
 
 name: CI Publish
 
