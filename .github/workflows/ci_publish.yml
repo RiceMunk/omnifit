@@ -14,7 +14,6 @@ jobs:
     # Publish to PyPi
     name: Build and publish to PyPI
     runs-on: ubuntu-18.04
-    needs: ci_tests
     steps:
     - uses: actions/checkout@master
     - name: Set up Python 3.8
