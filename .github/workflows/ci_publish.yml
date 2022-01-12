@@ -1,87 +1,18 @@
 # GitHub Actions workflow for publishing
-# Also runs tests on the release (identical to ci_tests.yml) before attempting a publish
+# Unlike test publishes, does not run tests (they were run as part of 
+# release creation, and are assumed to still succeed) and the trigger is
+# the publication of a (previously draft) release, instead of a 
 
 name: CI Publish
 
 on:
-  push:
-    tags:
-    - v*    # Version releases
+  release:
+    types: [published]
 
 jobs:
-  # Github Actions supports ubuntu, windows, and macos virtual environments:
-  # https://help.github.com/en/actions/reference/virtual-environments-for-github-hosted-runners
-  ci_tests:
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - name: Code style checks
-            os: ubuntu-latest
-            python: 3.x
-            toxenv: codestyle
-
-          - name: Python 3.7 with minimal dependencies
-            os: ubuntu-latest
-            python: 3.7
-            toxenv: py37-test
-
-          - name: Python 3.8 with all optional dependencies and coverage checking
-            os: ubuntu-latest
-            python: 3.8
-            toxenv: py38-test-alldeps-cov
-
-          - name: macOS - Python 3.8 with all optional dependencies
-            os: macos-latest
-            python: 3.8
-            toxenv: py38-test-alldeps
-
-          - name: Windows - Python 3.8 with all optional dependencies
-            os: windows-latest
-            python: 3.8
-            toxenv: py38-test-alldeps
-
-          # - name: Python 3.7 with oldest supported version of all dependencies
-          #   os: ubuntu-16.04
-          #   python: 3.7
-          #   toxenv: py37-test-oldestdeps
-
-          # - name: Python 3.8 with latest dev versions of key dependencies
-          #   os: ubuntu-latest
-          #   python: 3.8
-          #   toxenv: py38-test-devdeps
-
-          # - name: Test building of Sphinx docs
-          #   os: ubuntu-latest
-          #   python: 3.x
-          #   toxenv: build_docs
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Set up python ${{ matrix.python }} on ${{ matrix.os }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python }}
-    - name: Install base dependencies
-      run: |
-        python -m pip install --upgrade pip
-        python -m pip install tox codecov
-    - name: Test with tox
-      run: |
-        tox -e ${{ matrix.toxenv }}
-    # This is an example of how to upload coverage to codecov
-    # - name: Upload coverage to codecov
-    #   if: "contains(matrix.toxenv, '-cov')"
-    #   uses: codecov/codecov-action@v2
-    #   with:
-    #     file: ./coverage.xml
-  publish_test:
-    # Publish to test PyPi
-    name: Build and publish to TestPyPI
+  publish:
+    # Publish to PyPi
+    name: Build and publish to PyPI
     runs-on: ubuntu-18.04
     needs: ci_tests
     steps:
@@ -104,9 +35,9 @@ jobs:
         --wheel
         --outdir dist/
         .
-    - name: Publish distribution 📦 to Test PyPI
+    - name: Publish distribution 📦 to PyPI
+      if: startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@master
       with:
         user: __token__
-        password: ${{ secrets.TEST_PYPI }}
-        repository_url: https://test.pypi.org/legacy/
+        password: ${{ secrets.PYPI }}
